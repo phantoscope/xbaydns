@@ -28,6 +28,10 @@ class CommandTest(basetest.BaseTestCase):
 		returncode = shtools.execute("ls")
 		self.assertTrue(returncode==0)
 
+	def testExecuteError(self):
+		returncode = shtools.execute("中华人民共和国")
+		self.assertTrue(returncode>0)
+
 """
 测试用例结合
 """
