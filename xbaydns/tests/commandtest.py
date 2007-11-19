@@ -13,18 +13,28 @@ import unittest
 import basetest
 import logging.config
 
+from xbaydns.utils import shtools
+
 log = logging.getLogger('xbaydns.tests.commandtest')
 
+"""
+command的测试用例类
+"""
 class CommandTest(basetest.BaseTestCase):
 	def setUp(self):
 		basetest.BaseTestCase.setUp(self)
 
-#测试用例的集合
+	def testExecute(self):
+		returncode = shtools.execute("ls")
+		self.assertTrue(returncode==0)
+
+"""
+测试用例结合
+"""
 def suite():
 	suite = unittest.TestSuite()
 	suite.addTest(unittest.makeSuite(CommandTest, 'test'))
 	return suite
-
 
 """
 单独运行command的测试用例
