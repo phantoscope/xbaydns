@@ -10,7 +10,7 @@ import logging
 import os
 import shlex
 
-from perbay.utils.command import CommandLine
+from xbaydns.utils.command import CommandLine
 
 log = logging.getLogger('perbay.utils.shtools')
 
