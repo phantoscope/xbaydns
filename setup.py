@@ -25,6 +25,6 @@ setup(
 	download_url = 'http://xbaydns.googlecode.com',
 	zip_safe = False,
 
-	packages = find_packages(exclude=['*.tests*']),
+	packages = find_packages(include=['xbaydns.*'],exclude=['*.tests*']),
 	test_suite = 'xbaydns.tests.suite'
 )
