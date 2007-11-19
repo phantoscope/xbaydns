@@ -49,12 +49,13 @@ import logging.config
 
 from xbaydns.utils import shtools
 from xbaydns.utils.command import CommandLine,_combine,TimeoutError,FileSet
+
 log = logging.getLogger('xbaydns.tests.commandtest')
 
-"""
-command的测试用例类
-"""
 class CommandTest(basetest.BaseTestCase):
+	"""
+	command的测试用例类
+	"""
 	def setUp(self):
 		self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
 		basetest.BaseTestCase.setUp(self)
