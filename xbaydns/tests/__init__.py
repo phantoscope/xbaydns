@@ -8,7 +8,7 @@ Copyright (c) 2007 XbayDNS Team. All rights reserved.
 """
 
 import unittest
-from xbaydsn.test import commandtest
+from xbaydns.tests import commandtest
 
 def suite():
     suite = unittest.TestSuite()
