@@ -44,6 +44,11 @@ class InitConfTest(basetest.BaseTestCase):
 			telcom=('4.4.4.4','5.5.5.5') ))
 		self.assertEqual(acl_content,'acl "telcom" { 4.4.4.4; 5.5.5.5; };\nacl "cnc" { 1.1.1.1; 2.2.2.2; 3.3.3.3; };\n')
 
+	def test_defaultzone_file(self):
+		"""defaultzone_file test"""
+		defaultzone = initconf.defaultzone_file()
+		log.debug(defaultzone)
+		self.assertTrue( 'zone "." { type hint; file "named.root"; };' in defaultzone )
 
 """
 测试用例结合
