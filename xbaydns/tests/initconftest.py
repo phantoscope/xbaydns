@@ -91,6 +91,10 @@ class InitConfTest(basetest.BaseTestCase):
 		self.assertTrue( os.path.isdir("%s/namedb/slave"%tmpdir) )
 		shutil.rmtree(tmpdir)
 
+	def test_create_conf(self):
+		"""create_conf test"""
+		tmpdir = initconf.create_destdir()
+		self.assertTrue( initconf.create_conf(tmpdir) )
 
 """
 测试用例结合
