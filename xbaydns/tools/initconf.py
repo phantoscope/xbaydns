@@ -18,9 +18,14 @@ import sys
 log = logging.getLogger('xbaydns.tools.initconf')
 
 def create_dir(path):
+	"""建立指定的目录"""
 	cur = os.path.join(path)
 	os.mkdir(cur)
 	return cur
+
+def create_file( name, content=None):
+	"""docstring for create_file"""
+	pass
 
 def main():
 	pass
