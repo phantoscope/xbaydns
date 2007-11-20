@@ -81,6 +81,17 @@ class InitConfTest(basetest.BaseTestCase):
 		log.debug("backup file is:%s"%(os.path.join(self.basedir,filename)))
 		self.assertTrue( os.path.isfile(os.path.join(self.basedir,filename)) )
 
+	def test_create_destdir(self):
+		"""create_destdir test"""
+		tmpdir = initconf.create_destdir()
+		log.debug("create tmpdir is:%s"%tmpdir)
+		self.assertTrue( os.path.isdir("%s/namedb/acl"%tmpdir) )
+		self.assertTrue( os.path.isdir("%s/namedb/dynamic"%tmpdir) )
+		self.assertTrue( os.path.isdir("%s/namedb/master"%tmpdir) )
+		self.assertTrue( os.path.isdir("%s/namedb/slave"%tmpdir) )
+		shutil.rmtree(tmpdir)
+
+
 """
 测试用例结合
 """
