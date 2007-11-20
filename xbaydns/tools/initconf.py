@@ -159,6 +159,7 @@ def main():
         print "Create configuration files failed."
         return -1
     else:
+        os.rmdir(tmpdir)
         return 0
 
 if __name__ == '__main__':
