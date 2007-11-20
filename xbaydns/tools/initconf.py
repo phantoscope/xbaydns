@@ -79,10 +79,10 @@ def create_destdir():
     tmpdir = mkdtemp()
     os.makedirs("%s/namedb/acl"%tmpdir)
     os.mkdir("%s/namedb/dynamic"%tmpdir)
-    os.chown("%s/namedb/dynamic"%tmpdir, 53)
+    os.chown("%s/namedb/dynamic"%tmpdir, 53, 0)
     os.mkdir("%s/namedb/master"%tmpdir)
     os.mkdir("%s/namedb/slave"%tmpdir)
-    os.chown("%s/namedb/slave"%tmpdir, 53)
+    os.chown("%s/namedb/slave"%tmpdir, 53, 0)
     return tmpdir
 
 def create_conf(tmpdir):
