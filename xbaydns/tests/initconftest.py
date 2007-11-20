@@ -47,8 +47,13 @@ class InitConfTest(basetest.BaseTestCase):
 	def test_defaultzone_file(self):
 		"""defaultzone_file test"""
 		defaultzone = initconf.defaultzone_file()
-		log.debug(defaultzone)
+		#log.debug(defaultzone)
 		self.assertTrue( 'zone "." { type hint; file "named.root"; };' in defaultzone )
+
+	def test_named_root_file(self):
+		"""named_root_file test"""
+		rootfile = initconf.named_root_file()
+		self.assertTrue('A.ROOT-SERVERS.NET.      3600000      A' in rootfile )
 
 """
 测试用例结合
