@@ -20,7 +20,9 @@ import sys
 from tempfile import mkdtemp
 import time
 
-#log = logging.getLogger('xbaydns.tools.initconf')
+log = logging.getLogger('xbaydns.tools.initconf')
+logging.basicConfig(level=logging.DEBUG)
+
 CUR_DIR = os.getcwd()
 TMPL_DIR = CUR_DIR + "/templates"
 TMPL_DEFAULTZONE = "%s/defaultzone.tmpl"%TMPL_DIR
@@ -155,6 +157,7 @@ def main():
             print "No namedb in basedir, I'll continue."
     # that's my business
     tmpdir = create_destdir()
+    log.debug(tmpdir)
     if create_conf(tmpdir) == False or install_conf(tmpdir, real_basedir) == False:
         print "Create configuration files failed."
         return -1
