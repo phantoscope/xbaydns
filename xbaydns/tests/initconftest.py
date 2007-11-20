@@ -12,6 +12,7 @@ import logging.config
 import os
 import shutil
 import tempfile
+import time
 import unittest
 
 from xbaydns.tools import initconf
@@ -28,7 +29,7 @@ class InitConfTest(basetest.BaseTestCase):
 		basetest.BaseTestCase.setUp(self)
 
 	def tearDown(self):
-		shutil.rmtree(self.basedir)
+		#shutil.rmtree(self.basedir)
 		basetest.BaseTestCase.tearDown(self)
 
 	def test_acl_file(self):
@@ -36,6 +37,19 @@ class InitConfTest(basetest.BaseTestCase):
 		acl_content = initconf.acl_file( dict(cnc=('192.168.1.1', '202.106.1.1')) )
 		#log.debug("acl content is:" + acl_content)
 		self.assertEqual(acl_content,'acl "cnc" { 192.168.1.1; 202.106.1.1; };\n')
+
+	def _create_dir(self, *path):
+		cur = self.basedir
+		for part in path:
+			cur = os.path.join(cur, part)
+			os.mkdir(cur)
+		return cur[len(self.basedir) + 1:]
+
+	def _create_file(self, *path):
+		filename = os.path.join(self.basedir, *path)
+		fd = file(filename, 'w')
+		fd.close()
+		return filename[len(self.basedir) + 1:]
 
 	def test_muti_acl_file(self):
 		"""test muti record acl acl_file"""
@@ -54,6 +68,18 @@ class InitConfTest(basetest.BaseTestCase):
 		"""named_root_file test"""
 		rootfile = initconf.named_root_file()
 		self.assertTrue('A.ROOT-SERVERS.NET.      3600000      A' in rootfile )
+
+	def test_namedconf_file(self):
+		"""namedconf_file test"""
+		pass
+
+	def test_backup_conf(self):
+		"""backup_conf test"""
+		tmpdir = self._create_dir("namedb")
+		self.assertTrue( self.basedir,"" )
+		filename = "namedconf_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
+		log.debug("backup file is:%s"%(os.path.join(self.basedir,filename)))
+		self.assertTrue( os.path.isfile(os.path.join(self.basedir,filename)) )
 
 """
 测试用例结合
