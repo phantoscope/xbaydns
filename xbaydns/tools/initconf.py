@@ -21,7 +21,6 @@ from tempfile import mkdtemp
 import time
 
 log = logging.getLogger('xbaydns.tools.initconf')
-logging.basicConfig(level=logging.DEBUG)
 
 CUR_DIR = os.getcwd()
 TMPL_DIR = CUR_DIR + "/templates"

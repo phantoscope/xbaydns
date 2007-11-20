@@ -31,11 +31,18 @@ class InitConfTest(basetest.BaseTestCase):
 		shutil.rmtree(self.basedir)
 		basetest.BaseTestCase.tearDown(self)
 
-	def test_create_dir(self):
-		"""测试目录创建create_dir"""
-		createdir = initconf.create_dir(self.basedir + "/tmp_create")
-		log.debug("createdir is:" + createdir[len(self.basedir)+1:])
-		self.assertEqual(createdir[len(self.basedir)+1:],"tmp_create")
+	def test_acl_file(self):
+		"""测试acl_file调用"""
+		acl_content = initconf.acl_file( dict(cnc=('192.168.1.1', '202.106.1.1')) )
+		#log.debug("acl content is:" + acl_content)
+		self.assertEqual(acl_content,'acl "cnc" { 192.168.1.1; 202.106.1.1; };\n')
+
+	def test_muti_acl_file(self):
+		"""test muti record acl acl_file"""
+		acl_content = initconf.acl_file( dict(
+			cnc=('1.1.1.1','2.2.2.2','3.3.3.3'),
+			telcom=('4.4.4.4','5.5.5.5') ))
+		self.assertEqual(acl_content,'acl "telcom" { 4.4.4.4; 5.5.5.5; };\nacl "cnc" { 1.1.1.1; 2.2.2.2; 3.3.3.3; };\n')
 
 
 """
