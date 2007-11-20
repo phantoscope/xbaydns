@@ -29,7 +29,7 @@ class InitConfTest(basetest.BaseTestCase):
 		basetest.BaseTestCase.setUp(self)
 
 	def tearDown(self):
-		#shutil.rmtree(self.basedir)
+		shutil.rmtree(self.basedir)
 		basetest.BaseTestCase.tearDown(self)
 
 	def test_acl_file(self):
