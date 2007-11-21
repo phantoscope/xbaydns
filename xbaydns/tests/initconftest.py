@@ -95,10 +95,8 @@ class InitConfTest(basetest.BaseTestCase):
 		tmpdir = initconf.create_destdir()
 		self.assertTrue( initconf.create_conf(tmpdir) )
 
-"""
-测试用例结合
-"""
 def suite():
+	"""集合测试用例"""
 	suite = unittest.TestSuite()
 	suite.addTest(unittest.makeSuite(InitConfTest, 'test'))
 	return suite
