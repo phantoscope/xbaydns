@@ -21,14 +21,13 @@ log = logging.getLogger('xbaydns.tests.initconftest')
 logging.basicConfig(level=logging.DEBUG)
 
 class InitConfTest(basetest.BaseTestCase):
-	"""
-	对初始化配置
-	"""
 	def setUp(self):
+		"""初始化测试环境"""
 		self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
 		basetest.BaseTestCase.setUp(self)
 
 	def tearDown(self):
+		"""清洁测试环境"""
 		shutil.rmtree(self.basedir)
 		basetest.BaseTestCase.tearDown(self)
 
@@ -76,7 +75,7 @@ class InitConfTest(basetest.BaseTestCase):
 	def test_backup_conf(self):
 		"""backup_conf test"""
 		tmpdir = self._create_dir("namedb")
-		self.assertTrue( self.basedir,"" )
+		self.assertTrue( initconf.backup_conf(self.basedir,"") )
 		filename = "namedconf_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
 		log.debug("backup file is:%s"%(os.path.join(self.basedir,filename)))
 		self.assertTrue( os.path.isfile(os.path.join(self.basedir,filename)) )
