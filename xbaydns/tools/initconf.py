@@ -11,6 +11,7 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 目录进行初始化
 """
 from xbaydns.utils import shtools
+from xbaydns.conf import sysconf
 
 import errno
 import getopt
@@ -22,15 +23,14 @@ import time
 
 log = logging.getLogger('xbaydns.tools.initconf')
 
-CUR_DIR = os.getcwd()
-TMPL_DIR = CUR_DIR + "/templates"
+BASEDIR = sysconf.installdir
+TMPL_DIR = BASEDIR + "/templates"
 TMPL_DEFAULTZONE = "%s/defaultzone.tmpl"%TMPL_DIR
 TMPL_NAMEDCONF = "%s/namedconf.tmpl"%TMPL_DIR
 TMPL_NAMEDROOT = "%s/namedroot.tmpl"%TMPL_DIR
-DEF_BASEDIR = "/etc"
 ERR_BACKUP = 1000
-DEF_ACL = dict(internal=('127.0.0.1', '10.217.24.0/24'))
-FILENAME_MAP = dict(acl='acldef.conf', defzone='defaultzone.conf')
+
+
 
 def acl_file(acls):
     '''acls = dict(aclname=('ip0', 'net0'))'''
@@ -66,18 +66,21 @@ def namedconf_file(include_files):
 def make_localhost():
     pass
     
-def backup_conf(real_basedir, backdir):
-    if os.path.isdir(real_basedir + "/namedb") == False:
+def backup_conf(real_confdir, real_dbdir, backdir):
+    if os.path.isdir(real_confdir) == False:
         return False
     else:
-        retcode = shtools.execute(executable = "tar", args = "-cjf %s/namedconf_%s.tar.bz2 %s/namedb"%(backdir, time.strftime("%y%m%d%H%M"), real_basedir))
+        time_suffix = time.strftime("%y%m%d%H%M")
+        retcode = shtools.execute(executable = "tar", args = "-cjf %s/namedconf_%s.tar.bz2 %s"%(backdir,  time_suffix, real_confdir))
         if retcode == 0:
-            return True
-        else:
-            return False
+            retcode = shtools.execute(executable = "tar", args = "-cjf %s/namedb_%s.tar.bz2 %s"%(backdir,  time_suffix, real_dbdir))
+            if retcode == 0:
+                return True
+    return False
 
 def create_destdir():
     tmpdir = mkdtemp()
+    os.makedirs("%s/namedconf"%tmpdir)
     os.makedirs("%s/namedb/acl"%tmpdir)
     os.mkdir("%s/namedb/dynamic"%tmpdir)
     os.chown("%s/namedb/dynamic"%tmpdir, 53, 0)
@@ -88,41 +91,43 @@ def create_destdir():
 
 def create_conf(tmpdir):
     
-    acl = acl_file(DEF_ACL)
+    acl = acl_file(sysconf.default_acl)
     defzone = defaultzone_file()
     namedroot = named_root_file()
 
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
-        tmpfile = open("%s/namedb/acl/%s"%(tmpdir, FILENAME_MAP['acl']), "w")
+        tmpfile = open("%s/namedb/acl/%s"%(tmpdir, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
-        tmpfile = open("%s/namedb/%s"%(tmpdir, FILENAME_MAP['defzone']), "w")
+        tmpfile = open("%s/namedb/%s"%(tmpdir, sysconf.filename_map['defzone']), "w")
         tmpfile.write(defzone)
         tmpfile.close()
-        tmpfile = open("%s/namedb/named.root"%tmpdir, "w")
+        tmpfile = open("%s/namedconf/named.root"%tmpdir, "w")
         tmpfile.write(namedroot)
         tmpfile.close()
-        namedconf = namedconf_file(FILENAME_MAP)
-        tmpfile = open("%s/namedb/named.conf"%tmpdir, "w")
+        namedconf = namedconf_file(sysconf.filename_map)
+        tmpfile = open("%s/namedconf/named.conf"%tmpdir, "w")
         tmpfile.write(namedconf)
         tmpfile.close()
         return True
         
-def install_conf(tmpdir, real_basedir):
-    ret = shtools.execute(executable="rm", args="-rf %s/namedb"%real_basedir)
+def install_conf(tmpdir, real_confdir, real_dbdir):
+    ret = shtools.execute(executable="rm", args="-rf %s %s"%(real_confdir, real_dbdir))
     if ret == 0:
-        ret = shtools.execute(executable="mkdir", args="-p %s"%real_basedir)
+        ret = shtools.execute(executable="mkdir", args="-p %s %s"%(real_confdir, real_dbdir))
         if ret == 0:
-            ret = shtools.execute(executable="mv", args="%s/namedb %s"%(tmpdir, real_basedir))
+            ret = shtools.execute(executable="mv", args="%s/namedconf %s"%(tmpdir, real_confdir))
             if ret == 0:
-                return True
+                ret = shtools.execute(executable="mv", args="%s/namedb %s"%(tmpdir, real_dbdir))
+                if ret == 0:
+                    return True
     else:
         return False
     
 def usage():
-    print "usage: %s [-db]"%__file__
+    print "usage: %s [-dbc]"%__file__
     
 def main():
     # check root
@@ -131,24 +136,28 @@ def main():
         return errno.EPERM
     # parse options
     try:
-        opts = getopt.getopt(sys.argv[1:], "d:b:")
+        opts = getopt.getopt(sys.argv[1:], "d:b:c:")
     except getopt.GetoptError:
         usage()
         return errno.EINVAL
-    basedir = DEF_BASEDIR
+    confdir = sysconf.namedconf
+    dbdir = sysconf.nameddb
     backup = False
     backdir = ""
     for optname, optval in opts[0]:
-        if optname == "-d":
-            basedir = optval
+        if optname == "-c":
+            confdir = optval
+        elif optname == "-d":
+            dbdir = optval
         elif optname == "-b":
             backup = True
             backdir = optval
-    real_basedir = os.path.dirname(os.path.realpath(basedir + "/namedb"))
+    real_confdir = os.path.realpath(confdir)
+    real_dbdir = os.path.realpath(dbdir)
     # backup
     if backup == True:
-        if os.path.isdir(real_basedir + "/namedb") == True:
-            ret = backup_conf(real_basedir, backdir)
+        if os.path.isdir(real_confdir) == True and os.path.isdir(real_dbdir) == True:
+            ret = backup_conf(real_confdir, real_dbdir, backdir)
             if ret == False:
                 print "Backup failed."
                 return -1
@@ -157,7 +166,7 @@ def main():
     # that's my business
     tmpdir = create_destdir()
     log.debug(tmpdir)
-    if create_conf(tmpdir) == False or install_conf(tmpdir, real_basedir) == False:
+    if create_conf(tmpdir) == False or install_conf(tmpdir, real_confdir, real_dbdir) == False:
         print "Create configuration files failed."
         return -1
     else:
