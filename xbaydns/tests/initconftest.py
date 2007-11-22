@@ -75,9 +75,12 @@ class InitConfTest(basetest.BaseTestCase):
 		rootfile = initconf.named_root_file()
 		self.assertTrue('A.ROOT-SERVERS.NET.      3600000      A' in rootfile )
 
-	def test_namedconf_file(self):
-		"""namedconf_file test"""
-		pass
+	def test_error_named_root_file(self):
+		curset = initconf.TMPL_NAMEDROOT
+		initconf.TMPL_NAMEDROOT = "中华人民共和国"
+		returncode =  initconf.named_root_file()
+		initconf.TMPL_NAMEDROOT = curset
+		self.assertFalse(returncode)
 
 	def test_backup_conf(self):
 		"""backup_conf test"""

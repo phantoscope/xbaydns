@@ -54,6 +54,7 @@ def defaultzone_file():
         return open(TMPL_DEFAULTZONE, "r").read() + "\n"
 
 def named_root_file():
+    """得到缺省的root文件，也就是模板目录中的namedroot.tmpl文件内容"""
     if os.path.isfile(TMPL_NAMEDROOT) == False:
         return False
     else:
