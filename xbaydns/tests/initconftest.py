@@ -15,10 +15,10 @@ import tempfile
 import time
 import unittest
 
-from xbaydns.tools import initconf
-
 log = logging.getLogger('xbaydns.tests.initconftest')
 logging.basicConfig(level=logging.DEBUG)
+
+from xbaydns.tools import initconf
 
 class InitConfTest(basetest.BaseTestCase):
 	def setUp(self):
@@ -60,8 +60,15 @@ class InitConfTest(basetest.BaseTestCase):
 	def test_defaultzone_file(self):
 		"""defaultzone_file test"""
 		defaultzone = initconf.defaultzone_file()
-		#log.debug(defaultzone)
+		#log.debug("defaultzone is:%s"%defaultzone)
 		self.assertTrue( 'zone "." { type hint; file "named.root"; };' in defaultzone )
+	
+	def test_error_default_file(self):
+		curset = initconf.TMPL_DEFAULTZONE
+		initconf.TMPL_DEFAULTZONE = "中华人民共和国"
+		returncode = initconf.defaultzone_file()
+		initconf.TMPL_DEFAULTZONE = curset
+		self.assertFalse( returncode )
 
 	def test_named_root_file(self):
 		"""named_root_file test"""

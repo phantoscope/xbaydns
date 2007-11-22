@@ -24,7 +24,8 @@ import time
 log = logging.getLogger('xbaydns.tools.initconf')
 
 BASEDIR = sysconf.installdir
-TMPL_DIR = BASEDIR + "/templates"
+TMPL_DIR = BASEDIR + "/tools/templates"
+log.debug("template diris:%s"%TMPL_DIR)
 TMPL_DEFAULTZONE = "%s/defaultzone.tmpl"%TMPL_DIR
 TMPL_NAMEDCONF = "%s/namedconf.tmpl"%TMPL_DIR
 TMPL_NAMEDROOT = "%s/namedroot.tmpl"%TMPL_DIR
@@ -33,7 +34,10 @@ ERR_BACKUP = 1000
 
 
 def acl_file(acls):
-    '''acls = dict(aclname=('ip0', 'net0'))'''
+    '''
+安dict的输入生成named所需要的acl字符串
+acls = dict(aclname=('ip0', 'net0'))
+    '''
     acl_content = ""
     for aclname, aclvalue in acls.iteritems():
         acl_content += 'acl "%s" { '%aclname
@@ -43,6 +47,7 @@ def acl_file(acls):
     return acl_content
 
 def defaultzone_file():
+    """得到缺省的zone文件，也就是模板目录中的defaultzone.tmpl文件内容"""
     if os.path.isfile(TMPL_DEFAULTZONE) == False:
         return False
     else:
