@@ -111,6 +111,13 @@ class InitConfTest(basetest.BaseTestCase):
 		"""create_conf test"""
 		tmpdir = initconf.create_destdir()
 		self.assertTrue( initconf.create_conf(tmpdir) )
+		
+	def test_namedconf_file(self):
+		"""docstring for test_namedconf_file"""
+		namedconf = initconf.namedconf_file(dict(acl='acl/acldef.conf', defzone='defaultzone.conf'))
+		#log.debug("namedconf gen to:%s"%namedconf)
+		self.assertTrue('include "defaultzone.conf";' in namedconf)
+		self.assertTrue('include "acl/acldef.conf";' in namedconf)
 
 def suite():
 	"""集合测试用例"""
