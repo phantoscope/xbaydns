@@ -61,6 +61,7 @@ def named_root_file():
         return open(TMPL_NAMEDROOT, "r").read()
 
 def namedconf_file(include_files):
+    """通过namedconf.tmpl生成最终的named.conf文件。include_file为一个dic，每项的值为一个要include的文件路径"""
     if os.path.isfile(TMPL_DEFAULTZONE) == False:
         return False
     else:
@@ -73,6 +74,7 @@ def make_localhost():
     pass
     
 def backup_conf(real_confdir, real_dbdir, backdir):
+   """备份named.conf和namedb目录。read_confdir为包含named.conf的目录，real_dbdir为包含zone db的目录，backdir为备份文件存放的目录。"""
     if os.path.isdir(real_confdir) == False:
         return False
     else:
