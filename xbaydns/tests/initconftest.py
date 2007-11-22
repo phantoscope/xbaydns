@@ -82,6 +82,10 @@ class InitConfTest(basetest.BaseTestCase):
 		initconf.TMPL_NAMEDROOT = curset
 		self.assertFalse(returncode)
 
+	def test_error_backup_conf(self):
+		"""docstring for test_error_backup_conf"""
+		self.assertFalse( initconf.backup_conf("中华人民共和国","中华人民共和国","中华人民共和国") )
+
 	def test_backup_conf(self):
 		"""backup_conf test"""
 		tmpdir = self._create_dir("namedb")
