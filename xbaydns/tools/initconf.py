@@ -74,7 +74,7 @@ def make_localhost():
     pass
     
 def backup_conf(real_confdir, real_dbdir, backdir):
-   """备份named.conf和namedb目录。read_confdir为包含named.conf的目录，real_dbdir为包含zone db的目录，backdir为备份文件存放的目录。"""
+    """备份named.conf和namedb目录。read_confdir为包含named.conf的目录，real_dbdir为包含zone db的目录，backdir为备份文件存放的目录。"""
     if os.path.isdir(real_confdir) == False:
         return False
     else:
@@ -87,6 +87,7 @@ def backup_conf(real_confdir, real_dbdir, backdir):
     return False
 
 def create_destdir():
+    """创建系统目录，这里只是在tmp目录中建立"""
     tmpdir = mkdtemp()
     os.makedirs("%s/namedconf/acl"%tmpdir)
     os.makedirs("%s/namedb/dynamic"%tmpdir)
@@ -97,7 +98,7 @@ def create_destdir():
     return tmpdir
 
 def create_conf(tmpdir):
-    
+    """在tmpdir目录中创建配置文件"""
     acl = acl_file(sysconf.default_acl)
     defzone = defaultzone_file()
     namedroot = named_root_file()
@@ -121,6 +122,7 @@ def create_conf(tmpdir):
         return True
         
 def install_conf(tmpdir, real_confdir, real_dbdir):
+    """将tmpdir中的临时文件安装到最终的使用目录中去"""
     ret = shtools.execute(executable="rm", args="-rf %s %s"%(real_confdir, real_dbdir))
     if ret == 0:
         ret = shtools.execute(executable="mkdir", args="-p %s %s"%(real_confdir, real_dbdir))
