@@ -12,4 +12,4 @@ namedconf = "/etc/namedb"
 # 这里记录了dynamic、master和slave目录所有的路径
 nameddb = "/etc/namedb"
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
-filename_map = dict(acl='acl/acldef.conf', defzone='/defaultzone.conf')
+filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')

@@ -97,7 +97,7 @@ def create_conf(tmpdir):
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
-        tmpfile = open("%s/namedb/%s"%(tmpdir, sysconf.filename_map['acl']), "w")
+        tmpfile = open("%s/namedconf/%s"%(tmpdir, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
         tmpfile = open("%s/namedconf/%s"%(tmpdir, sysconf.filename_map['defzone']), "w")
@@ -171,7 +171,6 @@ def main():
         print "Create configuration files failed."
         return -1
     else:
-        os.rmdir(tmpdir)
         return 0
 
 if __name__ == '__main__':
