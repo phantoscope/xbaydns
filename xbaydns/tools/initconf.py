@@ -60,7 +60,7 @@ def namedconf_file(include_files):
     else:
         namedconf = open(TMPL_NAMEDCONF, "r").read() + "\n"
         for filename in include_files.itervalues():
-            namedconf += 'include "%s"\n'%filename
+            namedconf += 'include "%s";\n'%filename
         return namedconf + "\n"
 
 def make_localhost():
@@ -80,9 +80,8 @@ def backup_conf(real_confdir, real_dbdir, backdir):
 
 def create_destdir():
     tmpdir = mkdtemp()
-    os.makedirs("%s/namedconf"%tmpdir)
-    os.makedirs("%s/namedb/acl"%tmpdir)
-    os.mkdir("%s/namedb/dynamic"%tmpdir)
+    os.makedirs("%s/namedconf/acl"%tmpdir)
+    os.makedirs("%s/namedb/dynamic"%tmpdir)
     os.chown("%s/namedb/dynamic"%tmpdir, 53, 0)
     os.mkdir("%s/namedb/master"%tmpdir)
     os.mkdir("%s/namedb/slave"%tmpdir)
@@ -98,10 +97,10 @@ def create_conf(tmpdir):
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
-        tmpfile = open("%s/namedb/acl/%s"%(tmpdir, sysconf.filename_map['acl']), "w")
+        tmpfile = open("%s/namedb/%s"%(tmpdir, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
-        tmpfile = open("%s/namedb/%s"%(tmpdir, sysconf.filename_map['defzone']), "w")
+        tmpfile = open("%s/namedconf/%s"%(tmpdir, sysconf.filename_map['defzone']), "w")
         tmpfile.write(defzone)
         tmpfile.close()
         tmpfile = open("%s/namedconf/named.root"%tmpdir, "w")
@@ -118,11 +117,13 @@ def install_conf(tmpdir, real_confdir, real_dbdir):
     if ret == 0:
         ret = shtools.execute(executable="mkdir", args="-p %s %s"%(real_confdir, real_dbdir))
         if ret == 0:
-            ret = shtools.execute(executable="mv", args="%s/namedconf %s"%(tmpdir, real_confdir))
+            ret = shtools.execute(executable="cp", args="-R %s/namedconf/ %s"%(tmpdir, real_confdir))
             if ret == 0:
-                ret = shtools.execute(executable="mv", args="%s/namedb %s"%(tmpdir, real_dbdir))
+                ret = shtools.execute(executable="cp", args="-R %s/namedb/ %s"%(tmpdir, real_dbdir))
                 if ret == 0:
-                    return True
+                    ret = shtools.execute(executable="rm", args="-rf %s"%tmpdir)
+                    if ret == 0:
+                        return True
     else:
         return False
     
