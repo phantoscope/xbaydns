@@ -88,17 +88,20 @@ class InitConfTest(basetest.BaseTestCase):
 
 	def test_backup_conf(self):
 		"""backup_conf test"""
-		tmpdir = self._create_dir("namedb")
-		self.assertTrue( initconf.backup_conf(self.basedir,"") )
-		filename = "namedconf_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
-		log.debug("backup file is:%s"%(os.path.join(self.basedir,filename)))
-		self.assertTrue( os.path.isfile(os.path.join(self.basedir,filename)) )
+		tmpdir = self._create_dir("backuptest")
+		self.assertTrue( initconf.backup_conf("/etc/namedb","/etc/namedb",os.path.join(self.basedir,tmpdir)) )
+		conffilename = "namedconf_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
+		log.debug("backup file is:%s"%(os.path.join(self.basedir,tmpdir,conffilename)))
+		dbfilename = "namedb_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
+		self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,conffilename)) )
+		self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,dbfilename)) )
+
 
 	def test_create_destdir(self):
 		"""create_destdir test"""
 		tmpdir = initconf.create_destdir()
 		log.debug("create tmpdir is:%s"%tmpdir)
-		self.assertTrue( os.path.isdir("%s/namedb/acl"%tmpdir) )
+		self.assertTrue( os.path.isdir("%s/namedconf/acl"%tmpdir) )
 		self.assertTrue( os.path.isdir("%s/namedb/dynamic"%tmpdir) )
 		self.assertTrue( os.path.isdir("%s/namedb/master"%tmpdir) )
 		self.assertTrue( os.path.isdir("%s/namedb/slave"%tmpdir) )
