@@ -21,6 +21,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf
+from xbaydns.utils import shtools
 
 class InitConfTest(basetest.BaseTestCase):
     def setUp(self):
@@ -130,7 +131,14 @@ class InitConfTest(basetest.BaseTestCase):
         real_dbdir = self._create_dir("namedb")
         self.assertTrue( initconf.create_conf(tmpdir) )
         self.assertTrue(initconf.install_conf(tmpdir, os.path.join(self.basedir,real_confdir), os.path.join(self.basedir,real_dbdir)) )
-
+        
+    def test_check_conf(self):
+        '''使用named-checkconf检查生成文件语法'''
+        tmpdir = initconf.create_destdir(self.named_uid)
+        self.assertTrue(initconf.create_conf(tmpdir))
+        ret = shtools.execute(executable = "named-checkconf", args = "%s/namedconf/named.conf"%tmpdir
+        self.assertEqual(ret, 0)
+        
 def suite():
     """集合测试用例"""
     suite = unittest.TestSuite()
