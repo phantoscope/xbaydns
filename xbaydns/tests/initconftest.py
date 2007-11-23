@@ -100,8 +100,8 @@ class InitConfTest(basetest.BaseTestCase):
 
 	def test_create_destdir(self):
 		"""create_destdir test"""
-        ostype = os.uname()[0].lower()
-        named_uid = pwd.getpwnam(sysconf.named_user_map[ostype])
+		ostype = os.uname()[0].lower()
+		named_uid = pwd.getpwnam(sysconf.named_user_map[ostype])
 		tmpdir = initconf.create_destdir(named_uid)
 		log.debug("create tmpdir is:%s"%tmpdir)
 		self.assertTrue( os.path.isdir("%s/namedconf/acl"%tmpdir) )
