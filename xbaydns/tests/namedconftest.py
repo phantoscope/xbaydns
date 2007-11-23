@@ -35,11 +35,19 @@ class InitConfTest(basetest.BaseTestCase):
 		cmd = self.nc.addAcl('internal',['127.0.0.1',])
 		self.assertEqual(cmd.strip(),'acl "internal" { 127.0.0.1; };')
 	def test_delAcl(self):
-		cmd=self.nc.delAcl('internal')
-		self.assertEqual(cmd.strip(),'include "acl/internal.conf";')
+		self.nc.addAcl('internal',['127.0.0.1',])
+		self.assertTrue(self.nc.delAcl('internal'))
+		self.assertFalse(self.nc.delAcl('home'))
 	def test_addView(self):
 		cmd = self.nc.addView('internal',['127.0.0.1',])
 		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; };')
+	def test_updateView(self):
+		cmd = self.nc.updateView('internal',['127.0.0.1',])
+		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; };')
+	def test_delView(self):
+		self.nc.addView('internal',['127.0.0.1',])
+		self.assertTrue(self.nc.delView('internal'))
+		self.assertFalse(self.nc.delView('home'))
 
 def suite():
 	"""集合测试用例"""

@@ -40,9 +40,10 @@ class NamedConf(object):
 	def delAcl(self,acl):
 		'''去除include文字'''
 		if acl in self.acls:
+			fname=os.path.join(self.path,acl+'.conf')
 			del self.acls[acl]
-		fname=os.path.join(self.path,acl+'.conf')
-		return 'include "%s";'%fname
+			return True
+		return False
 	
 	'''
 	add view(view,match-client) 
@@ -68,7 +69,7 @@ class NamedConf(object):
 	match-client 匹配于该view的acl汇总
 	'''
 	def updateView(self,view,matchClient):
-		pass
+		return self.addView(view,matchClient)
 	
 	'''
 	del view(view) 删除view 
@@ -77,7 +78,10 @@ class NamedConf(object):
 	view 增加的view的名称
 	'''
 	def delView(self,view):
-		pass
+		if view in self.views:
+			del self.views[view]
+			return True
+		return False
 		
 	def save(self):
 		pass
