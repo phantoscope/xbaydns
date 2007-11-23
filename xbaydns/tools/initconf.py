@@ -52,21 +52,29 @@ def defaultzone_file():
     if os.path.isfile(TMPL_DEFAULTZONE) == False:
         return False
     else:
-        return open(TMPL_DEFAULTZONE, "r").read() + "\n"
+        tmpl_file = open(TMPL_DEFAULTZONE, "r")
+        defzone = tmpl_file.read() + "\n"
+        tmpl_file.close()
+        return defzone
 
 def named_root_file():
     """得到缺省的root文件，也就是模板目录中的namedroot.tmpl文件内容"""
     if os.path.isfile(TMPL_NAMEDROOT) == False:
         return False
     else:
-        return open(TMPL_NAMEDROOT, "r").read()
+        tmpl_file = open(TMPL_NAMEDROOT, "r")
+        named_root = tmpl_file.read()
+        tmpl_file.close()
+        return named_root
 
 def namedconf_file(include_files):
     """通过namedconf.tmpl生成最终的named.conf文件。include_file为一个dic，每项的值为一个要include的文件路径"""
     if os.path.isfile(TMPL_DEFAULTZONE) == False:
         return False
     else:
-        namedconf = open(TMPL_NAMEDCONF, "r").read() + "\n"
+        tmpl_file = open(TMPL_NAMEDCONF, "r")
+        namedconf = tmpl_file.read() + "\n"
+        tmpl_file.close()
         for filename in include_files.itervalues():
             namedconf += 'include "%s";\n'%filename
         return namedconf + "\n"
