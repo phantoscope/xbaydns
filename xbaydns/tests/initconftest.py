@@ -10,6 +10,7 @@ Copyright (c) 2007 __MyCompanyName__. All rights reserved.
 import basetest
 import logging.config
 import os
+import pwd
 import shutil
 import tempfile
 import time
@@ -19,6 +20,7 @@ log = logging.getLogger('xbaydns.tests.initconftest')
 logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
+from xbaydns.conf import sysconf
 
 class InitConfTest(basetest.BaseTestCase):
 	def setUp(self):
@@ -98,7 +100,9 @@ class InitConfTest(basetest.BaseTestCase):
 
 	def test_create_destdir(self):
 		"""create_destdir test"""
-		tmpdir = initconf.create_destdir()
+        ostype = os.uname()[0].lower()
+        named_uid = pwd.getpwnam(sysconf.named_user_map[ostype])
+		tmpdir = initconf.create_destdir(named_uid)
 		log.debug("create tmpdir is:%s"%tmpdir)
 		self.assertTrue( os.path.isdir("%s/namedconf/acl"%tmpdir) )
 		self.assertTrue( os.path.isdir("%s/namedb/dynamic"%tmpdir) )
