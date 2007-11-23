@@ -35,7 +35,7 @@ class NamedConf(object):
 	'''
 	def delAcl(self,acl):
 		'''去除include文字'''
-		fname=os.path.join(self.path,acl,'.conf')
+		fname=os.path.join(self.path,acl+'.conf')
 		return 'include "%s";'%fname
 	
 	'''
@@ -48,11 +48,26 @@ class NamedConf(object):
 	match-client 匹配于该view的acl汇总
 	'''
 	def addView(self,view,matchClient):
-		pass
+		return '''
+			view "%s" { match-clients { %s; }; };
+		'''%(view,';'.join(matchClient))
 	
+	'''
+	update view(view,match-client) 更新view 
+
+	参数说明： 
+	view 增加的view的名称 
+	match-client 匹配于该view的acl汇总
+	'''
 	def updateView(self,view,matchClient):
 		pass
+	
+	'''
+	del view(view) 删除view 
 
+	参数说明： 
+	view 增加的view的名称
+	'''
 	def delView(self,view):
 		pass
 		
