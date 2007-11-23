@@ -16,6 +16,8 @@ class NamedConf(object):
 	def __init__(self):
 		self.path='acl/'
 		self.fname='acldef.conf'
+		self.acls={}
+		self.views={}
 	'''
 	add acl (acl,aclmatch) 增加一个acl 
 	参数说明： 
@@ -23,9 +25,11 @@ class NamedConf(object):
 	aclmatech 增加的acl中的match地址
 	'''
 	def addAcl(self,acl,aclmatch):
-		return '''
+		s='''
 			acl "%s" { %s; };
 		'''%(acl,';'.join(aclmatch))
+		self.acls[acl]=s
+		return s
 		
 	'''
 	del acl(acl) 删除一个acl 
@@ -35,6 +39,8 @@ class NamedConf(object):
 	'''
 	def delAcl(self,acl):
 		'''去除include文字'''
+		if acl in self.acls:
+			del self.acls[acl]
 		fname=os.path.join(self.path,acl+'.conf')
 		return 'include "%s";'%fname
 	
@@ -48,9 +54,11 @@ class NamedConf(object):
 	match-client 匹配于该view的acl汇总
 	'''
 	def addView(self,view,matchClient):
-		return '''
+		s='''
 			view "%s" { match-clients { %s; }; };
 		'''%(view,';'.join(matchClient))
+		self.views[view]=s
+		return s
 	
 	'''
 	update view(view,match-client) 更新view 
