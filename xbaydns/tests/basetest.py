@@ -12,9 +12,9 @@ Copyright (c) 2007 __MyCompanyName__. All rights reserved.
 import unittest
 
 class BaseTestCase(unittest.TestCase):
-	
-	def setUp(self):
-		pass
-		
-	def tearDown(self):
-		pass
+    
+    def setUp(self):
+        pass
+        
+    def tearDown(self):
+        pass

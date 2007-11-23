@@ -131,6 +131,7 @@ class InitConfTest(basetest.BaseTestCase):
         real_dbdir = self._create_dir("namedb")
         self.assertTrue( initconf.create_conf(tmpdir) )
         self.assertTrue(initconf.install_conf(tmpdir, os.path.join(self.basedir,real_confdir), os.path.join(self.basedir,real_dbdir)) )
+        self.assertTrue( os.path.isfile(os.path.join(self.basedir,real_confdir,"named.conf")) )
         
     def test_check_conf(self):
         '''使用named-checkconf检查生成文件语法'''
