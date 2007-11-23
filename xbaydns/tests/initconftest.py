@@ -25,6 +25,8 @@ from xbaydns.conf import sysconf
 class InitConfTest(basetest.BaseTestCase):
     def setUp(self):
         """初始化测试环境"""
+        ostype = os.uname()[0].lower()
+        self.named_uid = pwd.getpwnam(sysconf.named_user_map[ostype])[2]
         self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
         basetest.BaseTestCase.setUp(self)
 
@@ -100,9 +102,7 @@ class InitConfTest(basetest.BaseTestCase):
 
     def test_create_destdir(self):
         """create_destdir test"""
-        ostype = os.uname()[0].lower()
-        named_uid = pwd.getpwnam(sysconf.named_user_map[ostype])
-        tmpdir = initconf.create_destdir(named_uid)
+        tmpdir = initconf.create_destdir(self.named_uid)
         log.debug("create tmpdir is:%s"%tmpdir)
         self.assertTrue( os.path.isdir("%s/namedconf/acl"%tmpdir) )
         self.assertTrue( os.path.isdir("%s/namedb/dynamic"%tmpdir) )
@@ -112,7 +112,7 @@ class InitConfTest(basetest.BaseTestCase):
 
     def test_create_conf(self):
         """create_conf test"""
-        tmpdir = initconf.create_destdir()
+        tmpdir = initconf.create_destdir(self.named_uid)
         self.assertTrue( initconf.create_conf(tmpdir) )
         shutil.rmtree(tmpdir)
         
@@ -125,7 +125,7 @@ class InitConfTest(basetest.BaseTestCase):
 
     def test_install_conf(self):
         """docstring for test_install_conf"""
-        tmpdir = initconf.create_destdir()
+        tmpdir = initconf.create_destdir(self.named_uid)
         real_confdir = self._create_dir("namedconf")
         real_dbdir = self._create_dir("namedb")
         self.assertTrue( initconf.create_conf(tmpdir) )

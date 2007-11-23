@@ -184,7 +184,7 @@ def main():
         print "This program doesn't support your os. Assumed user 'bind'."
         named_user = "bind"
     try:
-        named_uid = pwd.getpwnam(named_user)
+        named_uid = pwd.getpwnam(named_user)[2]
     except KeyError:
         print "No such a user %s. I'll exit."%named_user
         return errno.EINVAL
