@@ -96,7 +96,6 @@ class InitConfTest(basetest.BaseTestCase):
 		self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,conffilename)) )
 		self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,dbfilename)) )
 
-
 	def test_create_destdir(self):
 		"""create_destdir test"""
 		tmpdir = initconf.create_destdir()
@@ -111,6 +110,7 @@ class InitConfTest(basetest.BaseTestCase):
 		"""create_conf test"""
 		tmpdir = initconf.create_destdir()
 		self.assertTrue( initconf.create_conf(tmpdir) )
+		shutil.rmtree(tmpdir)
 		
 	def test_namedconf_file(self):
 		"""docstring for test_namedconf_file"""
@@ -118,6 +118,14 @@ class InitConfTest(basetest.BaseTestCase):
 		#log.debug("namedconf gen to:%s"%namedconf)
 		self.assertTrue('include "defaultzone.conf";' in namedconf)
 		self.assertTrue('include "acl/acldef.conf";' in namedconf)
+
+	def test_install_conf(self):
+		"""docstring for test_install_conf"""
+		tmpdir = initconf.create_destdir()
+		real_confdir = self._create_dir("namedconf")
+		real_dbdir = self._create_dir("namedb")
+		self.assertTrue( initconf.create_conf(tmpdir) )
+		self.assertTrue(initconf.install_conf(tmpdir, os.path.join(self.basedir,real_confdir), os.path.join(self.basedir,real_dbdir)) )
 
 def suite():
 	"""集合测试用例"""
