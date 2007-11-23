@@ -17,6 +17,7 @@ import errno
 import getopt
 import logging.config
 import os
+import pwd
 import sys
 from tempfile import mkdtemp
 import time
@@ -86,15 +87,15 @@ def backup_conf(real_confdir, real_dbdir, backdir):
                 return True
     return False
 
-def create_destdir():
+def create_destdir(named_uid):
     """创建系统目录，这里只是在tmp目录中建立"""
     tmpdir = mkdtemp()
     os.makedirs("%s/namedconf/acl"%tmpdir)
     os.makedirs("%s/namedb/dynamic"%tmpdir)
-    os.chown("%s/namedb/dynamic"%tmpdir, 53, 0)
+    os.chown("%s/namedb/dynamic"%tmpdir, named_uid, 0)
     os.mkdir("%s/namedb/master"%tmpdir)
     os.mkdir("%s/namedb/slave"%tmpdir)
-    os.chown("%s/namedb/slave"%tmpdir, 53, 0)
+    os.chown("%s/namedb/slave"%tmpdir, named_uid, 0)
     return tmpdir
 
 def create_conf(tmpdir):
@@ -175,7 +176,19 @@ def main():
         else:
             print "No namedb in basedir, I'll continue."
     # that's my business
-    tmpdir = create_destdir()
+    # get named uid
+    ostype = os.uname()[0].lower()
+    try:
+        named_user = sysconf.named_user_map[ostype]
+    except KeyError:
+        print "This program doesn't support your os. Assumed user 'bind'."
+        named_user = "bind"
+    try:
+        named_uid = pwd.getpwnam(named_user)
+    except KeyError:
+        print "No such a user %s. I'll exit."%named_user
+        return errno.EINVAL
+    tmpdir = create_destdir(named_uid)
     log.debug(tmpdir)
     if create_conf(tmpdir) == False or install_conf(tmpdir, real_confdir, real_dbdir) == False:
         print "Create configuration files failed."

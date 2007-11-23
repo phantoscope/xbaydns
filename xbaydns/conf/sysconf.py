@@ -13,3 +13,4 @@ namedconf = "/etc/namedb"
 nameddb = "/etc/namedb"
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
 filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')
+named_user_map = dict(freebsd='bind', openbsd='named', osx='root')
