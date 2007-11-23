@@ -8,12 +8,13 @@ Copyright (c) 2007 XbayDNS Team. All rights reserved.
 """
 
 import unittest
-from xbaydns.tests import commandtest,initconftest
+from xbaydns.tests import commandtest,initconftest,namedconftest
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(commandtest.suite())
     suite.addTest(initconftest.suite())
+    suite.addTest(namedconftest.suite())
     return suite
 
 if __name__ == '__main__':
