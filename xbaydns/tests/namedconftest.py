@@ -2,7 +2,7 @@
 """
 namedconftest.py
 
-Created by yanxu on 2007-11-23.
+Created by QingFeng on 2007-11-23.
 Copyright (c) 2007 yanxu. All rights reserved.
 """
 
@@ -17,13 +17,14 @@ import unittest
 log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
 
-from xbaydns.tools import namedconf
+from xbaydns.tools.namedconf import *
 
 class InitConfTest(basetest.BaseTestCase):
 	def setUp(self):
 		"""初始化测试环境"""
 		self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
 		basetest.BaseTestCase.setUp(self)
+		self.nc=NamedConf()
 
 	def tearDown(self):
 		"""清洁测试环境"""
@@ -31,7 +32,11 @@ class InitConfTest(basetest.BaseTestCase):
 		basetest.BaseTestCase.tearDown(self)
 
 	def test_addAcl(self):
-		namedconf.addAcl('internal',['127.0.0.1',])
+		cmd = self.nc.addAcl('internal',['127.0.0.1',])
+		self.assertTrue(cmd,'acl {127.0.0.1;}')
+	def test_delAcl(self):
+		cmd=self.nc.delAcl('internal')
+		self.assertTrue(cmd,'include "acl/internal.conf";')
 
 def suite():
 	"""集合测试用例"""
