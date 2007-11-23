@@ -17,7 +17,7 @@ import time
 import unittest
 
 log = logging.getLogger('xbaydns.tests.initconftest')
-#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf
@@ -81,6 +81,7 @@ class InitConfTest(basetest.BaseTestCase):
         self.assertTrue('A.ROOT-SERVERS.NET.      3600000      A' in rootfile )
 
     def test_error_named_root_file(self):
+        """对于named_root_file的错误调用测试"""
         curset = initconf.TMPL_NAMEDROOT
         initconf.TMPL_NAMEDROOT = "中华人民共和国"
         returncode =  initconf.named_root_file()
@@ -88,11 +89,11 @@ class InitConfTest(basetest.BaseTestCase):
         self.assertFalse(returncode)
 
     def test_error_backup_conf(self):
-        """docstring for test_error_backup_conf"""
+        """对于backup_conf的错误调用测试"""
         self.assertFalse( initconf.backup_conf("中华人民共和国","中华人民共和国","中华人民共和国") )
 
     def test_backup_conf(self):
-        """backup_conf test"""
+        """测试backup_conf的调用"""
         tmpdir = self._create_dir("backuptest")
         self.assertTrue( initconf.backup_conf("/etc/namedb","/etc/namedb",os.path.join(self.basedir,tmpdir)) )
         conffilename = "namedconf_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
@@ -102,7 +103,7 @@ class InitConfTest(basetest.BaseTestCase):
         self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,dbfilename)) )
 
     def test_create_destdir(self):
-        """create_destdir test"""
+        """测试create_destdir的调用"""
         tmpdir = initconf.create_destdir(self.named_uid)
         log.debug("create tmpdir is:%s"%tmpdir)
         self.assertTrue( os.path.isdir("%s/namedconf/acl"%tmpdir) )
@@ -112,20 +113,20 @@ class InitConfTest(basetest.BaseTestCase):
         shutil.rmtree(tmpdir)
 
     def test_create_conf(self):
-        """create_conf test"""
+        """测试create_conf的调用"""
         tmpdir = initconf.create_destdir(self.named_uid)
         self.assertTrue( initconf.create_conf(tmpdir) )
         shutil.rmtree(tmpdir)
         
     def test_namedconf_file(self):
-        """docstring for test_namedconf_file"""
+        """测试namedconf_file的调用"""
         namedconf = initconf.namedconf_file(dict(acl='acl/acldef.conf', defzone='defaultzone.conf'))
         #log.debug("namedconf gen to:%s"%namedconf)
         self.assertTrue('include "defaultzone.conf";' in namedconf)
         self.assertTrue('include "acl/acldef.conf";' in namedconf)
 
     def test_install_conf(self):
-        """docstring for test_install_conf"""
+        """测试install_conf的调用"""
         tmpdir = initconf.create_destdir(self.named_uid)
         real_confdir = self._create_dir("namedconf")
         real_dbdir = self._create_dir("namedb")
