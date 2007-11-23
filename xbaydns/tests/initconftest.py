@@ -136,7 +136,7 @@ class InitConfTest(basetest.BaseTestCase):
         '''使用named-checkconf检查生成文件语法'''
         tmpdir = initconf.create_destdir(self.named_uid)
         self.assertTrue(initconf.create_conf(tmpdir))
-        ret = shtools.execute(executable = "named-checkconf", args = "%s/namedconf/named.conf"%tmpdir
+        ret = shtools.execute(executable = "named-checkconf", args = "%s/namedconf/named.conf"%tmpdir)
         self.assertEqual(ret, 0)
         
 def suite():
