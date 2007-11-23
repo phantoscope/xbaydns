@@ -13,4 +13,5 @@ namedconf = "/etc/namedb"
 nameddb = "/etc/namedb"
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
 filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')
+# 这里匹配了在不同的操作系统中使用的bind用户
 named_user_map = dict(freebsd='bind', openbsd='named', darwin='root')
