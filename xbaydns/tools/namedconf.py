@@ -7,7 +7,8 @@ Copyright (c) 2007 yanxu. All rights reserved.
 """
 
 import logging.config
-import os
+import os,tempfile
+from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
@@ -38,9 +39,7 @@ class NamedConf(object):
 	acl 要删除的acl的名称
 	'''
 	def delAcl(self,acl):
-		'''去除include文字'''
 		if acl in self.acls:
-			fname=os.path.join(self.path,acl+'.conf')
 			del self.acls[acl]
 			return True
 		return False
@@ -82,6 +81,26 @@ class NamedConf(object):
 			del self.views[view]
 			return True
 		return False
-		
-	def save(self):
+	
+	'''
+	用于校验生成出的配置文件
+	'''
+	def __checkfile(self):
 		pass
+		
+	'''
+	cp正确的文件到指定位置
+	'''
+	def __cpfile(self):
+		pass
+		
+	def save(self,path=sysconf.nameddb):
+		acl_include=[]
+		for k,v in self.acls.items():
+			fname=os.path.join('acl/',k+'.conf')
+			pathname=os.path.join(path,fname)
+			acl_include.append('include "%s";'%fname)
+			open(pathname,'w').write(v)
+		acl_file=os.path.join(
+				path,sysconf.filename_map['acl'])
+		open(acl_file,'w').write('\n'.join(acl_include))

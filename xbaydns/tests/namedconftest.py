@@ -48,6 +48,16 @@ class InitConfTest(basetest.BaseTestCase):
 		self.nc.addView('internal',['127.0.0.1',])
 		self.assertTrue(self.nc.delView('internal'))
 		self.assertFalse(self.nc.delView('home'))
+	def test_save(self):
+		self.nc.addAcl('internal',['127.0.0.1',])
+		self.nc.addAcl('home',['127.0.0.1',])
+		self.nc.save('/tmp')
+		try:
+			self.assertTrue(os.stat('/tmp/acl/internal.conf'))
+			self.assertTrue(os.stat('/tmp/acl/home.conf'))
+			self.assertTrue(os.stat('/tmp/acl/acldef.conf'))
+		except OSError:
+			self.fail('acldef conf not found!')
 
 def suite():
 	"""集合测试用例"""
