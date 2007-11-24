@@ -93,7 +93,10 @@ class NamedConf(object):
 	'''
 	def __cpfile(self):
 		pass
-		
+	
+	'''
+	保存acl和views的配置文件
+	'''	
 	def save(self,path=sysconf.nameddb):
 		acl_include=[]
 		for k,v in self.acls.items():
