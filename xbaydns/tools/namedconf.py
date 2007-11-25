@@ -15,10 +15,9 @@ logging.basicConfig(level=logging.DEBUG)
 
 class NamedConf(object):
 	def __init__(self):
-		self.path='acl/'
-		self.fname='acldef.conf'
 		self.acls={}
 		self.views={}
+		self.acl_include=[]
 	'''
 	add acl (acl,aclmatch) 增加一个acl 
 	参数说明： 
@@ -95,15 +94,36 @@ class NamedConf(object):
 		pass
 	
 	'''
-	保存acl和views的配置文件
-	'''	
-	def save(self,path=sysconf.nameddb):
-		acl_include=[]
+	保存所有acl配置文件
+	'''
+	def __saveAcls(self,path=sysconf.nameddb):
 		for k,v in self.acls.items():
 			fname=os.path.join('acl/',k+'.conf')
 			pathname=os.path.join(path,fname)
-			acl_include.append('include "%s";'%fname)
+			self.acl_include.append('include "%s";'%fname)
 			open(pathname,'w').write(v)
+		
+	'''
+	保存所有view配置文件
+	'''
+	def __saveViews(self,path=sysconf.nameddb):
+		for k,v in self.views.items():
+			fname=os.path.join('view/',k+'.conf')
+			pathname=os.path.join(path,fname)
+			self.acl_include.append('include "%s";'%fname)
+			open(pathname,'w').write(v)
+	
+	'''
+	保存acldef.conf文件,保存所有生成的include语句
+	'''
+	def __saveAcldef(self,path):
 		acl_file=os.path.join(
 				path,sysconf.filename_map['acl'])
-		open(acl_file,'w').write('\n'.join(acl_include))
+		open(acl_file,'w').write('\n'.join(self.acl_include))
+	'''
+	保存acl和views的配置文件
+	'''	
+	def save(self,path=sysconf.nameddb):
+		self.__saveAcls(path)
+		self.__saveViews(path)
+		self.__saveAcldef(path)
