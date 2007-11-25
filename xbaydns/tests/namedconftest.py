@@ -41,6 +41,8 @@ class InitConfTest(basetest.BaseTestCase):
 	def test_addView(self):
 		cmd = self.nc.addView('internal',['127.0.0.1',])
 		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; };')
+		cmd = self.nc.addView('internal-tsig',tsig=['telcome',])
+		self.assertEqual(cmd.strip(),'view "internal-tsig" { match-clients { key telcome; }; };')
 	def test_updateView(self):
 		cmd = self.nc.updateView('internal',['127.0.0.1',])
 		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; };')

@@ -52,10 +52,10 @@ class NamedConf(object):
 	view 增加的view的名称 
 	match-client 匹配于该view的acl汇总
 	'''
-	def addView(self,view,matchClient):
-		s='''
-			view "%s" { match-clients { %s; }; };
-		'''%(view,';'.join(matchClient))
+	def addView(self,view,matchClient=[],tsig=[]):
+		tsig=map(lambda x:'key %s'%x,tsig)
+		s='''view "%s" { match-clients { %s; }; };
+		'''%(view,';'.join(matchClient+tsig))
 		self.views[view]=s
 		return s
 	
@@ -66,8 +66,8 @@ class NamedConf(object):
 	view 增加的view的名称 
 	match-client 匹配于该view的acl汇总
 	'''
-	def updateView(self,view,matchClient):
-		return self.addView(view,matchClient)
+	def updateView(self,view,matchClient=[],tsig=[]):
+		return self.addView(view,matchClient,tsig)
 	
 	'''
 	del view(view) 删除view 
