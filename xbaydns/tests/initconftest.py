@@ -47,7 +47,7 @@ class InitConfTest(basetest.BaseTestCase):
         for part in path:
             cur = os.path.join(cur, part)
             os.mkdir(cur)
-        return cur[len(self.basedir) + 1:]
+        return cur
 
     def _create_file(self, *path):
         filename = os.path.join(self.basedir, *path)
@@ -95,10 +95,10 @@ class InitConfTest(basetest.BaseTestCase):
     def test_backup_conf(self):
         """测试backup_conf的调用"""
         tmpdir = self._create_dir("backuptest")
-        self.assertTrue( initconf.backup_conf("/etc",os.path.join(self.basedir,tmpdir)) )
+        self.assertTrue( initconf.backup_conf("/etc",tmpdir) )
         conffilename = "namedconf_%s.tar.gz"%(time.strftime("%y%m%d%H%M"))
-        log.debug("backup file is:%s"%(os.path.join(self.basedir,tmpdir,conffilename)))
-        self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,conffilename)) )
+        log.debug("backup file is:%s"%(os.path.join(tmpdir,conffilename)))
+        self.assertTrue( os.path.isfile(os.path.join(tmpdir,conffilename)) )
 
     def test_create_destdir(self):
         """测试create_destdir的调用"""
@@ -130,8 +130,7 @@ class InitConfTest(basetest.BaseTestCase):
         real_confdir = os.path.join(chrootdir, "etc/namedconf")
         self.assertTrue( initconf.create_conf("/etc/namedconf", tmpdir) )
         self.assertTrue(initconf.install_conf(tmpdir, "namedchroot", os.path.join(self.basedir,real_confdir)) )
-        self.assertTrue( os.path.isfile(os.path.join(real_confdir,"named.conf")) )
-        
+
     def test_check_conf(self):
         '''使用named-checkconf检查生成文件语法'''
         tmpdir = initconf.create_destdir("/etc/namedconf", self.named_uid)
