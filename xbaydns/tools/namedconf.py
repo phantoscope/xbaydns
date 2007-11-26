@@ -113,7 +113,7 @@ class NamedConf(object):
 	保存所有acl配置文件
 	'''
 	@pathIsExists
-	def __saveAcls(self,path=sysconf.nameddb):
+	def __saveAcls(self,path=sysconf.namedconf):
 		for k,v in self.acls.items():
 			fname=os.path.join('acl/',k+'.conf')
 			pathname=os.path.join(path,fname)
@@ -124,7 +124,7 @@ class NamedConf(object):
 	保存所有view配置文件
 	'''
 	@pathIsExists
-	def __saveViews(self,path=sysconf.nameddb):
+	def __saveViews(self,path=sysconf.namedconf):
 		for k,v in self.views.items():
 			fname=os.path.join('view/',k+'.conf')
 			pathname=os.path.join(path,fname)
@@ -142,7 +142,7 @@ class NamedConf(object):
 	'''
 	保存acl和views的配置文件
 	'''	
-	def save(self,path=sysconf.nameddb):
+	def save(self,path=sysconf.namedconf):
 		self.__saveAcls(path)
 		self.__saveViews(path)
 		self.__saveAcldef(path)
