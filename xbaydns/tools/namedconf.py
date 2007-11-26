@@ -18,12 +18,12 @@ def pathIsExists(func):
 		path=args[1]
 		try:
 			acl_path=os.path.join(path,'acl/')
-			print os.stat(acl_path)
+			os.stat(acl_path)
 		except OSError:
 			os.mkdir(acl_path)
 		try:
 			view_path=os.path.join(path,'view/')
-			print os.stat(view_path)
+			os.stat(view_path)
 		except OSError:
 			os.mkdir(view_path)
 		func(args[0],args[1])
