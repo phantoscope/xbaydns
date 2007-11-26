@@ -10,8 +10,6 @@ installdir = os.path.dirname(os.path.realpath(__file__)) + "/.."
 chroot_path = "/var/named"
 # 这里记录了named.conf所存储的路径
 namedconf = "/etc/namedb"
-# 这里记录了dynamic、master和slave目录所有的路径
-nameddb = "/etc/namedb"
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
 filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')
 # 这里匹配了在不同的操作系统中使用的bind用户

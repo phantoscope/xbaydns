@@ -18,6 +18,7 @@ import getopt
 import logging.config
 import os
 import pwd
+import shutil
 from string import Template
 import sys
 from tempfile import mkdtemp
@@ -31,6 +32,9 @@ log.debug("template diris:%s"%TMPL_DIR)
 TMPL_DEFAULTZONE = "%s/defaultzone.tmpl"%TMPL_DIR
 TMPL_NAMEDCONF = "%s/namedconf.tmpl"%TMPL_DIR
 TMPL_NAMEDROOT = "%s/namedroot.tmpl"%TMPL_DIR
+TMPL_LOCALHOST_FORWARD_DB = "%s/localhost-forward.db.tmpl"%TMPL_DIR
+TMPL_LOCALHOST_REVERSE_DB = "%s/localhost-reverse.db.tmpl"%TMPL_DIR
+TMPL_EMPTY_DB = "%s/empty.db.tmpl"%TMPL_DIR
 ERR_BACKUP = 1000
 
 
@@ -96,15 +100,15 @@ def backup_conf(chrootdir, backdir):
             return True
     return False
 
-def create_destdir(conf_dir, db_dir, named_uid):
+def create_destdir(conf_dir, named_uid):
     """创建系统目录，这里只是在tmp目录中建立"""
     tmpdir = mkdtemp()
     os.makedirs("%s/%s/acl"%(tmpdir, conf_dir))
-    os.makedirs("%s/%s/dynamic"%(tmpdir, db_dir))
-    os.chown("%s/%s/dynamic"%(tmpdir, db_dir), named_uid, 0)
-    os.mkdir("%s/%s/master"%(tmpdir, db_dir))
-    os.mkdir("%s/%s/slave"%(tmpdir, db_dir))
-    os.chown("%s/%s/slave"%(tmpdir, db_dir), named_uid, 0)
+    os.makedirs("%s/%s/dynamic"%(tmpdir, conf_dir))
+    os.chown("%s/%s/dynamic"%(tmpdir, conf_dir), named_uid, 0)
+    os.mkdir("%s/%s/master"%(tmpdir, conf_dir))
+    os.mkdir("%s/%s/slave"%(tmpdir, conf_dir))
+    os.chown("%s/%s/slave"%(tmpdir, conf_dir), named_uid, 0)
     return tmpdir
 
 def create_conf(conf_dir, tmpdir):
@@ -125,15 +129,18 @@ def create_conf(conf_dir, tmpdir):
         tmpfile = open("%s/%s/named.root"%(tmpdir, conf_dir), "w")
         tmpfile.write(namedroot)
         tmpfile.close()
+        shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, conf_dir))
+        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, conf_dir))
+        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, conf_dir))
         namedconf = namedconf_file(conf_dir, sysconf.filename_map)
         tmpfile = open("%s/%s/named.conf"%(tmpdir, conf_dir), "w")
         tmpfile.write(namedconf)
         tmpfile.close()
         return True
         
-def install_conf(tmpdir, chrootdir, real_confdir, real_dbdir):
+def install_conf(tmpdir, chrootdir, real_confdir):
     """将tmpdir中的临时文件安装到最终的使用目录中去"""
-    ret = shtools.execute(executable="rm", args="-rf %s %s"%(real_confdir, real_dbdir))
+    ret = shtools.execute(executable="rm", args="-rf %s"%(real_confdir))
     if ret == 0:
         ret = shtools.execute(executable="cp", args="-R %s/ %s"%(tmpdir, chrootdir))
         if ret == 0:
@@ -153,13 +160,12 @@ def main():
         return errno.EPERM
     # parse options
     try:
-        opts = getopt.getopt(sys.argv[1:], "d:b:c:C:")
+        opts = getopt.getopt(sys.argv[1:], "b:c:C:")
     except getopt.GetoptError:
         usage()
         return errno.EINVAL
     chrootdir = os.path.realpath(sysconf.chroot_path)
     confdir = sysconf.namedconf
-    dbdir = sysconf.nameddb
     backup = False
     backdir = ""
     for optname, optval in opts[0]:
@@ -167,13 +173,10 @@ def main():
             chrootdir = os.path.realpath(optval)
         elif optname == "-c":
             confdir = optval
-        elif optname == "-d":
-            dbdir = optval
         elif optname == "-b":
             backup = True
             backdir = optval
     realconf_dir = chrootdir + confdir
-    realdb_dir = chrootdir + dbdir
     # backup
     if backup == True:
         if os.path.isdir(chrootdir) == True:
@@ -196,9 +199,9 @@ def main():
     except KeyError:
         print "No such a user %s. I'll exit."%named_user
         return errno.EINVAL
-    tmpdir = create_destdir(confdir, dbdir, named_uid)
+    tmpdir = create_destdir(confdir, named_uid)
     log.debug(tmpdir)
-    if create_conf(confdir, tmpdir) == False or install_conf(tmpdir, chrootdir, realconf_dir, realdb_dir) == False:
+    if create_conf(confdir, tmpdir) == False or install_conf(tmpdir, chrootdir, realconf_dir) == False:
         print "Create configuration files failed."
         return -1
     else:
