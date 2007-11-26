@@ -138,6 +138,14 @@ class InitConfTest(basetest.BaseTestCase):
         self.assertTrue(initconf.create_conf("/etc/namedconf", tmpdir))
         ret = shtools.execute(executable = "named-checkconf", args = "-t %s /%s/named.conf"%(tmpdir, "/etc/namedconf"), output="/tmp/hd.txt")
         self.assertEqual(ret, 0)
+
+    def test_main(self):
+        """测试main调用"""
+        cruroot = sysconf.chroot_path
+        sysconf.chroot_path = self.basedir
+        returncode = initconf.main()
+        sysconf.chroot_path = cruroot
+        self.assertTrue(returncode == 0 )
         
 def suite():
     """集合测试用例"""
