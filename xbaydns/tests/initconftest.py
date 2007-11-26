@@ -90,55 +90,56 @@ class InitConfTest(basetest.BaseTestCase):
 
     def test_error_backup_conf(self):
         """对于backup_conf的错误调用测试"""
-        self.assertFalse( initconf.backup_conf("中华人民共和国","中华人民共和国","中华人民共和国") )
+        self.assertFalse( initconf.backup_conf("中华人民共和国","中华人民共和国") )
 
     def test_backup_conf(self):
         """测试backup_conf的调用"""
         tmpdir = self._create_dir("backuptest")
-        self.assertTrue( initconf.backup_conf("/etc/namedb","/etc/namedb",os.path.join(self.basedir,tmpdir)) )
+        self.assertTrue( initconf.backup_conf("/var/named",os.path.join(self.basedir,tmpdir)) )
         conffilename = "namedconf_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
         log.debug("backup file is:%s"%(os.path.join(self.basedir,tmpdir,conffilename)))
-        dbfilename = "namedb_%s.tar.bz2"%(time.strftime("%y%m%d%H%M"))
         self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,conffilename)) )
-        self.assertTrue( os.path.isfile(os.path.join(self.basedir,tmpdir,dbfilename)) )
 
     def test_create_destdir(self):
         """测试create_destdir的调用"""
-        tmpdir = initconf.create_destdir(self.named_uid)
+        tmpdir = initconf.create_destdir("/etc/namedconf", "/etc/namedb", self.named_uid)
         log.debug("create tmpdir is:%s"%tmpdir)
-        self.assertTrue( os.path.isdir("%s/namedconf/acl"%tmpdir) )
-        self.assertTrue( os.path.isdir("%s/namedb/dynamic"%tmpdir) )
-        self.assertTrue( os.path.isdir("%s/namedb/master"%tmpdir) )
-        self.assertTrue( os.path.isdir("%s/namedb/slave"%tmpdir) )
+        self.assertTrue( os.path.isdir("%s/etc/namedconf/acl"%tmpdir) )
+        self.assertTrue( os.path.isdir("%s/etc/namedb/dynamic"%tmpdir) )
+        self.assertTrue( os.path.isdir("%s/etc/namedb/master"%tmpdir) )
+        self.assertTrue( os.path.isdir("%s/etc/namedb/slave"%tmpdir) )
         shutil.rmtree(tmpdir)
 
     def test_create_conf(self):
         """测试create_conf的调用"""
-        tmpdir = initconf.create_destdir(self.named_uid)
-        self.assertTrue( initconf.create_conf(tmpdir) )
+        tmpdir = initconf.create_destdir("/etc/namedconf", "/etc/namedb", self.named_uid)
+        self.assertTrue( initconf.create_conf("/etc/namedconf", tmpdir) )
         shutil.rmtree(tmpdir)
         
     def test_namedconf_file(self):
         """测试namedconf_file的调用"""
-        namedconf = initconf.namedconf_file(dict(acl='acl/acldef.conf', defzone='defaultzone.conf'))
+        namedconf = initconf.namedconf_file("/etc/namedconf", dict(acl='acl/acldef.conf', defzone='defaultzone.conf'))
         #log.debug("namedconf gen to:%s"%namedconf)
         self.assertTrue('include "defaultzone.conf";' in namedconf)
         self.assertTrue('include "acl/acldef.conf";' in namedconf)
 
     def test_install_conf(self):
         """测试install_conf的调用"""
-        tmpdir = initconf.create_destdir(self.named_uid)
-        real_confdir = self._create_dir("namedconf")
-        real_dbdir = self._create_dir("namedb")
-        self.assertTrue( initconf.create_conf(tmpdir) )
-        self.assertTrue(initconf.install_conf(tmpdir, os.path.join(self.basedir,real_confdir), os.path.join(self.basedir,real_dbdir)) )
-        self.assertTrue( os.path.isfile(os.path.join(self.basedir,real_confdir,"named.conf")) )
+        tmpdir = initconf.create_destdir("/etc/namedconf", "/etc/namedb", self.named_uid)
+        chrootdir = os.path.realpath(self._create_dir("namedchroot"))
+        real_confdir = os.path.join(chrootdir, "etc/namedconf")
+        real_dbdir = os.path.join(chrootdir, "etc/namedb")
+        self.assertTrue( initconf.create_conf("/etc/namedconf", tmpdir) )
+        self.assertTrue(initconf.install_conf(tmpdir, "namedchroot", os.path.join(self.basedir,real_confdir), os.path.join(self.basedir,real_dbdir)) )
+        self.assertTrue( os.path.isfile(os.path.join(real_confdir,"named.conf")) )
         
     def test_check_conf(self):
         '''使用named-checkconf检查生成文件语法'''
-        tmpdir = initconf.create_destdir(self.named_uid)
-        self.assertTrue(initconf.create_conf(tmpdir))
-        ret = shtools.execute(executable = "named-checkconf", args = "%s/namedconf/named.conf"%tmpdir, output="/tmp/hd.txt")
+        tmpdir = initconf.create_destdir("/etc/namedconf", "/etc/namedb", self.named_uid)
+        self.assertTrue(initconf.create_conf("/etc/namedconf", tmpdir))
+        os.symlink("%s/etc/namedconf"%tmpdir, "/etc/namedconf")
+        ret = shtools.execute(executable = "named-checkconf", args = "%s/%s/named.conf"%(tmpdir, "/etc/namedconf"), output="/tmp/hd.txt")
+        os.unlink("/etc/namedconf")
         self.assertEqual(ret, 0)
         
 def suite():

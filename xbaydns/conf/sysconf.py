@@ -7,6 +7,7 @@
 # 安装路径，是否能传进来？暂时写成根据相对路径
 import os
 installdir = os.path.dirname(os.path.realpath(__file__)) + "/.."
+chroot_path = "/var/named"
 # 这里记录了named.conf所存储的路径
 namedconf = "/etc/namedb"
 # 这里记录了dynamic、master和slave目录所有的路径
