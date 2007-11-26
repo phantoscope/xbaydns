@@ -95,7 +95,7 @@ def backup_conf(chrootdir, backdir):
         return False
     else:
         time_suffix = time.strftime("%y%m%d%H%M")
-        retcode = shtools.execute(executable = "tar", args = "-cjf %s/namedconf_%s.tar.bz2 %s"%(backdir,  time_suffix, chrootdir))
+        retcode = shtools.execute(executable = "tar", args = "-czf %s/namedconf_%s.tar.gz %s"%(backdir,  time_suffix, chrootdir))
         if retcode == 0:
             return True
     return False
