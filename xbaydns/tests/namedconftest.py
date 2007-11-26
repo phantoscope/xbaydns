@@ -55,12 +55,12 @@ class InitConfTest(basetest.BaseTestCase):
 		self.nc.addAcl('home',['127.0.0.1',])
 		self.nc.addAcl('fx-subnet',['192.253.254/24',])
 		self.nc.addView('internal',['fx-subnet',])
-		self.nc.save('/tmp')
-		self.assertTrue(os.stat('/tmp/acl/internal.conf'))
-		self.assertTrue(os.stat('/tmp/acl/home.conf'))
-		self.assertTrue(os.stat('/tmp/acl/fx-subnet.conf'))
-		self.assertTrue(os.stat('/tmp/view/internal.conf'))
-		self.assertTrue(os.stat('/tmp/acl/acldef.conf'))
+		self.nc.save(self.basedir)
+		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/internal.conf')))
+		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home.conf')))
+		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/fx-subnet.conf')))
+		self.assertTrue(os.stat(os.path.join(self.basedir,'view/internal.conf')))
+		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/acldef.conf')))
 
 def suite():
 	"""集合测试用例"""
