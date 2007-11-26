@@ -13,6 +13,22 @@ from xbaydns.conf import sysconf
 log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
 
+def pathIsExists(func):
+	def wrapper(*args):
+		path=args[1]
+		try:
+			acl_path=os.path.join(path,'acl/')
+			print os.stat(acl_path)
+		except OSError:
+			os.mkdir(acl_path)
+		try:
+			view_path=os.path.join(path,'view/')
+			print os.stat(view_path)
+		except OSError:
+			os.mkdir(view_path)
+		func(args[0],args[1])
+	return wrapper
+	
 class NamedConf(object):
 	def __init__(self):
 		self.acls={}
@@ -96,6 +112,7 @@ class NamedConf(object):
 	'''
 	保存所有acl配置文件
 	'''
+	@pathIsExists
 	def __saveAcls(self,path=sysconf.nameddb):
 		for k,v in self.acls.items():
 			fname=os.path.join('acl/',k+'.conf')
@@ -106,6 +123,7 @@ class NamedConf(object):
 	'''
 	保存所有view配置文件
 	'''
+	@pathIsExists
 	def __saveViews(self,path=sysconf.nameddb):
 		for k,v in self.views.items():
 			fname=os.path.join('view/',k+'.conf')
@@ -116,6 +134,7 @@ class NamedConf(object):
 	'''
 	保存acldef.conf文件,保存所有生成的include语句
 	'''
+	@pathIsExists
 	def __saveAcldef(self,path):
 		acl_file=os.path.join(
 				path,sysconf.filename_map['acl'])

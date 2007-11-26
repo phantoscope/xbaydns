@@ -56,14 +56,11 @@ class InitConfTest(basetest.BaseTestCase):
 		self.nc.addAcl('fx-subnet',['192.253.254/24',])
 		self.nc.addView('internal',['fx-subnet',])
 		self.nc.save('/tmp')
-		try:
-			self.assertTrue(os.stat('/tmp/acl/internal.conf'))
-			self.assertTrue(os.stat('/tmp/acl/home.conf'))
-			self.assertTrue(os.stat('/tmp/acl/fx-subnet.conf'))
-			self.assertTrue(os.stat('/tmp/view/internal.conf'))
-			self.assertTrue(os.stat('/tmp/acl/acldef.conf'))
-		except OSError:
-			self.fail('acldef conf not found!')
+		self.assertTrue(os.stat('/tmp/acl/internal.conf'))
+		self.assertTrue(os.stat('/tmp/acl/home.conf'))
+		self.assertTrue(os.stat('/tmp/acl/fx-subnet.conf'))
+		self.assertTrue(os.stat('/tmp/view/internal.conf'))
+		self.assertTrue(os.stat('/tmp/acl/acldef.conf'))
 
 def suite():
 	"""集合测试用例"""
