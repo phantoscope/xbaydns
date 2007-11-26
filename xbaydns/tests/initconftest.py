@@ -129,7 +129,7 @@ class InitConfTest(basetest.BaseTestCase):
         chrootdir = os.path.realpath(self._create_dir("namedchroot"))
         real_confdir = os.path.join(chrootdir, "etc/namedconf")
         self.assertTrue( initconf.create_conf("/etc/namedconf", tmpdir) )
-        self.assertTrue(initconf.install_conf(tmpdir, "namedchroot", os.path.join(self.basedir,real_confdir)) )
+        self.assertTrue(initconf.install_conf(tmpdir, chrootdir, os.path.join(self.basedir,real_confdir)) )
 
     def test_check_conf(self):
         '''使用named-checkconf检查生成文件语法'''
