@@ -44,7 +44,9 @@ elif (system == "OpenBSD"):
         pass
 elif (system == "Linux"):
     # 操作系统为Linux
-    pass
+    named_user = "bind"
+    chroot_path = "/"
+    namedconf = "/etc/bind"
 try:
     named_uid = pwd.getpwnam(named_user)[2]
 except KeyError:
