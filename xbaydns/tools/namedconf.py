@@ -86,6 +86,17 @@ class NamedConf(object):
         return self.addView(view,matchClient,tsig)
     
     '''
+    load view(view,match-client) 更新view 
+
+    参数说明： 
+    view 增加的view的名称 
+    match-client 匹配于该view的acl汇总
+    '''
+    def loadViewKey(self,view):
+        import base64
+        return base64.b64encode('%s-key'%view)
+    
+    '''
     del view(view) 删除view 
 
     参数说明： 

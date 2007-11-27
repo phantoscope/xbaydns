@@ -13,6 +13,7 @@ import shutil
 import tempfile
 import time
 import unittest
+import base64
 
 log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
@@ -46,6 +47,9 @@ class InitConfTest(basetest.BaseTestCase):
 	def test_updateView(self):
 		cmd = self.nc.updateView('internal',['127.0.0.1',])
 		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; %s };')
+	def test_loadViewKey(self):
+		key = self.nc.loadViewKey('internal')
+		self.assertEqual(base64.b64decode(key),"internal-key")
 	def test_delView(self):
 		self.nc.addView('internal',['127.0.0.1',])
 		self.assertTrue(self.nc.delView('internal'))
