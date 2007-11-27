@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools.namedconf import *
 
-class InitConfTest(basetest.BaseTestCase):
+class NamedConfTest(basetest.BaseTestCase):
 	def setUp(self):
 		"""初始化测试环境"""
 		self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
@@ -86,7 +86,7 @@ class InitConfTest(basetest.BaseTestCase):
 def suite():
 	"""集合测试用例"""
 	suite = unittest.TestSuite()
-	suite.addTest(unittest.makeSuite(InitConfTest, 'test'))
+	suite.addTest(unittest.makeSuite(NamedConfTest, 'test'))
 	return suite
 
 """
