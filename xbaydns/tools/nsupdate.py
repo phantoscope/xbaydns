@@ -17,19 +17,44 @@ class NSUpdate:
         self.addr = addr
         self.port = port
         
-    def getZoneInfo(self):
+    def getDomainInfo(self):
         pass
         
-    def addRecord(self):
+    def addRecord(self, domain, recordlist, view = False, 
+                timeout = None, rdclass = 'IN', usetcp = False):
+        '''
+        generate an update message for adding record.
+        : param domain: the name of the domain. string.
+        : param recordlist: list of the records to be added.
+        '''
         pass
         
-    def removeRecord(self):
+    def removeRecord(self, domain, recordlist, view = False, 
+                timeout = None, rdclass = 'IN', usetcp = False):
+        '''
+        generate an update message for removing record.
+        '''
         pass
         
-    def updateRecord(self):
+    def updateRecord(self, domain, recordlist, view = False, 
+                timeout = None, rdclass = 'IN', usetcp = False):
+        '''
+        generate an update message for updating record.
+        '''
         pass
+
+    def _commitChanges(self, updatemsg, timeout, usetcp):
+        '''
+        send the update messages to NS server
+        '''
+        if usetcp == True:
+            query_wrapper = query.tcp
+        else:
+            query_wrapper = query.udp
+        response = query_wrapper(updatemsg, self.addr, timeout, self.port)
         
-    def queryRecord(self, name, view = False, rdtype = 'A', usetcp = False, timeout = 30, rdclass = 'IN'):
+    def queryRecord(self, name, view = False, rdtype = 'A', 
+                    usetcp = False, timeout = 30, rdclass = 'IN'):
         '''
         query a record though the specified NS server.
         '''
@@ -43,7 +68,7 @@ class NSUpdate:
             resolv.use_tsig(tsigkey)
         try:
             resultset = resolv.query(name, rdatatype.from_text(rdtype), 
-                                               rdataclass.from_text(rdclass), tcp = usetcp)
+                                    rdataclass.from_text(rdclass), tcp = usetcp)
         except resolver.Timeout:
             # query time exceed the lifetime
             return False
