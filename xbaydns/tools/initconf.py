@@ -169,10 +169,13 @@ def main():
     backup = False
     backdir = ""
     for optname, optval in opts[0]:
+        # -C为指定chroot目录
         if optname == "-C":
             chrootdir = os.path.realpath(optval)
+        # -c为指定config目录
         elif optname == "-c":
             confdir = optval
+        # -b为指定备份目录
         elif optname == "-b":
             backup = True
             backdir = optval
