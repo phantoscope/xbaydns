@@ -14,21 +14,19 @@ log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
 
 def pathIsExists(func):
-    def wrapper(*args):
-        path=args[1]
-        try:
-            acl_path=os.path.join(path,'acl/')
-            os.stat(acl_path)
-        except OSError:
-            os.mkdir(acl_path)
-        try:
-            view_path=os.path.join(path,'view/')
-            os.stat(view_path)
-        except OSError:
-            os.mkdir(view_path)
-        func(args[0],args[1])
-    return wrapper
-    
+	def mkconfdir(path,childpath):
+		try:
+			path_all=os.path.join(path,childpath)
+			os.stat(path_all)
+		except OSError:
+			os.mkdir(path_all)
+	def wrapper(*args):
+		path=args[1]
+		mkconfdir(path,'acl/')
+		mkconfdir(path,'view/')
+		func(args[0],args[1])
+	return wrapper
+
 class NamedConf(object):
     def __init__(self):
         self.acls={}
