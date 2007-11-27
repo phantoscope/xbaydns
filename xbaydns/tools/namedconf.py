@@ -14,23 +14,25 @@ log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
 
 def pathIsExists(func):
-	def mkconfdir(path,childpath):
-		try:
-			path_all=os.path.join(path,childpath)
-			os.stat(path_all)
-		except OSError:
-			os.mkdir(path_all)
-	def wrapper(*args):
-		path=args[1]
-		mkconfdir(path,'acl/')
-		mkconfdir(path,'view/')
-		func(args[0],args[1])
-	return wrapper
+    def mkconfdir(path,childpath):
+        try:
+            path_all=os.path.join(path,childpath)
+            os.stat(path_all)
+        except OSError:
+            os.mkdir(path_all)
+    def wrapper(*args):
+        path=args[1]
+        mkconfdir(path,'acl/')
+        mkconfdir(path,'view/')
+        mkconfdir(path,'dynamic/')
+        func(args[0],args[1])
+    return wrapper
 
 class NamedConf(object):
     def __init__(self):
         self.acls={}
         self.views={}
+        self.domains={}
         self.acl_include=[]
     '''
     add acl (acl,aclmatch) 增加一个acl 
@@ -68,7 +70,7 @@ class NamedConf(object):
     '''
     def addView(self,view,matchClient=[],tsig=[]):
         tsig=map(lambda x:'key %s'%x,tsig)
-        s='''view "%s" { match-clients { %s; }; };
+        s='''view "%s" { match-clients { %s; }; %%s };
         '''%(view,';'.join(matchClient+tsig))
         self.views[view]=s
         return s
@@ -93,6 +95,36 @@ class NamedConf(object):
         if view in self.views:
             del self.views[view]
             return True
+        return False
+       
+    '''
+    add domain(view,domain) 增加一个DNS域。
+    '''
+    def addDomain(self,view,domain=[]):
+    	cmds=''
+        for d in domain:
+            s='''
+                zone "%(domain)s" {
+                    type master;
+                    file "%(view)s.%(domain)s.file";
+                };'''%{'domain':d,'view':view}
+            cmds+=s
+            if view not in self.domains:
+                self.domains[view]={}
+            self.domains[view].update({d:s})
+        return cmds
+        
+    '''
+    del domain(view,domain) 删除一个DNS域 
+    参数说明： 
+        view   对应的view名
+        domain 需要删除的DNS域名
+    '''
+    def delDomain(self,view,domain):
+        if view in self.domains:
+            if domain in self.domains[view]:
+                del self.domains[view][domain]
+                return True
         return False
     
     '''
@@ -127,7 +159,10 @@ class NamedConf(object):
             fname=os.path.join('view/',k+'.conf')
             pathname=os.path.join(path,fname)
             self.acl_include.append('include "%s";'%fname)
-            open(pathname,'w').write(v)
+            value = ''
+            if k in self.domains:
+                value = v%'\n'.join(self.domains[k].values())
+            open(pathname,'w').write(value)
     
     '''
     保存acldef.conf文件,保存所有生成的include语句

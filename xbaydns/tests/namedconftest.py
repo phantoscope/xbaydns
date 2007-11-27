@@ -40,21 +40,38 @@ class InitConfTest(basetest.BaseTestCase):
 		self.assertFalse(self.nc.delAcl('home'))
 	def test_addView(self):
 		cmd = self.nc.addView('internal',['127.0.0.1',])
-		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; };')
+		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; %s };')
 		cmd = self.nc.addView('internal-tsig',tsig=['telcome',])
-		self.assertEqual(cmd.strip(),'view "internal-tsig" { match-clients { key telcome; }; };')
+		self.assertEqual(cmd.strip(),'view "internal-tsig" { match-clients { key telcome; }; %s };')
 	def test_updateView(self):
 		cmd = self.nc.updateView('internal',['127.0.0.1',])
-		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; };')
+		self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; %s };')
 	def test_delView(self):
 		self.nc.addView('internal',['127.0.0.1',])
 		self.assertTrue(self.nc.delView('internal'))
 		self.assertFalse(self.nc.delView('home'))
+	def test_addDomain(self):
+		cmd = self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
+		self.assertEqual(cmd.replace("  ", "").replace("\n","").strip(),'''
+				zone "sina.com.cn" {
+					type master;
+					file "internal.sina.com.cn.file";
+				};
+				zone "mail.sina.com.cn" {
+					type master;
+					file "internal.mail.sina.com.cn.file";
+				};
+				'''.replace("\t", "").replace("\n","").strip())
+	def test_delDomain(self):
+		self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
+		self.assertTrue(self.nc.delDomain('internal','sina.com.cn'))
+		self.assertFalse(self.nc.delDomain('home','a.sina.com.cn'))
 	def test_save(self):
 		self.nc.addAcl('internal',['127.0.0.1',])
 		self.nc.addAcl('home',['127.0.0.1',])
 		self.nc.addAcl('fx-subnet',['192.253.254/24',])
 		self.nc.addView('internal',['fx-subnet',])
+		self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
 		self.nc.save(self.basedir)
 		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/internal.conf')))
 		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home.conf')))
