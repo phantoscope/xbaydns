@@ -174,6 +174,18 @@ class NamedConf(object):
             if k in self.domains:
                 value = v%'\n'.join(self.domains[k].values())
             open(pathname,'w').write(value)
+            
+    '''
+    保存view中声名的zone文件
+    '''
+    @pathIsExists       
+    def __saveDomains(self,path=sysconf.namedconf):
+        for view,domains in self.domains.items():
+            for domain,value in domains.items():
+                f=open(os.path.join(path,"dynamic/","%(view)s.%(domain)s.file"
+                                    %{'domain':domain,'view':view}),"w")
+                f.write("")
+                f.close()
     
     '''
     保存acldef.conf文件,保存所有生成的include语句
@@ -189,4 +201,7 @@ class NamedConf(object):
     def save(self,path=sysconf.namedconf):
         self.__saveAcls(path)
         self.__saveViews(path)
+        self.__saveDomains(path)
         self.__saveAcldef(path)
+        
+        

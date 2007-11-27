@@ -82,6 +82,8 @@ class NamedConfTest(basetest.BaseTestCase):
 		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/fx-subnet.conf')))
 		self.assertTrue(os.stat(os.path.join(self.basedir,'view/internal.conf')))
 		self.assertTrue(os.stat(os.path.join(self.basedir,'acl/acldef.conf')))
+		self.assertTrue(os.stat(os.path.join(self.basedir,'dynamic/internal.sina.com.cn.file')))
+		self.assertTrue(os.stat(os.path.join(self.basedir,'dynamic/internal.mail.sina.com.cn.file')))
 
 def suite():
 	"""集合测试用例"""
