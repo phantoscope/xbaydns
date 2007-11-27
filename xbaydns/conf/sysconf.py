@@ -37,7 +37,11 @@ elif (system == "FreeBSD"):
         pass
 elif (system == "OpenBSD"):
     # 操作系统为OpenBSD
-    named_user = "named"    
+    named_user = "named"
+    chroot_path = "/var/named"
+    namedconf = "/etc"
+    if (release[:3] ==  "4.2"):
+        pass
 elif (system == "Linux"):
     # 操作系统为Linux
     pass
