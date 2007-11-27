@@ -33,12 +33,16 @@ log.debug("template diris:%s"%TMPL_DIR)
 ERR_BACKUP = 1000
 
 def getProperTmpl(tmpl_file):
+    '''
+    得到合适的模板，如果在系统模板目录中有对应的模板则使用，如果没有则返回默认的模板。
+    '''    
     plat_tmpl = "%s/%s"%(TMPL_PLAT_DIR, tmpl_file)
     if os.path.isfile(plat_tmpl) == True:
         return plat_tmpl
     else:
         return "%s/%s"%(TMPL_DEF_DIR, tmpl_file)
 
+# 定义使用模板
 TMPL_DEFAULTZONE = getProperTmpl('defaultzone.tmpl')
 TMPL_NAMEDCONF = getProperTmpl('namedconf.tmpl')
 TMPL_NAMEDROOT = getProperTmpl('namedroot.tmpl')
