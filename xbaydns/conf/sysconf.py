@@ -18,9 +18,13 @@ chroot_path = "/var/named"
 namedconf = "/etc/namedb"
 
 if (system == 'Darwin'  and release == '9.1.0'):
-    #如果操作系统为Mac OSX 10.5
+    #操作系统为Mac OSX 10.5
     chroot_path = "/"
     namedconf = "/etc"
+elif (system == "FreeBSD" and release[:3] == "7.0"):
+    #操作系统为FreeBSD 7.0
+    chroot_path = "/var/named"
+    namedconf = "/etc/namedb"
 
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
 filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')
