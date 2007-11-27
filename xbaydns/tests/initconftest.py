@@ -27,7 +27,7 @@ class InitConfTest(basetest.BaseTestCase):
     def setUp(self):
         """初始化测试环境"""
         ostype = os.uname()[0].lower()
-        self.named_uid = pwd.getpwnam(sysconf.named_user_map[ostype])[2]
+        self.named_uid = sysconf.named_uid
         self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
         basetest.BaseTestCase.setUp(self)
 
@@ -102,39 +102,39 @@ class InitConfTest(basetest.BaseTestCase):
 
     def test_create_destdir(self):
         """测试create_destdir的调用"""
-        tmpdir = initconf.create_destdir("/etc/namedconf", self.named_uid)
+        tmpdir = initconf.create_destdir()
         log.debug("create tmpdir is:%s"%tmpdir)
-        self.assertTrue( os.path.isdir("%s/etc/namedconf/acl"%tmpdir) )
-        self.assertTrue( os.path.isdir("%s/etc/namedconf/dynamic"%tmpdir) )
-        self.assertTrue( os.path.isdir("%s/etc/namedconf/master"%tmpdir) )
-        self.assertTrue( os.path.isdir("%s/etc/namedconf/slave"%tmpdir) )
+        self.assertTrue( os.path.isdir("%s/%s/acl"%(tmpdir, sysconf.namedconf)) )
+        self.assertTrue( os.path.isdir("%s/%s/dynamic"%(tmpdir, sysconf.namedconf)) )
+        self.assertTrue( os.path.isdir("%s/%s/master"%(tmpdir, sysconf.namedconf)) )
+        self.assertTrue( os.path.isdir("%s/%s/slave"%(tmpdir, sysconf.namedconf)) )
         shutil.rmtree(tmpdir)
 
     def test_create_conf(self):
         """测试create_conf的调用"""
-        tmpdir = initconf.create_destdir("/etc/namedconf", self.named_uid)
-        self.assertTrue( initconf.create_conf("/etc/namedconf", tmpdir) )
+        tmpdir = initconf.create_destdir()
+        self.assertTrue( initconf.create_conf(tmpdir) )
         shutil.rmtree(tmpdir)
         
     def test_namedconf_file(self):
         """测试namedconf_file的调用"""
-        namedconf = initconf.namedconf_file("/etc/namedconf", dict(acl='acl/acldef.conf', defzone='defaultzone.conf'))
+        namedconf = initconf.namedconf_file(dict(acl='acl/acldef.conf', defzone='defaultzone.conf'))
         #log.debug("namedconf gen to:%s"%namedconf)
         self.assertTrue('include "defaultzone.conf";' in namedconf)
         self.assertTrue('include "acl/acldef.conf";' in namedconf)
 
     def test_install_conf(self):
         """测试install_conf的调用"""
-        tmpdir = initconf.create_destdir("/etc/namedconf", self.named_uid)
+        tmpdir = initconf.create_destdir()
         chrootdir = os.path.realpath(self._create_dir("namedchroot"))
         real_confdir = os.path.join(chrootdir, "etc/namedconf")
-        self.assertTrue( initconf.create_conf("/etc/namedconf", tmpdir) )
-        self.assertTrue(initconf.install_conf(tmpdir, chrootdir, os.path.join(self.basedir,real_confdir)) )
+        self.assertTrue( initconf.create_conf(tmpdir) )
+        self.assertTrue(initconf.install_conf(tmpdir, chrootdir) )
 
     def test_check_conf(self):
         '''使用named-checkconf检查生成文件语法'''
-        tmpdir = initconf.create_destdir("/etc/namedconf", self.named_uid)
-        self.assertTrue(initconf.create_conf("/etc/namedconf", tmpdir))
+        tmpdir = initconf.create_destdir()
+        self.assertTrue(initconf.create_conf(tmpdir))
         ret = shtools.execute(executable = "named-checkconf", args = "-t %s /%s/named.conf"%(tmpdir, "/etc/namedconf"), output="/tmp/hd.txt")
         self.assertEqual(ret, 0)
 

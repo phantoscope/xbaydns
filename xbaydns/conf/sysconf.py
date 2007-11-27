@@ -7,6 +7,8 @@
 # 安装路径，是否能传进来？暂时写成根据相对路径
 import os
 import platform
+import pwd
+import sys
 
 system, _, release, version, machine, processor = platform.uname()
 system, release, version = platform.system_alias(system, release,version)
@@ -17,17 +19,34 @@ chroot_path = "/var/named"
 # 这里记录了named.conf所存储的路径
 namedconf = "/etc/namedb"
 
-if (system == 'Darwin'  and release == '9.1.0'):
-    #操作系统为Mac OSX 10.5
+if (system == 'Darwin'):
+    #操作系统为Mac OSX
     chroot_path = "/"
     namedconf = "/etc"
-elif (system == "FreeBSD" and release[:3] == "7.0"):
-    #操作系统为FreeBSD 7.0
+    named_user = "root"
+    if (release == '9.1.0'):
+        pass
+elif (system == "FreeBSD"):
+    #操作系统为FreeBSD
     chroot_path = "/var/named"
     namedconf = "/etc/namedb"
-
+    named_user = "bind"
+    if (release[:3] == "6.2"):
+        pass
+    elif (release[:3] == "7.0"):
+        pass
+elif (system == "OpenBSD"):
+    # 操作系统为OpenBSD
+    named_user = "named"    
+elif (system == "Linux"):
+    # 操作系统为Linux
+    pass
+try:
+    named_uid = pwd.getpwnam(named_user)[2]
+except KeyError:
+    print "No such a user %s. I'll exit."%named_user
+    sys.exit(errno.EINVAL)
+        
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
 filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')
-# 这里匹配了在不同的操作系统中使用的bind用户
-named_user_map = dict(freebsd='bind', openbsd='named', darwin='root')
 

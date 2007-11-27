@@ -17,7 +17,6 @@ import errno
 import getopt
 import logging.config
 import os
-import pwd
 import shutil
 from string import Template
 import sys
@@ -72,7 +71,7 @@ def named_root_file():
         tmpl_file.close()
         return named_root
 
-def namedconf_file(conf_dir, include_files):
+def namedconf_file(include_files):
     """通过namedconf.tmpl生成最终的named.conf文件。include_file为一个dic，每项的值为一个要include的文件路径"""
     if os.path.isfile(TMPL_DEFAULTZONE) == False:
         return False
@@ -80,7 +79,7 @@ def namedconf_file(conf_dir, include_files):
         tmpl_file = open(TMPL_NAMEDCONF, "r")
         namedconf_tmpl = Template(tmpl_file.read())
         tmpl_file.close()
-        namedconf = namedconf_tmpl.substitute(CONF_DIR=conf_dir)
+        namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf)
         namedconf += "\n"
         for filename in include_files.itervalues():
             namedconf += 'include "%s";\n'%filename
@@ -100,18 +99,19 @@ def backup_conf(chrootdir, backdir):
             return True
     return False
 
-def create_destdir(conf_dir, named_uid):
+def create_destdir():
     """创建系统目录，这里只是在tmp目录中建立"""
+    
     tmpdir = mkdtemp()
-    os.makedirs("%s/%s/acl"%(tmpdir, conf_dir))
-    os.makedirs("%s/%s/dynamic"%(tmpdir, conf_dir))
-    os.chown("%s/%s/dynamic"%(tmpdir, conf_dir), named_uid, 0)
-    os.mkdir("%s/%s/master"%(tmpdir, conf_dir))
-    os.mkdir("%s/%s/slave"%(tmpdir, conf_dir))
-    os.chown("%s/%s/slave"%(tmpdir, conf_dir), named_uid, 0)
+    os.makedirs("%s/%s/acl"%(tmpdir, sysconf.namedconf))
+    os.makedirs("%s/%s/dynamic"%(tmpdir, sysconf.namedconf))
+    os.chown("%s/%s/dynamic"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
+    os.mkdir("%s/%s/master"%(tmpdir, sysconf.namedconf))
+    os.mkdir("%s/%s/slave"%(tmpdir, sysconf.namedconf))
+    os.chown("%s/%s/slave"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
     return tmpdir
 
-def create_conf(conf_dir, tmpdir):
+def create_conf(tmpdir):
     """在tmpdir目录中创建配置文件"""
     acl = acl_file(sysconf.default_acl)
     defzone = defaultzone_file()
@@ -120,38 +120,36 @@ def create_conf(conf_dir, tmpdir):
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
-        tmpfile = open("%s/%s/%s"%(tmpdir, conf_dir, sysconf.filename_map['acl']), "w")
+        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
-        tmpfile = open("%s/%s/%s"%(tmpdir, conf_dir, sysconf.filename_map['defzone']), "w")
+        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['defzone']), "w")
         tmpfile.write(defzone)
         tmpfile.close()
-        tmpfile = open("%s/%s/named.root"%(tmpdir, conf_dir), "w")
+        tmpfile = open("%s/%s/named.root"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedroot)
         tmpfile.close()
-        shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, conf_dir))
-        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, conf_dir))
-        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, conf_dir))
-        namedconf = namedconf_file(conf_dir, sysconf.filename_map)
-        tmpfile = open("%s/%s/named.conf"%(tmpdir, conf_dir), "w")
+        shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, sysconf.namedconf))
+        namedconf = namedconf_file(sysconf.filename_map)
+        tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedconf)
         tmpfile.close()
         return True
         
-def install_conf(tmpdir, chrootdir, real_confdir):
+def install_conf(tmpdir, chrootdir):
     """将tmpdir中的临时文件安装到最终的使用目录中去"""
-    ret = shtools.execute(executable="rm", args="-rf %s"%(real_confdir))
+    ret = shtools.execute(executable="cp", args="-R %s/ %s"%(tmpdir, chrootdir))
     if ret == 0:
-        ret = shtools.execute(executable="cp", args="-R %s/ %s"%(tmpdir, chrootdir))
+        ret = shtools.execute(executable="rm", args="-rf %s"%tmpdir)
         if ret == 0:
-            ret = shtools.execute(executable="rm", args="-rf %s"%tmpdir)
-            if ret == 0:
-                return True
+            return True
     else:
         return False
     
 def usage():
-    print "usage: %s [-dbcC]"%__file__
+    print "usage: %s [-bc]"%__file__
     
 def main():
     # check root
@@ -160,26 +158,20 @@ def main():
         return errno.EPERM
     # parse options
     try:
-        opts = getopt.getopt(sys.argv[1:], "b:c:C:")
+        opts = getopt.getopt(sys.argv[1:], "b:c:")
     except getopt.GetoptError:
         usage()
         return errno.EINVAL
     chrootdir = os.path.realpath(sysconf.chroot_path)
-    confdir = sysconf.namedconf
     backup = False
     backdir = ""
     for optname, optval in opts[0]:
-        # -C为指定chroot目录
-        if optname == "-C":
-            chrootdir = os.path.realpath(optval)
-        # -c为指定config目录
-        elif optname == "-c":
-            confdir = optval
+        if optname == "-c":
+            chrootdir = optval
         # -b为指定备份目录
         elif optname == "-b":
             backup = True
             backdir = optval
-    realconf_dir = chrootdir + confdir
     # backup
     if backup == True:
         if os.path.isdir(chrootdir) == True:
@@ -191,20 +183,9 @@ def main():
             print "No namedb in basedir, I'll continue."
     # that's my business
     # get named uid
-    ostype = os.uname()[0].lower()
-    try:
-        named_user = sysconf.named_user_map[ostype]
-    except KeyError:
-        print "This program doesn't support your os. Assumed user 'bind'."
-        named_user = "bind"
-    try:
-        named_uid = pwd.getpwnam(named_user)[2]
-    except KeyError:
-        print "No such a user %s. I'll exit."%named_user
-        return errno.EINVAL
-    tmpdir = create_destdir(confdir, named_uid)
+    tmpdir = create_destdir()
     log.debug(tmpdir)
-    if create_conf(confdir, tmpdir) == False or install_conf(tmpdir, chrootdir, realconf_dir) == False:
+    if create_conf(tmpdir) == False or install_conf(tmpdir, chrootdir) == False:
         print "Create configuration files failed."
         return -1
     else:
