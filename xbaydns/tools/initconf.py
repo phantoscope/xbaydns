@@ -27,16 +27,24 @@ log = logging.getLogger('xbaydns.tools.initconf')
 
 BASEDIR = sysconf.installdir
 TMPL_DIR = BASEDIR + "/tools/templates"
+TMPL_DEF_DIR = "%s/default"%TMPL_DIR
+TMPL_PLAT_DIR = "%s/%s/%s"%(TMPL_DIR, sysconf.system, sysconf.release[:3])
 log.debug("template diris:%s"%TMPL_DIR)
-TMPL_DEFAULTZONE = "%s/defaultzone.tmpl"%TMPL_DIR
-TMPL_NAMEDCONF = "%s/namedconf.tmpl"%TMPL_DIR
-TMPL_NAMEDROOT = "%s/namedroot.tmpl"%TMPL_DIR
-TMPL_LOCALHOST_FORWARD_DB = "%s/localhost-forward.db.tmpl"%TMPL_DIR
-TMPL_LOCALHOST_REVERSE_DB = "%s/localhost-reverse.db.tmpl"%TMPL_DIR
-TMPL_EMPTY_DB = "%s/empty.db.tmpl"%TMPL_DIR
 ERR_BACKUP = 1000
 
+def getProperTmpl(tmpl_file):
+    plat_tmpl = "%s/%s"%(TMPL_PLAT_DIR, tmpl_file)
+    if os.path.isfile(plat_tmpl) == True:
+        return plat_tmpl
+    else:
+        return "%s/%s"%(TMPL_DEF_DIR, tmpl_file)
 
+TMPL_DEFAULTZONE = getProperTmpl('defaultzone.tmpl')
+TMPL_NAMEDCONF = getProperTmpl('namedconf.tmpl')
+TMPL_NAMEDROOT = getProperTmpl('namedroot.tmpl')
+TMPL_LOCALHOST_FORWARD_DB = getProperTmpl('localhost-forward.db.tmpl')
+TMPL_LOCALHOST_REVERSE_DB = getProperTmpl('localhost-reverse.db.tmpl')
+TMPL_EMPTY_DB = getProperTmpl('empty.db.tmpl')
 
 def acl_file(acls):
     '''
@@ -88,13 +96,13 @@ def namedconf_file(include_files):
 def make_localhost():
     pass
     
-def backup_conf(chrootdir, backdir):
-    """备份named.conf和namedb目录。chrootdir为bind运行时的chroot根，backdir为备份文件存放的目录。"""
-    if os.path.isdir(chrootdir) == False:
+def backup_conf(confdir, backdir):
+    """备份named.conf和namedb目录。confdir为named配置目录， backdir为备份文件存放的目录。"""
+    if os.path.isdir(confdir) == False:
         return False
     else:
         time_suffix = time.strftime("%y%m%d%H%M")
-        retcode = shtools.execute(executable = "tar", args = "-czf %s/namedconf_%s.tar.gz %s"%(backdir,  time_suffix, chrootdir))
+        retcode = shtools.execute(executable = "tar", args = "-czf %s/namedconf_%s.tar.gz %s"%(backdir,  time_suffix, confdir))
         if retcode == 0:
             return True
     return False
@@ -174,8 +182,9 @@ def main():
             backdir = optval
     # backup
     if backup == True:
-        if os.path.isdir(chrootdir) == True:
-            ret = backup_conf(chrootdir, backdir)
+        realconfdir = chrootdir + sysconf.namedconf
+        if os.path.isdir(realconfdir) == True:
+            ret = backup_conf(realconfdir, backdir)
             if ret == False:
                 print "Backup failed."
                 return -1
