@@ -6,7 +6,7 @@ class Acl(models.Model):
     
     class Admin:
         list_display = ('aclName',)
-        search_fields = ('',)
+        search_fields = ('aclName',)
 
     def __str__(self):
         return self.aclName
@@ -29,7 +29,7 @@ class View(models.Model):
     
     class Admin:
         list_display = ('viewName',)
-        search_fields = ('',)
+        search_fields = ('viewName',)
 
     def __str__(self):
         return self.viewName
@@ -65,7 +65,7 @@ class Domain(models.Model):
 
     class Admin:
         list_display = ('view','domain')
-        search_fields = ('',)
+        search_fields = ('domain',)
 
     def __str__(self):
         return "Domain"
