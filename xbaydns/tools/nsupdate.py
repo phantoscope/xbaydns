@@ -39,7 +39,6 @@ class NSUpdate:
                         rdatatype.from_text(rdtype),
                         token_str,
                         origin = self.domain))
-                print name, ttl, rdclass, rdtype, token_str
             recordset = rdataset.from_rdata_list(ttl, rdatalist)
             func(name, recordset)
                     
@@ -51,11 +50,15 @@ class NSUpdate:
         '''
         self._updateWrapper(self.updatemsg.add, recordlist)
         
-    def removeRecord(self, recordlist):
+    def removeRecord(self, recordlist, entire_node = False):
         '''
         generate an update message for removing record.
         '''
-        self._updateWrapper(self.updatemsg.delete, recordlist)
+        if entire_node == True:
+            for name in recordlist:
+                self.updatemsg.delete(name)
+        else:
+            self._updateWrapper(self.updatemsg.delete, recordlist)
         
     def updateRecord(self, recordlist):
         '''
@@ -73,6 +76,7 @@ class NSUpdate:
             query_wrapper = query.udp
         response = query_wrapper(self.updatemsg, self.addr, timeout, self.port)
         print response
+        self.updatemsg = update.Update(self.domain, keyring = self.tsigkey)
         
     def queryRecord(self, name, view = False, rdtype = 'A', 
                     usetcp = False, timeout = 30, rdclass = 'IN'):
