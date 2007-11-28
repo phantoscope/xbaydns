@@ -9,41 +9,61 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 update DNS server on FLY...
 """
 
-from dns import name, query, rdataclass, rdatatype, \
-                            resolver, tsigkeyring, update, zone
+from dns import name, query, rdataclass, rdatatype, rdataset,\
+                            rdata, resolver, tsigkeyring, update, zone
 
 class NSUpdate:
-    def __init__(self, addr, port = 53):
+    def __init__(self, addr, domain, view = False, port = 53):
         self.addr = addr
         self.port = port
+        self.domain = domain
+        self.view = view
+        self.tsigkey = None
+        if view != False:
+            # get TSIG
+            self.tsigkey = tsigkeyring.from_text({'keyname' : 'xxxxxxxx'})
+        self.domain_info = self._getDomainInfo()
+        self.updatemsg = update.Update(self.domain, keyring = self.tsigkey)
         
-    def getDomainInfo(self):
-        pass
-        
-    def addRecord(self, domain, recordlist, view = False, 
-                timeout = None, rdclass = 'IN', usetcp = False):
+    def _getDomainInfo(self):
+        # get full zone by xfr, for checking before add/remove/update records
+        domain_info = zone.from_xfr(query.xfr(self.addr, self.domain, keyring = self.tsigkey))
+        return domain_info
+    
+    def _updateWrapper(self, func, recordlist):
+        for name, ttl, rdclass, rdtype, token in recordlist:
+            rdatalist = []
+            for token_str in token:
+                rdatalist.append(rdata.from_text(
+                        rdataclass.from_text(rdclass),
+                        rdatatype.from_text(rdtype),
+                        token_str,
+                        origin = self.domain))
+                print name, ttl, rdclass, rdtype, token_str
+            recordset = rdataset.from_rdata_list(ttl, rdatalist)
+            func(name, recordset)
+                    
+    def addRecord(self, recordlist):
         '''
         generate an update message for adding record.
         : param domain: the name of the domain. string.
         : param recordlist: list of the records to be added.
         '''
-        pass
+        self._updateWrapper(self.updatemsg.add, recordlist)
         
-    def removeRecord(self, domain, recordlist, view = False, 
-                timeout = None, rdclass = 'IN', usetcp = False):
+    def removeRecord(self, recordlist):
         '''
         generate an update message for removing record.
         '''
-        pass
+        self._updateWrapper(self.updatemsg.delete, recordlist)
         
-    def updateRecord(self, domain, recordlist, view = False, 
-                timeout = None, rdclass = 'IN', usetcp = False):
+    def updateRecord(self, recordlist):
         '''
         generate an update message for updating record.
         '''
         pass
 
-    def _commitChanges(self, updatemsg, timeout, usetcp):
+    def commitChanges(self, timeout = None, usetcp = True):
         '''
         send the update messages to NS server
         '''
@@ -51,7 +71,8 @@ class NSUpdate:
             query_wrapper = query.tcp
         else:
             query_wrapper = query.udp
-        response = query_wrapper(updatemsg, self.addr, timeout, self.port)
+        response = query_wrapper(self.updatemsg, self.addr, timeout, self.port)
+        print response
         
     def queryRecord(self, name, view = False, rdtype = 'A', 
                     usetcp = False, timeout = 30, rdclass = 'IN'):
