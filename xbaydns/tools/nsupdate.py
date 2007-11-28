@@ -9,8 +9,14 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 update DNS server on FLY...
 """
 
-from dns import name, query, rdataclass, rdatatype, rdataset,\
+from dns import exception, name, query, rdataclass, rdatatype, rdataset,\
                             rdata, resolver, tsigkeyring, update, zone
+import logging.config
+
+log = logging.getLogger('xbaydns.tools.nsupdate')
+
+class NSUpdateException(Exception):
+    pass
 
 class NSUpdate:
     def __init__(self, addr, domain, view = False, port = 53):
@@ -27,7 +33,20 @@ class NSUpdate:
         
     def _getDomainInfo(self):
         # get full zone by xfr, for checking before add/remove/update records
-        domain_info = zone.from_xfr(query.xfr(self.addr, self.domain, keyring = self.tsigkey))
+        try:
+            domain_info = zone.from_xfr(query.xfr(self.addr, self.domain, keyring = self.tsigkey))
+        except query.BadResponse:
+            log.error("DOMAIN XFR ERROR: Bad Response.")
+            raise NSUpdateException("DOMAIN XFR ERROR: Bad Response.")
+        except zone.NoSOA:
+            log.error("DOMAIN XFR ERROR: No SOA.")
+            raise NSUpdateException("DOMAIN XFR ERROR: No SOA.")
+        except zone.NoNS:
+            log.error("DOMAIN XFR ERROR: No NS.")
+            raise NSUpdateException("DOMAIN XFR ERROR: No NS.")
+        except exception.FormError:
+            log.error("DOMAIN XFR ERROR: Form Error")
+            raise NSUpdateException("DOMAIN XFR ERROR: Form Error")            
         return domain_info
     
     def _updateWrapper(self, func, recordlist):
@@ -39,6 +58,7 @@ class NSUpdate:
                         rdatatype.from_text(rdtype),
                         token_str,
                         origin = self.domain))
+                log.debug("ADD RDATA: %s, %d, %s, %s, %s"%(name, ttl, rdclass, rdtype, token))
             recordset = rdataset.from_rdata_list(ttl, rdatalist)
             func(name, recordset)
                     
@@ -74,8 +94,12 @@ class NSUpdate:
             query_wrapper = query.tcp
         else:
             query_wrapper = query.udp
-        response = query_wrapper(self.updatemsg, self.addr, timeout, self.port)
-        print response
+        try:
+            response = query_wrapper(self.updatemsg, self.addr, timeout, self.port)
+        except query.BadResponse:
+            log.error("UPDATE RESPONSE ERROR: Bad Response")
+            raise NSUpdateException("UPDATE RESPONSE ERROR: Bad Response")
+        log.debug("UPDATE RESPONSE: %s"%response)
         self.updatemsg = update.Update(self.domain, keyring = self.tsigkey)
         
     def queryRecord(self, name, view = False, rdtype = 'A', 
@@ -96,15 +120,19 @@ class NSUpdate:
                                     rdataclass.from_text(rdclass), tcp = usetcp)
         except resolver.Timeout:
             # query time exceed the lifetime
-            return False
+            log.error("RESOLVER ERROR: Query Timeout.")
+            raise NSUpdateException("RESOLVER ERROR: Query Timeout.")
         except resolver.NXDOMAIN:
             # the query name does not exist
-            return False
+            log.error("RESOLVER ERROR: Name Not Exist.")
+            raise NSUpdateException("RESOLVER ERROR: Name Not Exist.")
         except resolver.NoAnswer:
             # the response did not contain an answer
-            return False
+            log.error("RESOLVER ERROR: No Answer.")
+            raise NSUpdateException("RESOLVER ERROR: No Answer.")
         except resolver.NoNameservers:
             # no non-broken nameservers are available to answer the question.
-            return False
+            log.error("RESOLVER ERROR: No Nameservers.")
+            raise NSUpdateException("RESOLVER ERROR: No Nameservers.")
         return [ record.to_text() for record in resultset ]
 
