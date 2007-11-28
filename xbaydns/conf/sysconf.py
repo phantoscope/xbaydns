@@ -4,7 +4,8 @@
 这个文件中记录了所有的全局静态配置变量。现在只有named.conf所属路径和nameddb目录存储路径。
 """
 
-# 安装路径，是否能传进来？暂时写成根据相对路径
+
+import re
 import os
 import platform
 import pwd
@@ -12,7 +13,9 @@ import sys
 
 system, _, release, version, machine, processor = platform.uname()
 system, release, version = platform.system_alias(system, release,version)
+release = re.compile(r"^\d+.\d+").search(release).group()
 
+# 安装路径，是否能传进来？暂时写成根据相对路径
 installdir = os.path.dirname(os.path.realpath(__file__)) + "/.."
 # 这里记录了bind启动的chroot根目录
 chroot_path = "/var/named"
@@ -24,23 +27,23 @@ if (system == 'Darwin'):
     chroot_path = "/"
     namedconf = "/etc"
     named_user = "root"
-    if (release == '9.1.0'):
+    if (release == '9.1'):
         pass
 elif (system == "FreeBSD"):
     #操作系统为FreeBSD
     chroot_path = "/var/named"
     namedconf = "/etc/namedb"
     named_user = "bind"
-    if (release[:3] == "6.2"):
+    if (release == "6.2"):
         pass
-    elif (release[:3] == "7.0"):
+    elif (release == "7.0"):
         pass
 elif (system == "OpenBSD"):
     # 操作系统为OpenBSD
     named_user = "named"
     chroot_path = "/var/named"
     namedconf = "/etc"
-    if (release[:3] ==  "4.2"):
+    if (release ==  "4.2"):
         pass
 elif (system == "Linux"):
     # 操作系统为Linux

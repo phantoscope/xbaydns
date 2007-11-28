@@ -28,7 +28,7 @@ log = logging.getLogger('xbaydns.tools.initconf')
 BASEDIR = sysconf.installdir
 TMPL_DIR = BASEDIR + "/tools/templates"
 TMPL_DEF_DIR = "%s/default"%TMPL_DIR
-TMPL_PLAT_DIR = "%s/%s/%s"%(TMPL_DIR, sysconf.system, sysconf.release[:3])
+TMPL_PLAT_DIR = "%s/%s/%s"%(TMPL_DIR, sysconf.system, sysconf.release)
 log.debug("template diris:%s"%TMPL_DIR)
 ERR_BACKUP = 1000
 
