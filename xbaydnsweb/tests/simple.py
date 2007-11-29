@@ -1,5 +1,5 @@
 import os,sys
-sys.path.append('../../')
+#sys.path.append('../')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
 
 import unittest, doctest
