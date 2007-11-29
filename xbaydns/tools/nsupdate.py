@@ -8,7 +8,9 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 
 update DNS server on FLY...
 """
-import dns
+import dns.exception, dns.name, dns.query, dns.rdata, dns.rdataclass, \
+            dns.rdataset, dns.rdatatype, dns.rdtypes, dns.resolver, \
+            dns.tsigkeyring, dns.update, dns.zone
 import logging.config
 
 log = logging.getLogger('xbaydns.tools.nsupdate')
