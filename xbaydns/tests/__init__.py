@@ -9,6 +9,7 @@ Copyright (c) 2007 XbayDNS Team. All rights reserved.
 
 import unittest
 from xbaydns.tests import commandtest,initconftest,namedconftest,sysintergratetest
+from xbaydnsweb.tests.simple import run_tests
 
 def suite():
     suite = unittest.TestSuite()
@@ -16,6 +17,7 @@ def suite():
     suite.addTest(initconftest.suite())
     suite.addTest(namedconftest.suite())
     suite.addTest(sysintergratetest.suite())
+    suite.addTest(run_tests())
     return suite
 
 if __name__ == '__main__':

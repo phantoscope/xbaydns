@@ -1,3 +1,7 @@
+import os,sys
+sys.path.append('../../')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
+
 import unittest, doctest
 from django.conf import settings
 from django.test.utils import setup_test_environment, teardown_test_environment
