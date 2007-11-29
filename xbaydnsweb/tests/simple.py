@@ -75,15 +75,14 @@ def run_tests(module_list=get_apps(), verbosity=1, extra_tests=[]):
     
     settings.DEBUG = False    
     suite = unittest.TestSuite()
-     
+
     for module in module_list:
         suite.addTest(build_suite(module))
-    
+
     for test in extra_tests:
         suite.addTest(test)
 
     old_name = settings.DATABASE_NAME
     create_test_db(verbosity)
-    
+
     return suite
-    
