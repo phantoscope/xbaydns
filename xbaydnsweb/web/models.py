@@ -1,5 +1,6 @@
 # encoding: utf-8
 from django.db import models
+from xbaydns.conf import sysconf
 from xbaydns.tools.namedconf import *
 import logging.config
 
@@ -20,8 +21,17 @@ class Acl(models.Model):
         
     def __str__(self):
         return self.aclName
+        
+    def saveConf(self,path=sysconf.namedconf):
+        nc = NamedConf()
+        matchs=map(lambda x:x.aclMatch,
+                AclMatch.objects.filter(
+                    acl__aclName=self.aclName))
+        nc.addAcl(self.aclName,matchs)
+        nc.save(path)
 
-    def saveToFile(self,path):
+    @staticmethod
+    def saveAllConf(path=sysconf.namedconf):
         nc = NamedConf()
         for acl in Acl.objects.all():
             matchs=map(lambda x:x.aclMatch,AclMatch.objects.filter(acl=acl))
