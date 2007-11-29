@@ -48,6 +48,4 @@ def suite():
 单独运行command的测试用例
 """
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
-
-    
+    unittest.main(defaultTest='suite')    
