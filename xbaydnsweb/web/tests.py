@@ -15,7 +15,7 @@ import time
 import unittest
 import base64
 
-log = logging.getLogger('xbaydnsweb.tests')
+log = logging.getLogger('xbaydnsweb.web.tests')
 logging.basicConfig(level=logging.DEBUG)
 
 from django.test.utils import *
@@ -27,6 +27,7 @@ class ModelsTest(TestCase):
     def setUp(self):
         """初始化测试环境"""
         self.acl1=Acl.objects.create(aclName='internal')
+        self.view1=View.objects.create(viewName='home')
         
     def tearDown(self):
         """清洁测试环境"""
@@ -34,6 +35,8 @@ class ModelsTest(TestCase):
 
     def test_Acl(self):
         self.assertEquals(str(self.acl1), 'internal')
+    def test_View(self):
+        self.assertEquals(str(self.view1), 'home')
         
 def suite():
     """集合测试用例"""
