@@ -43,7 +43,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         
     def tearDown(self):
         """清洁测试环境"""
-        #shutil.rmtree(self.basedir)
+        shutil.rmtree(self.basedir)
         basetest.BaseTestCase.tearDown(self)
 
     def test_Acl(self):
