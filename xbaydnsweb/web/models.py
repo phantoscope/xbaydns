@@ -1,5 +1,10 @@
 # encoding: utf-8
 from django.db import models
+from xbaydns.tools.namedconf import *
+import logging.config
+
+log = logging.getLogger('xbaydnsweb.web.tests')
+logging.basicConfig(level=logging.DEBUG)
 
 class Acl(models.Model):
     """Acl Model"""
@@ -15,7 +20,14 @@ class Acl(models.Model):
         
     def __str__(self):
         return self.aclName
-        
+
+    def saveToFile(self,path):
+        nc = NamedConf()
+        for acl in Acl.objects.all():
+            matchs=map(lambda x:x.aclMatch,AclMatch.objects.filter(acl=acl))
+            nc.addAcl(acl.aclName,matchs)
+        nc.save(path)
+    
 class AclMatch(models.Model):
     """AclMatch Model"""
     acl = models.ForeignKey(Acl)

@@ -7,7 +7,7 @@ Created by QingFeng on 2007-11-28.
 Copyright (c) 2007 yanxu. All rights reserved.
 """
 
-#import basetest
+import xbaydns.tests.basetest as basetest
 import logging.config
 import shutil
 import tempfile
@@ -23,20 +23,27 @@ from django.test import TestCase
 from django.conf import settings
 from xbaydnsweb.web.models import *
 
-class ModelsTest(TestCase):
+class ModelsTest(basetest.BaseTestCase,TestCase):
     def setUp(self):
         """初始化测试环境"""
+        self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
+        basetest.BaseTestCase.setUp(self)
         self.acl1=Acl.objects.create(aclName='internal')
+        self.aclM1=AclMatch.objects.create(acl=self.acl1,aclMatch='127.0.0.1')
         self.view1=View.objects.create(viewName='home')
         
     def tearDown(self):
         """清洁测试环境"""
-        pass
+        shutil.rmtree(self.basedir)
+        basetest.BaseTestCase.tearDown(self)
 
     def test_Acl(self):
         self.assertEquals(str(self.acl1), 'internal')
     def test_View(self):
         self.assertEquals(str(self.view1), 'home')
+    def test_saveToFile(self):
+        self.acl1.saveToFile(self.basedir)
+        self.assertTrue(os.stat(os.path.join(self.basedir,'acl/internal.conf')))
         
 def suite():
     """集合测试用例"""
