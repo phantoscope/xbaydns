@@ -34,7 +34,8 @@ class Acl(models.Model):
     def saveAllConf(path=sysconf.namedconf):
         nc = NamedConf()
         for acl in Acl.objects.all():
-            matchs=map(lambda x:x.aclMatch,AclMatch.objects.filter(acl=acl))
+            matchs=map(lambda x:x.aclMatch,
+                    AclMatch.objects.filter(acl=acl))
             nc.addAcl(acl.aclName,matchs)
         nc.save(path)
     
@@ -67,6 +68,23 @@ class View(models.Model):
 
     def __str__(self):
         return self.viewName
+        
+    def saveConf(self,path=sysconf.namedconf):
+        nc = NamedConf()
+        matchs=map(lambda x:x.viewMatchClient,
+                ViewMatch.objects.filter(
+                    view__viewName=self.viewName))
+        nc.addView(self.viewName,matchs)
+        nc.save(path)
+
+    @staticmethod
+    def saveAllConf(path=sysconf.namedconf):
+        nc = NamedConf()
+        for view in View.objects.all():
+            matchs=map(lambda x:x.viewMatchClient,
+                    ViewMatch.objects.filter(view=view))
+            nc.addView(view.viewName,matchs)
+        nc.save(path)
 
 class ViewMatch(models.Model):
     """ViewMatch Model"""

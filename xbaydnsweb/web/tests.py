@@ -50,13 +50,17 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.assertEquals(str(self.acl1), 'internal')
     def test_View(self):
         self.assertEquals(str(self.view1), 'home')
-    def test_saveToFile(self):
+    def test_saveAclFile(self):
         self.acl1.saveConf(self.basedir)
         Acl.saveAllConf(self.basedir)
         self.assertTrue(os.stat(os.path.join(self.basedir,'acl/internal.conf')))
         self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home1.conf')))
         self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home2.conf')))
-        
+    def test_saveViewFile(self):
+        self.view1.saveConf(self.basedir)
+        View.saveAllConf(self.basedir)
+        self.assertTrue(os.stat(os.path.join(self.basedir,'view/home.conf')))
+
 def suite():
     """集合测试用例"""
     suite = unittest.TestSuite()
