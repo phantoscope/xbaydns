@@ -173,7 +173,9 @@ class NamedConf(object):
             value = ''
             if k in self.domains:
                 value = v%'\n'.join(self.domains[k].values())
-            open(pathname,'w').write(value)
+            else:
+                value = v%''
+            open(pathname,'a').write(value)
             
     '''
     保存view中声名的zone文件

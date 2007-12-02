@@ -1,7 +1,6 @@
 # encoding: utf-8
 from django.db import models
 from xbaydns.conf import sysconf
-from xbaydns.tools.namedconf import *
 import logging.config
 
 log = logging.getLogger('xbaydnsweb.web.tests')
@@ -21,24 +20,7 @@ class Acl(models.Model):
         
     def __str__(self):
         return self.aclName
-        
-    def saveConf(self,path=sysconf.namedconf):
-        nc = NamedConf()
-        matchs=map(lambda x:x.aclMatch,
-                AclMatch.objects.filter(
-                    acl__aclName=self.aclName))
-        nc.addAcl(self.aclName,matchs)
-        nc.save(path)
 
-    @staticmethod
-    def saveAllConf(path=sysconf.namedconf):
-        nc = NamedConf()
-        for acl in Acl.objects.all():
-            matchs=map(lambda x:x.aclMatch,
-                    AclMatch.objects.filter(acl=acl))
-            nc.addAcl(acl.aclName,matchs)
-        nc.save(path)
-    
 class AclMatch(models.Model):
     """AclMatch Model"""
     acl = models.ForeignKey(Acl)
@@ -68,23 +50,6 @@ class View(models.Model):
 
     def __str__(self):
         return self.viewName
-        
-    def saveConf(self,path=sysconf.namedconf):
-        nc = NamedConf()
-        matchs=map(lambda x:x.viewMatchClient,
-                ViewMatch.objects.filter(
-                    view__viewName=self.viewName))
-        nc.addView(self.viewName,matchs)
-        nc.save(path)
-
-    @staticmethod
-    def saveAllConf(path=sysconf.namedconf):
-        nc = NamedConf()
-        for view in View.objects.all():
-            matchs=map(lambda x:x.viewMatchClient,
-                    ViewMatch.objects.filter(view=view))
-            nc.addView(view.viewName,matchs)
-        nc.save(path)
 
 class ViewMatch(models.Model):
     """ViewMatch Model"""
