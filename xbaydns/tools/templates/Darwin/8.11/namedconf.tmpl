@@ -1,8 +1,18 @@
+//
+// Include keys file
+//
+include "/etc/rndc.key";
+
+//       
+// Default controls 
+//       
+controls {
+        inet 127.0.0.1 port 953 allow {any;}
+        keys { "rndc-key"; };
+};
+
 options {
     directory       "${CONF_DIR}";
-    pid-file        "/var/run/named/pid";
-    dump-file       "/var/dump/named_dump.db";
-    statistics-file "/var/stats/named.stats";
 
     recursion no;
 };
