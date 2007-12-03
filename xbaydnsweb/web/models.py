@@ -118,11 +118,14 @@ class Record(models.Model):
     recordgroup = models.ForeignKey("RecordGroup")
 
     class Admin:
-        list_display = ('domain',)
-        search_fields = ('domain',)
+        list_display = ('view','domain','record','recordgroup')
+        search_fields = ('domain','record')
+    class Meta:
+        verbose_name = 'Record'
+        verbose_name_plural = 'Record 管理'
 
     def __str__(self):
-        return "Record"
+        return ' '.join([self.domain.self.record])
 
 class RecordGroup(models.Model):
     """RecordGroup"""
@@ -131,9 +134,12 @@ class RecordGroup(models.Model):
     class Admin:
         list_display = ('name',)
         search_fields = ('name',)
+    class Meta:
+        verbose_name = 'RecordGroup'
+        verbose_name_plural = 'Record Group管理'
 
     def __str__(self):
-        return "RecordGroup"
+        return self.name
 
 class ViewMatch(models.Model):
     """ViewMatch"""
