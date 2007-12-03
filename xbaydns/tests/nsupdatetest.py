@@ -38,13 +38,15 @@ class NSUpdateTest(basetest.BaseTestCase):
 
     def _initnamedconf(self):
         returncode = initconf.main()
-        namedconf_obj = namedconf.NamedConf()
-        cmd = namedconf_obj.addDomain('', ['example.com'])
-        namedconf_obj.save()
+        nc = namedconf.NamedConf()
+        nc.addAcl("hdacl",["any",])
+        nc.addView("hdview",["default",])
+        cmd = nc.addDomain('hdview', ['example.com'])
+        nc.save()
         namedconf_file = open(sysconf.chroot_path+sysconf.namedconf+"/named.conf", "a")
         namedconf_file.write(cmd)
         namedconf_file.close()
-        os.system("rndc reload")
+        nc.reload()
             
     def test_addRecord(self):
         self._initnamedconf()
