@@ -27,13 +27,13 @@ class AclMatch(models.Model):
 
     class Admin:
         list_display = ('acl','aclMatch')
-        search_fields = ('',)
+        #search_fields = ('',)
     class Meta:
         verbose_name = 'ACL'
         verbose_name_plural = 'ACL管理'
 
     def __str__(self):
-        return "AclMatch"
+        return ''.join([self.acl,aclMatch])
 
 class View(models.Model):
     """View Model"""
@@ -58,13 +58,13 @@ class ViewMatchClient(models.Model):
 
     class Admin:
         list_display = ('view','viewMatch')
-        search_fields = ('',)
+        #search_fields = ('',)
     class Meta:
-        verbose_name = 'MatchClient'
+        verbose_name = 'View MatchClient'
         verbose_name_plural = 'View MatchClient管理'
 
     def __str__(self):
-        return "ViewMatch"
+        return ' '.join([str(self.view),self.viewMatch])
         
 class ViewTsig(models.Model):
     """ViewTsig Model"""
@@ -73,7 +73,7 @@ class ViewTsig(models.Model):
 
     class Admin:
         list_display = ('view','tsig')
-        search_fields = ('',)
+        #search_fields = ('',)
     class Meta:
         verbose_name = 'View Tsig'
         verbose_name_plural = 'View Tsig管理'
@@ -87,11 +87,15 @@ class Domain(models.Model):
     zone = models.CharField(maxlength=100)
 
     class Admin:
-        list_display = ('zone',)
-        search_fields = ('',)
+        list_display = ('showviews','zone',)
+        search_fields = ('zone',)
     class Meta:
         verbose_name = 'Zone'
         verbose_name_plural = 'Zone管理'
+    def showviews(self):
+        return ','.join(map(lambda x:x.viewName,self.view.all()))
+    showviews.short_description = 'Views'
+    showviews.allow_tags = True
 
     def __str__(self):
         return self.zone
@@ -113,7 +117,7 @@ class ViewGroup(models.Model):
 class Record(models.Model):
     """Record"""
     view = models.ForeignKey(View)
-    domain = models.CharField(maxlength=100)
+    domain = models.ForeignKey(Domain)
     rdtype = models.ForeignKey("RecordType")
     recordgroup = models.ForeignKey("RecordGroup")
     
@@ -124,13 +128,13 @@ class Record(models.Model):
 
     class Admin:
         list_display = ('view','domain','rdtype','recordgroup')
-        search_fields = ('domain','record')
+        #search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
         verbose_name_plural = 'Record 管理'
 
     def __str__(self):
-        return ' '.join([self.domain.self.record])
+        return '%s IN %s'%(self.domain,self.rdtype)
 
 class RecordGroup(models.Model):
     """RecordGroup"""
@@ -153,14 +157,22 @@ class ViewMatch(models.Model):
     recordgroup = models.ManyToManyField(RecordGroup)
 
     class Admin:
-        list_display = ('name',)
+        list_display = ('name','showViewGroups','showRecordGroups')
         search_fields = ('name',)
     class Meta:
         verbose_name = 'ViewMatch'
         verbose_name_plural = 'View Match管理'
+    def showViewGroups(self):
+        return ','.join(map(lambda x:x.name,self.viewgroup.all()))
+    showViewGroups.short_description = 'View Group'
+    showViewGroups.allow_tags = True
+    def showRecordGroups(self):
+        return ','.join(map(lambda x:x.name,self.recordgroup.all()))
+    showRecordGroups.short_description = 'Record Group'
+    showRecordGroups.allow_tags = True
 
     def __str__(self):
-        return "ViewMatch"
+        return self.name
 
 class SOA(models.Model):
     """SOA"""
