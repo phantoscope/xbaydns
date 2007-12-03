@@ -201,15 +201,15 @@ class NamedConf(object):
                         %self.getDomainFileName(domain,view)),"w")
                 zonedata='''
                 $ORIGIN .
-                $TTL 3600       ; 1 hour
-                %(domain)s IN SOA  %(soa)s (
+                $TTL 3600 1 hour
+                %(domain)s. IN SOA %(soa)s. (
                             %(time)s ; serial
                             60         ; refresh (1 minute)
                             3600       ; retry (1 hour)
                             604800     ; expire (1 week)
                             3600       ; minimum (1 hour)
                             )
-                %(domain)s  IN      NS      %(ns)s
+                %(domain)s. IN NS %(ns)s.
                 '''%{'domain':domain,'time':self.getSerial(),
                      'ns':sysconf.default_ns,'soa':sysconf.default_soa}
                 f.write(zonedata)
