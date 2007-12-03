@@ -7,7 +7,7 @@ Copyright (c) 2007 yanxu. All rights reserved.
 """
 
 import logging.config
-import os,tempfile
+import os,tempfile,datetime
 from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydns.tests.namedconftest')
@@ -114,17 +114,30 @@ class NamedConf(object):
     def addDomain(self,view,domain=[]):
     	cmds=''
         for d in domain:
+            fname=self.getDomainFileName(d,view)
             s='''
                 zone "%(domain)s" {
                     type master;
-                    file "dynamic/%(view)s.%(domain)s.file";
-                };'''%{'domain':d,'view':view}
+                    file "%(fname)s";
+                };'''%{'domain':d,
+                       'fname':fname}
             cmds+=s
             if view not in self.domains:
                 self.domains[view]={}
             self.domains[view].update({d:s})
         return cmds
-        
+    '''
+    获得zone文件名
+    '''
+    def getDomainFileName(self,domain,view):
+        return "dynamic/%(view)s.%(domain)s.file"%{'domain':domain,'view':view}
+    '''
+    获取Serial
+    '''
+    def getSerial(self):
+        d=datetime.datetime.now()
+        return '%s%s%s01'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2))
+    
     '''
     del domain(view,domain) 删除一个DNS域 
     参数说明： 
@@ -184,9 +197,22 @@ class NamedConf(object):
     def __saveDomains(self,path=sysconf.namedconf):
         for view,domains in self.domains.items():
             for domain,value in domains.items():
-                f=open(os.path.join(path,"dynamic/","%(view)s.%(domain)s.file"
-                                    %{'domain':domain,'view':view}),"w")
-                f.write("")
+                f=open(os.path.join(path,"%s"
+                        %self.getDomainFileName(domain,view)),"w")
+                zonedata='''
+                $ORIGIN .
+                $TTL 3600       ; 1 hour
+                %(domain)s IN SOA  %(soa)s (
+                            %(time)s ; serial
+                            60         ; refresh (1 minute)
+                            3600       ; retry (1 hour)
+                            604800     ; expire (1 week)
+                            3600       ; minimum (1 hour)
+                            )
+                %(domain)s  IN      NS      %(ns)s
+                '''%{'domain':domain,'time':self.getSerial(),
+                     'ns':sysconf.default_ns,'soa':sysconf.default_soa}
+                f.write(zonedata)
                 f.close()
     
     '''
@@ -205,5 +231,3 @@ class NamedConf(object):
         self.__saveViews(path)
         self.__saveDomains(path)
         self.__saveAcldef(path)
-        
-        

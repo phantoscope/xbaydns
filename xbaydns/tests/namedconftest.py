@@ -19,6 +19,7 @@ log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools.namedconf import *
+import datetime
 
 class NamedConfTest(basetest.BaseTestCase):
     def setUp(self):
@@ -70,6 +71,12 @@ class NamedConfTest(basetest.BaseTestCase):
         self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
         self.assertTrue(self.nc.delDomain('internal','sina.com.cn'))
         self.assertFalse(self.nc.delDomain('home','a.sina.com.cn'))
+    def test_getDomainFileName(self):
+        self.assertEqual(self.nc.getDomainFileName("sina.com.cn","home"),
+                        "dynamic/home.sina.com.cn.file")
+    def test_getSerial(self):
+        d=datetime.datetime.now()
+        self.assertEqual(self.nc.getSerial(),'%s%s%s01'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2)))    
     def test_save(self):
         self.nc.addAcl('internal',['127.0.0.1',])
         self.nc.addAcl('home',['127.0.0.1',])
