@@ -22,9 +22,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf
+from xbaydns.tools.namedconf import *
 
 class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
-
+    """测试初始化配置"""
     def setUp(self):
         self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_sys'))
         shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
@@ -53,6 +54,28 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master","localhost-reverse.db")))
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave")))
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic")))
+
+class SysIntergrate_ConfigTest_Test(basetest.BaseTestCase):
+    """测试named.conf系列的配置"""
+    def setUp(self):
+        self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_sys'))
+        self.nc=NamedConf()
+        basetest.BaseTestCase.setUp(self)
+
+    def tearDown(self):
+        """清洁测试环境"""
+        shutil.rmtree(self.basedir)
+        basetest.BaseTestCase.tearDown(self)
+
+    def test_add_default_conf(self):
+        """加入default的conf信息"""
+        self.nc.addAcl('cnc',['127.0.0.1','192.168.1.0/24'])
+        self.nc.addAcl('telecom',['127.0.0.2','10.0.10.0/24'])
+        self.nc.save()
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","cnc.conf")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","telecom.conf")))
+
+
 
 def suite():
     """集合测试用例"""
