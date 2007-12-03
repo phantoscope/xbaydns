@@ -236,5 +236,3 @@ $TTL 360 ;10 minute
 
     def reload(self):
         return os.system("rndc reload")
-        """docstring for reload"""
-        pass
