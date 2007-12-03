@@ -62,6 +62,9 @@ class NSUpdateTest(basetest.BaseTestCase):
     def test_removeRecord(self):
         self._initnamedconf()
         dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
+        # write SOA and NS temporary
+        dbfile.write("$ORIGIN .\n$TTL 3600\n@ IN SOA ns1.example.com. admin.ns1.example.com. (\n2007120301\n8H\n1H\n2W\n1D)\n")
+        dbfile.write("\tNS ns1.example.com.\nns1.example.com.\tA\t127.0.0.1\n")
         dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
         dbfile.close()
         os.system("rndc reload")
@@ -89,6 +92,8 @@ class NSUpdateTest(basetest.BaseTestCase):
     def test_queryRecord(self):
         self._initnamedconf()
         dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
+        dbfile.write("$ORIGIN .\n$TTL 3600\n@ IN SOA ns1.example.com. admin.ns1.example.com. (\n2007120301\n8H\n1H\n2W\n1D)\n")
+        dbfile.write("\tNS ns1.example.com.\nns1.example.com.\tA\t127.0.0.1\n")
         dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
         dbfile.close()
         os.system("rndc reload")
