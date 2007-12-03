@@ -12,16 +12,25 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 
 import basetest
 import logging.config
+import os
+import shutil
+import tempfile
 import unittest
 
 log = logging.getLogger('xbaydns.tests.sysintergratetest')
 logging.basicConfig(level=logging.DEBUG)
 
+from xbaydns.tools import initconf
+from xbaydns.conf import sysconf
 
-class SysIntergrateTest(basetest.BaseTestCase):
+class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
 
     def setUp(self):
         self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_sys'))
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
         basetest.BaseTestCase.setUp(self)
 
     def tearDown(self):
@@ -29,23 +38,26 @@ class SysIntergrateTest(basetest.BaseTestCase):
         shutil.rmtree(self.basedir)
         basetest.BaseTestCase.tearDown(self)
 
-    def _create_dir(self, *path):
-        cur = self.basedir
-        for part in path:
-            cur = os.path.join(cur, part)
-            os.mkdir(cur)
-        return cur
-
-    def init_conf(self):
-        """为各种操作系统初始化named.conf,注意，这将清除系统中的原有文件。原有文件请提前备份。"""
-        pass
-
-
+    def test_intergrate(self):
+        """测试操作系统的named.conf初始化。
+        为各种操作系统初始化named.conf,注意，这将清除系统中的原有文件。原有文件请提前备份。
+        另一方面，请不要将本机的域名解晰放在127.0.0.1上，这样将会在测试失败时让你的机器也无法工作。"""
+        initconf.main()
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"named.conf")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"defaultzone.conf")))
+        self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","acldef.conf")))
+        self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master","empty.db")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master","localhost-forward.db")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master","localhost-reverse.db")))
+        self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave")))
+        self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic")))
 
 def suite():
     """集合测试用例"""
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(SysIntergrateTest, 'test'))
+    suite.addTest(unittest.makeSuite(SysIntergrate_ConfigInit_Test, 'test'))
     return suite
 
 if __name__ == '__main__':
