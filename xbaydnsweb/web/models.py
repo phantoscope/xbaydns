@@ -156,3 +156,14 @@ class ViewMatch(models.Model):
 
     def __str__(self):
         return "ViewMatch"
+
+class SOA(models.Model):
+    """SOA"""
+    name = models.CharField(maxlength=100)
+
+    class Admin:
+        list_display = ('name',)
+        search_fields = ('name',)
+
+    def __str__(self):
+        return self.name
