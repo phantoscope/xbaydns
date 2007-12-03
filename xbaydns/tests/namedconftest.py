@@ -65,7 +65,7 @@ class NamedConfTest(basetest.BaseTestCase):
                     type master;
                     file "internal.mail.sina.com.cn.file";
                 };
-                '''.replace("\t", "").replace("\n","").strip())
+                '''.replace("  ", "").replace("\n","").strip())
     def test_delDomain(self):
         self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
         self.assertTrue(self.nc.delDomain('internal','sina.com.cn'))
