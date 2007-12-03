@@ -116,6 +116,11 @@ class Record(models.Model):
     domain = models.CharField(maxlength=100)
     record = models.CharField(maxlength=100)
     recordgroup = models.ForeignKey("RecordGroup")
+    
+    def save(self):
+        "Before save"
+        super(Record,self).save()
+        "After save"
 
     class Admin:
         list_display = ('view','domain','record','recordgroup')
