@@ -114,7 +114,7 @@ class Record(models.Model):
     """Record"""
     view = models.ForeignKey(View)
     domain = models.CharField(maxlength=100)
-    record = models.CharField(maxlength=100)
+    rdtype = models.ForeignKey("RecordType")
     recordgroup = models.ForeignKey("RecordGroup")
     
     def save(self):
@@ -123,7 +123,7 @@ class Record(models.Model):
         "After save"
 
     class Admin:
-        list_display = ('view','domain','record','recordgroup')
+        list_display = ('view','domain','rdtype','recordgroup')
         search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
@@ -169,6 +169,25 @@ class SOA(models.Model):
     class Admin:
         list_display = ('name',)
         search_fields = ('name',)
+    class Meta:
+        verbose_name = 'SOA'
+        verbose_name_plural = 'SOA管理'
+
+
+    def __str__(self):
+        return self.name
+        
+class RecordType(models.Model):
+    """RecordType"""
+    name = models.CharField(maxlength=100)
+
+    class Admin:
+        list_display = ('name',)
+        search_fields = ('name',)
+    class Meta:
+        verbose_name = 'RecordType'
+        verbose_name_plural = 'Record Type管理'
+
 
     def __str__(self):
         return self.name
