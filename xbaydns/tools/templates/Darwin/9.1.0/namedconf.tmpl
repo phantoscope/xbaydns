@@ -1,0 +1,22 @@
+//
+// Include keys file
+//
+include "/etc/rndc.key";
+
+//       
+// Default controls 
+//       
+controls {
+        inet 127.0.0.1 port 953 allow {any;}
+        keys { "rndc-key"; };
+};
+
+options {
+    directory       "${CONF_DIR}";
+    
+    disable-empty-zone "255.255.255.255.IN-ADDR.ARPA";
+    disable-empty-zone "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA";
+    disable-empty-zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA";
+    
+    recursion no;
+};

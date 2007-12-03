@@ -27,7 +27,8 @@ if (system == 'Darwin'):
     chroot_path = "/"
     namedconf = "/etc"
     named_user = "root"
-    if (release == '9.1'):
+    if (release == '9.1.0'):
+        #OSX 10.5&10.5.1
         pass
 elif (system == "FreeBSD"):
     #操作系统为FreeBSD
