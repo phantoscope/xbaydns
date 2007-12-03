@@ -57,7 +57,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic")))
 
     def _add_default_conf(self):
-        """加入default的acl信息"""
+        #加入default的acl信息
         nc=NamedConf()
         nc.addAcl('bj-cnc',['127.0.0.1','192.168.1.0/24'])
         nc.addAcl('tj-cnc',['127.0.0.4','192.168.2.0/24'])
@@ -69,12 +69,16 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gd-telecom.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gx-telecom.conf")))
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view")))
-        
+        #加入default的view信息
         nc.addView("cnc",["bj-cnc","tj-cnc"])
         nc.addView("telecom",["gd-telecom","gx-telecom"])
         nc.save()
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","telecom.conf")))
+        #加入domain信息，这里有问题，但是先运行，回头再说。这里的add不应有view
+        nc.addDomain("cnc",["sina.com.cn","hd.com"])
+        nc.addDomain("telecom",["sina.com.cn","hd.com"])
+        nc.save()
 
     def test_intergrate(self):
         """集成测试"""
