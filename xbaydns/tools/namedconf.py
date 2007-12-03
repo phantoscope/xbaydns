@@ -117,7 +117,7 @@ class NamedConf(object):
             s='''
                 zone "%(domain)s" {
                     type master;
-                    file "%(view)s.%(domain)s.file";
+                    file "dynamic/%(view)s.%(domain)s.file";
                 };'''%{'domain':d,'view':view}
             cmds+=s
             if view not in self.domains:

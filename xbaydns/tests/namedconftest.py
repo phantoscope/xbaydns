@@ -59,11 +59,11 @@ class NamedConfTest(basetest.BaseTestCase):
         self.assertEqual(cmd.replace("  ", "").replace("\n","").strip(),'''
                 zone "sina.com.cn" {
                     type master;
-                    file "internal.sina.com.cn.file";
+                    file "dynamic/internal.sina.com.cn.file";
                 };
                 zone "mail.sina.com.cn" {
                     type master;
-                    file "internal.mail.sina.com.cn.file";
+                    file "dynamic/internal.mail.sina.com.cn.file";
                 };
                 '''.replace("  ", "").replace("\n","").strip())
     def test_delDomain(self):
