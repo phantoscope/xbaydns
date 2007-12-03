@@ -51,12 +51,13 @@ class NSUpdateTest(basetest.BaseTestCase):
         recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'ANY', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         nsupobj.addRecord(recordlist)
-        record_a = nsupobj.queryRecord('foo', rdtype='A')
-        self.assertEqual(record_a, ['192.168.1.1', '172.16.1.1'])
-        record_cname = nsupobj.queryRecord('bar', rdtype='CNAME')
-        self.assertEqual(record_cname, ['foo.example.com'])
-        record_mx = nsupobj.queryRecord('', rdtype='MX')
-        self.assertEqual(record_mx, ['10 foo.example.com'])
+        record_a = nsupobj.queryRecord('foo.example.com.', rdtype='A')
+        record_a.sort()
+        self.assertEqual(record_a, ['172.16.1.1', '192.168.1.1'])
+        record_cname = nsupobj.queryRecord('bar.example.com.', rdtype='CNAME')
+        self.assertEqual(record_cname, ['foo.example.com.'])
+        record_mx = nsupobj.queryRecord('example.com.', rdtype='MX')
+        self.assertEqual(record_mx, ['10 foo.example.com.'])
         
     def test_removeRecord(self):
         self._initnamedconf()
@@ -69,16 +70,18 @@ class NSUpdateTest(basetest.BaseTestCase):
         nsupobj.removeRecord(recordlist)        
         recordlist = ['bar']
         nsupobj.removeRecord(recordlist, True)
-        self.assertEqual(record_a, ['192.168.1.1', '172.16.1.1'])
+        record_a = nsupobj.queryRecord('foo.example.com.', rdtype='A')
+        record_a.sort()
+        self.assertEqual(record_a, ['172.16.1.1', '192.168.1.1'])
         deleted = False
         try:
-            record_cname = nsupobj.queryRecord('bar', rdtype='CNAME')
+            record_cname = nsupobj.queryRecord('bar.example.com.', rdtype='CNAME')
         except nsupdate.NSUpdateException:
             deleted = True
         self.assertTrue(deleted)
         deleted = False
         try:
-            record_mx = nsupobj.queryRecord('', rdtype='MX')
+            record_mx = nsupobj.queryRecord('example.com.', rdtype='MX')
         except nsupdate.NSUpdateException:
             deleted = True
         self.assertTrue(deleted)
@@ -91,11 +94,12 @@ class NSUpdateTest(basetest.BaseTestCase):
         os.system("rndc reload")
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         record_a = nsupobj.queryRecord('foo', rdtype='A')
-        self.assertEqual(record_a, ['192.168.1.1', '172.16.1.1'])
-        record_cname = nsupobj.queryRecord('bar', rdtype='CNAME')
-        self.assertEqual(record_cname, ['foo.example.com'])
-        record_mx = nsupobj.queryRecord('', rdtype='MX')
-        self.assertEqual(record_mx, ['10 foo.example.com'])
+        record_a.sort()
+        self.assertEqual(record_a, ['172.16.1.1', '192.168.1.1'])
+        record_cname = nsupobj.queryRecord('bar.example.com.', rdtype='CNAME')
+        self.assertEqual(record_cname, ['foo.example.com.'])
+        record_mx = nsupobj.queryRecord('example.com.', rdtype='MX')
+        self.assertEqual(record_mx, ['10 foo.example.com.'])
         
 def suite():
     """集合测试用例"""
