@@ -39,15 +39,16 @@ class NSUpdateTest(basetest.BaseTestCase):
     def _initnamedconf(self):
         returncode = initconf.main()
         namedconf_obj = namedconf.NamedConf()
-        namedconf_obj.addDomain('', ['example.com'])
+        cmd = namedconf_obj.addDomain('', ['example.com'])
         namedconf_obj.save()
+        namedconf_file = open(sysconf.chroot_path+sysconf.namedconf+"/named.conf", "a")
+        namedconf_file.write(cmd)
+        namedconf_file.close()
         os.system("rndc reload")
             
     def test_addRecord(self):
         self._initnamedconf()
-        recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1'],
-                            ['bar', 3600, 'ANY', 'CNAME', ['foo']],
-                            ['', 86400, 'IN', 'MX', ['10 foo']]
+        recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'ANY', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         nsupobj.addRecord(recordlist)
         record_a = nsupobj.queryRecord('foo', rdtype='A')
@@ -60,7 +61,7 @@ class NSUpdateTest(basetest.BaseTestCase):
     def test_removeRecord(self):
         self._initnamedconf()
         dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
-        dbfile.write("foo\t\tIN\tA\t192.168.1.1\n\t\t\t\t\t\t172.16.1.1\nexample.com. 86400\tIN\tMX\tfoo.example.com\nbar\t\tIN\tCNAME\tfoo.example.com.\n")
+        dbfile.write("foo\t\tIN\tA\t192.168.1.1\n\t\t\t\t172.16.1.1\nexample.com. 86400\tIN\tMX\tfoo.example.com\nbar\t\tIN\tCNAME\tfoo.example.com.\n")
         dbfile.close()
         os.system("rndc reload")
         recordlist =  ['', 86400, 'IN', 'MX', ['10 foo']]
