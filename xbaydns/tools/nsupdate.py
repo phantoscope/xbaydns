@@ -8,7 +8,7 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 
 update DNS server on FLY...
 """
-import dns.exception, dns.name, dns.query, dns.rdata, dns.rdataclass, \
+import dns.exception, dns.name, dns.query, dns.rcode, dns.rdata, dns.rdataclass, \
             dns.rdataset, dns.rdatatype, dns.rdtypes, dns.resolver, \
             dns.tsigkeyring, dns.update, dns.zone
 import logging.config
@@ -101,6 +101,9 @@ class NSUpdate:
             raise NSUpdateException("UPDATE RESPONSE ERROR: Bad Response")
         log.debug("UPDATE RESPONSE: %s"%response)
         self.updatemsg = dns.update.Update(self.domain, keyring = self.tsigkey)
+        rcode = response.rcode()
+        rtext = dns.rcode.to_text(rcode)
+        return {'rcode':rcode, 'rtext':rtext}
         
     def queryRecord(self, name, view = False, rdtype = 'A', 
                     usetcp = False, timeout = 30, rdclass = 'IN'):
