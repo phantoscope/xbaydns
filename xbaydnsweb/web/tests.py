@@ -40,9 +40,10 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.aclM3=AclMatch.objects.create(acl=self.acl3,aclMatch='10.10.10.1')
         self.aclM4=AclMatch.objects.create(acl=self.acl3,aclMatch='10.10.10.2')
         
-        self.view1=View.objects.create(viewName='home')
+        vg=ViewGroup.objects.create(name='default')
+        self.view1=View.objects.create(viewName='home',viewgroup=vg)
         self.viewT1=ViewTsig.objects.create(view=self.view1,tsig='telcom')
-        self.viewT2=ViewMatch.objects.create(view=self.view1,viewMatchClient='127.0.0.1')
+        self.viewT2=ViewMatchClient.objects.create(view=self.view1,viewMatch='127.0.0.1')
         
     def tearDown(self):
         """清洁测试环境"""
