@@ -62,7 +62,7 @@ class NSUpdateTest(basetest.BaseTestCase):
     def test_removeRecord(self):
         self._initnamedconf()
         dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
-        dbfile.write("foo\t\tIN\tA\t192.168.1.1\n\t\t\t\t172.16.1.1\nexample.com. 86400\tIN\tMX\tfoo.example.com\nbar\t\tIN\tCNAME\tfoo.example.com.\n")
+        dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
         dbfile.close()
         os.system("rndc reload")
         recordlist =  ['', 86400, 'IN', 'MX', ['10 foo']]
@@ -89,7 +89,7 @@ class NSUpdateTest(basetest.BaseTestCase):
     def test_queryRecord(self):
         self._initnamedconf()
         dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
-        dbfile.write("foo\t\tIN\tA\t192.168.1.1\n\t\t\t\t\t\t172.16.1.1\nexample.com. 86400\tIN\tMX\tfoo.example.com\nbar\t\tIN\tCNAME\tfoo.example.com.\n")
+        dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
         dbfile.close()
         os.system("rndc reload")
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
