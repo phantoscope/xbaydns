@@ -63,22 +63,26 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         nc.addAcl('tj-cnc',['127.0.0.4','192.168.2.0/24'])
         nc.addAcl('gd-telecom',['127.0.0.2','10.0.10.0/24'])
         nc.addAcl('gx-telecom',['127.0.0.3','10.0.11.0/24'])
+        #加入default的view信息
+        nc.addView("cnc",["bj-cnc","tj-cnc"])
+        nc.addView("telecom",["gd-telecom","gx-telecom"])
+        #加入domain信息，这里有问题，但是先运行，回头再说。这里的add不应有view
+        nc.addDomain("cnc",["sina.com.cn","hd.com"])
+        nc.addDomain("telecom",["sina.com.cn","hd.com"])
         nc.save()
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","bj-cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","tj-cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gd-telecom.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gx-telecom.conf")))
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view")))
-        #加入default的view信息
-        nc.addView("cnc",["bj-cnc","tj-cnc"])
-        nc.addView("telecom",["gd-telecom","gx-telecom"])
-        nc.save()
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","telecom.conf")))
-        #加入domain信息，这里有问题，但是先运行，回头再说。这里的add不应有view
-        nc.addDomain("cnc",["sina.com.cn","hd.com"])
-        nc.addDomain("telecom",["sina.com.cn","hd.com"])
-        nc.save()
+        self.assertTrue( os.system("named-checkconf") == 0 )
+        for i in ["sina.com.cn","hd.com"]:
+            for j in ["cnc","telecom"]:
+                log.debug("check %s as %s"%(i,j))
+                self.assertTrue( os.system("named-checkzone %s %s"%(i,os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic","%s.%s.file"%(j,i)))) == 0 )
+        self.assertTrue(nc.reload() == 0)
 
     def test_intergrate(self):
         """集成测试"""

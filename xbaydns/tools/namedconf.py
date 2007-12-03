@@ -201,20 +201,22 @@ class NamedConf(object):
                         %self.getDomainFileName(domain,view)),"w")
                 zonedata='''
 $ORIGIN .
-$TTL 3600 1 hour
-%(domain)s. IN SOA %(soa)s. (
+$TTL 360 ;10 minute
+%(domain)s IN SOA %(soa)s. %(admin)s. (
             %(time)s ; serial
             60         ; refresh (1 minute)
             3600       ; retry (1 hour)
             604800     ; expire (1 week)
             3600       ; minimum (1 hour)
             )
-%(domain)s. IN NS %(ns)s.
+
+           IN NS %(ns)s.
                 '''%{'domain':domain,'time':self.getSerial(),
-                     'ns':sysconf.default_ns,'soa':sysconf.default_soa}
+                     'ns':sysconf.default_ns,'soa':sysconf.default_soa,
+                     'admin':sysconf.default_admin}
                 f.write(zonedata)
                 f.close()
-    
+
     '''
     保存acldef.conf文件,保存所有生成的include语句
     '''
@@ -231,3 +233,8 @@ $TTL 3600 1 hour
         self.__saveViews(path)
         self.__saveDomains(path)
         self.__saveAcldef(path)
+
+    def reload(self):
+        return os.system("rndc reload")
+        """docstring for reload"""
+        pass
