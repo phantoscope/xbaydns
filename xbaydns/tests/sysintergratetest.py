@@ -32,6 +32,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
         shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
         shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
         basetest.BaseTestCase.setUp(self)
 
     def tearDown(self):
@@ -39,7 +40,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         shutil.rmtree(self.basedir)
         basetest.BaseTestCase.tearDown(self)
 
-    def test_intergrate(self):
+    def _init_conf(self):
         """测试操作系统的named.conf初始化。
         为各种操作系统初始化named.conf,注意，这将清除系统中的原有文件。原有文件请提前备份。
         另一方面，请不要将本机的域名解晰放在127.0.0.1上，这样将会在测试失败时让你的机器也无法工作。"""
@@ -55,27 +56,30 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave")))
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic")))
 
-class SysIntergrate_ConfigTest_Test(basetest.BaseTestCase):
-    """测试named.conf系列的配置"""
-    def setUp(self):
-        self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_sys'))
-        self.nc=NamedConf()
-        basetest.BaseTestCase.setUp(self)
+    def _add_default_conf(self):
+        """加入default的acl信息"""
+        nc=NamedConf()
+        nc.addAcl('bj-cnc',['127.0.0.1','192.168.1.0/24'])
+        nc.addAcl('tj-cnc',['127.0.0.4','192.168.2.0/24'])
+        nc.addAcl('gd-telecom',['127.0.0.2','10.0.10.0/24'])
+        nc.addAcl('gx-telecom',['127.0.0.3','10.0.11.0/24'])
+        nc.save()
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","bj-cnc.conf")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","tj-cnc.conf")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gd-telecom.conf")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gx-telecom.conf")))
+        self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view")))
+        
+        nc.addView("cnc",["bj-cnc","tj-cnc"])
+        nc.addView("telecom",["gd-telecom","gx-telecom"])
+        nc.save()
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","cnc.conf")))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","telecom.conf")))
 
-    def tearDown(self):
-        """清洁测试环境"""
-        shutil.rmtree(self.basedir)
-        basetest.BaseTestCase.tearDown(self)
-
-    def test_add_default_conf(self):
-        """加入default的conf信息"""
-        self.nc.addAcl('cnc',['127.0.0.1','192.168.1.0/24'])
-        self.nc.addAcl('telecom',['127.0.0.2','10.0.10.0/24'])
-        self.nc.save()
-        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","cnc.conf")))
-        self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","telecom.conf")))
-
-
+    def test_intergrate(self):
+        """集成测试"""
+        self._init_conf()
+        self._add_default_conf()
 
 def suite():
     """集合测试用例"""
