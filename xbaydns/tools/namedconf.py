@@ -108,23 +108,24 @@ class NamedConf(object):
         return False
        
     '''
-    add domain(view,domain) 增加一个DNS域。
+    add domain(domain) 增加一个DNS域。
     '''
-    def addDomain(self,view,domain=[]):
+    def addDomain(self,domain=[]):
     	cmds=''
-        for d in domain:
-            fname=self.getDomainFileName(d,view)
-            s='''
+        for view in self.views.keys():
+            for d in domain:
+                fname=self.getDomainFileName(d,view)
+                s='''
     zone "%(domain)s" {
         type master;
         file "%(fname)s";
     };'''%{'domain':d,
            'fname':fname}
-            cmds+=s
-            if view not in self.domains:
-                self.domains[view]={}
-            self.domains[view].update({d:s})
-            log.debug("domain is %s"%self.domains)
+                cmds+=s
+                if view not in self.domains:
+                    self.domains[view]={}
+                self.domains[view].update({d:s})
+                log.debug("domain is %s"%self.domains)
         return cmds
     '''
     获得zone文件名
@@ -139,13 +140,12 @@ class NamedConf(object):
         return '%s%s%s01'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2))
     
     '''
-    del domain(view,domain) 删除一个DNS域 
+    del domain(domain) 删除一个DNS域 
     参数说明： 
-        view   对应的view名
         domain 需要删除的DNS域名
     '''
-    def delDomain(self,view,domain):
-        if view in self.domains:
+    def delDomain(self,domain):
+        for view in self.domains.keys():
             if domain in self.domains[view]:
                 del self.domains[view][domain]
                 return True

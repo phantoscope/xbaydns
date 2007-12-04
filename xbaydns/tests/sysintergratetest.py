@@ -67,8 +67,8 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         nc.addView("cnc",["bj-cnc","tj-cnc"])
         nc.addView("telecom",["gd-telecom","gx-telecom"])
         #加入domain信息，这里有问题，但是先运行，回头再说。这里的add不应有view
-        nc.addDomain("cnc",["sina.com.cn","hd.com"])
-        nc.addDomain("telecom",["sina.com.cn","hd.com"])
+        nc.addDomain(["sina.com.cn","hd.com"])
+        #nc.addDomain("telecom",["sina.com.cn","hd.com"])
         nc.save()
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","bj-cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","tj-cnc.conf")))

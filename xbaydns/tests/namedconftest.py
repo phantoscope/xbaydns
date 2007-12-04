@@ -56,7 +56,8 @@ class NamedConfTest(basetest.BaseTestCase):
         self.assertTrue(self.nc.delView('internal'))
         self.assertFalse(self.nc.delView('home'))
     def test_addDomain(self):
-        cmd = self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
+        self.nc.addView('internal',['127.0.0.1',])
+        cmd = self.nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         self.assertEqual(cmd.replace("  ", "").replace("\n","").strip(),'''
                 zone "sina.com.cn" {
                     type master;
@@ -68,9 +69,10 @@ class NamedConfTest(basetest.BaseTestCase):
                 };
                 '''.replace("  ", "").replace("\n","").strip())
     def test_delDomain(self):
-        self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
-        self.assertTrue(self.nc.delDomain('internal','sina.com.cn'))
-        self.assertFalse(self.nc.delDomain('home','a.sina.com.cn'))
+        self.nc.addView('internal',['127.0.0.1',])
+        self.nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
+        self.assertTrue(self.nc.delDomain('sina.com.cn'))
+        self.assertFalse(self.nc.delDomain('a.sina.com.cn'))
     def test_getDomainFileName(self):
         self.assertEqual(self.nc.getDomainFileName("sina.com.cn","home"),
                         "dynamic/home.sina.com.cn.file")
@@ -82,7 +84,7 @@ class NamedConfTest(basetest.BaseTestCase):
         self.nc.addAcl('home',['127.0.0.1',])
         self.nc.addAcl('fx-subnet',['192.253.254/24',])
         self.nc.addView('internal',['fx-subnet',])
-        self.nc.addDomain('internal',['sina.com.cn','mail.sina.com.cn'])
+        self.nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         self.nc.save(self.basedir)
         self.assertTrue(os.stat(os.path.join(self.basedir,'acl/internal.conf')))
         self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home.conf')))
