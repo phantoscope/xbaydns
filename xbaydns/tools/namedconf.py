@@ -211,7 +211,7 @@ $TTL 360 ;10 minute
             )
 
            IN NS %(ns)s.
-                '''%{'domain':domain,'time':self.getSerial(),
+'''%{'domain':domain,'time':self.getSerial(),
                      'ns':sysconf.default_ns,'soa':sysconf.default_soa,
                      'admin':sysconf.default_admin}
                 f.write(zonedata)
