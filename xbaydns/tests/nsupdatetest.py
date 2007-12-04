@@ -37,15 +37,17 @@ class NSUpdateTest(basetest.BaseTestCase):
         basetest.BaseTestCase.tearDown(self)
 
     def _initnamedconf(self):
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
         returncode = initconf.main()
         nc = namedconf.NamedConf()
         nc.addAcl("hdacl",["any",])
-        nc.addView("hdview",["default",])
+        nc.addView("hdview",["hdacl",])
         cmd = nc.addDomain('hdview', ['example.com'])
         nc.save()
-        namedconf_file = open(sysconf.chroot_path+sysconf.namedconf+"/named.conf", "a")
-        namedconf_file.write(cmd)
-        namedconf_file.close()
         nc.reload()
             
     def test_addRecord(self):
@@ -63,13 +65,13 @@ class NSUpdateTest(basetest.BaseTestCase):
         
     def test_removeRecord(self):
         self._initnamedconf()
-        dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
+        #dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
         # write SOA and NS temporary
-        dbfile.write("$ORIGIN .\n$TTL 3600\n@ IN SOA ns1.example.com. admin.ns1.example.com. (\n2007120301\n8H\n1H\n2W\n1D)\n")
-        dbfile.write("\tNS ns1.example.com.\nns1.example.com.\tA\t127.0.0.1\n")
-        dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
-        dbfile.close()
-        os.system("rndc reload")
+        #dbfile.write("$ORIGIN .\n$TTL 3600\n@ IN SOA ns1.example.com. admin.ns1.example.com. (\n2007120301\n8H\n1H\n2W\n1D)\n")
+        #dbfile.write("\tNS ns1.example.com.\nns1.example.com.\tA\t127.0.0.1\n")
+        #dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
+        #dbfile.close()
+        #os.system("rndc reload")
         recordlist =  ['', 86400, 'IN', 'MX', ['10 foo']]
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         nsupobj.removeRecord(recordlist)        
@@ -93,12 +95,12 @@ class NSUpdateTest(basetest.BaseTestCase):
         
     def test_queryRecord(self):
         self._initnamedconf()
-        dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
-        dbfile.write("$ORIGIN .\n$TTL 3600\n@ IN SOA ns1.example.com. admin.ns1.example.com. (\n2007120301\n8H\n1H\n2W\n1D)\n")
-        dbfile.write("\tNS ns1.example.com.\nns1.example.com.\tA\t127.0.0.1\n")
-        dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
-        dbfile.close()
-        os.system("rndc reload")
+        #dbfile = open(sysconf.chroot_path+sysconf.namedconf+"/dynamic/.example.com.file", "a")
+        #dbfile.write("$ORIGIN .\n$TTL 3600\n@ IN SOA ns1.example.com. admin.ns1.example.com. (\n2007120301\n8H\n1H\n2W\n1D)\n")
+        #dbfile.write("\tNS ns1.example.com.\nns1.example.com.\tA\t127.0.0.1\n")
+        #dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
+        #dbfile.close()
+        #os.system("rndc reload")
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         record_a = nsupobj.queryRecord('foo', rdtype='A')
         record_a.sort()
