@@ -12,6 +12,7 @@ import dns.exception, dns.name, dns.query, dns.rcode, dns.rdata, dns.rdataclass,
             dns.rdataset, dns.rdatatype, dns.rdtypes, dns.resolver, \
             dns.tsigkeyring, dns.update, dns.zone
 import logging.config
+from xbaydns.tools import namedconf
 
 log = logging.getLogger('xbaydns.tools.nsupdate')
 
@@ -27,7 +28,9 @@ class NSUpdate:
         self.tsigkey = None
         if view != False:
             # get TSIG
-            self.tsigkey = dns.tsigkeyring.from_text({'keyname' : 'xxxxxxxx'})
+            namedconf.NamedConf()
+            key = namedconf.loadViewKey(view)
+            self.tsigkey = dns.tsigkeyring.from_text({view: key})
         self.domain_info = self._getDomainInfo()
         self.updatemsg = dns.update.Update(self.domain, keyring = self.tsigkey)
         
@@ -116,7 +119,9 @@ class NSUpdate:
         resolv.lifetime = timeout
         if view != False:
             # get TSIG
-            tsigkey = dns.tsigkeyring.from_text({'keyname' : 'xxxxxxxx'})
+            namedconf.NamedConf()
+            key = namedconf.loadViewKey(view)
+            tsigkey = dns.tsigkeyring.from_text({view: key})
             resolv.use_tsig(tsigkey)
         try:
             resultset = resolv.query(name, dns.rdatatype.from_text(rdtype), 
