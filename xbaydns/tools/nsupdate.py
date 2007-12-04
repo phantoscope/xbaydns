@@ -28,8 +28,8 @@ class NSUpdate:
         self.tsigkey = None
         if view != False:
             # get TSIG
-            namedconf.NamedConf()
-            key = namedconf.loadViewKey(view)
+            namedconf_obj = namedconf.NamedConf()
+            key = namedconf_obj.loadViewKey(view)
             self.tsigkey = dns.tsigkeyring.from_text({view: key})
         self.domain_info = self._getDomainInfo()
         self.updatemsg = dns.update.Update(self.domain, keyring = self.tsigkey)
@@ -119,8 +119,8 @@ class NSUpdate:
         resolv.lifetime = timeout
         if view != False:
             # get TSIG
-            namedconf.NamedConf()
-            key = namedconf.loadViewKey(view)
+            namedconf_obj = namedconf.NamedConf()
+            key = namedconf_obj.loadViewKey(view)
             tsigkey = dns.tsigkeyring.from_text({view: key})
             resolv.use_tsig(tsigkey)
         try:

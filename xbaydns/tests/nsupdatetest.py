@@ -53,7 +53,7 @@ class NSUpdateTest(basetest.BaseTestCase):
     def test_addRecord(self):
         self._initnamedconf()
         recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'IN', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
-        nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
+        nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.', view='hdview')
         nsupobj.addRecord(recordlist)
         nsupobj.commitChanges()
         record_a = nsupobj.queryRecord('foo.example.com.', rdtype='A')
