@@ -77,8 +77,8 @@ class NSUpdateTest(basetest.BaseTestCase):
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         nsupobj.addRecord(recordlist)
         nsupobj.commitChanges()
-        recordlist =  ['', 86400, 'IN', 'MX', ['10 foo']]
-        nsupobj.removeRecord(recordlist)        
+        recordlist =  [['', 86400, 'IN', 'MX', ['10 foo']]]
+        nsupobj.removeRecord(recordlist)
         recordlist = ['bar']
         nsupobj.removeRecord(recordlist, True)
         nsupobj.commitChanges()
