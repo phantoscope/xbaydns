@@ -1,6 +1,8 @@
 # encoding: utf-8
 from django.db import models
 import logging.config
+from xbaydns.tools import nsupdate
+import traceback
 
 log = logging.getLogger('xbaydnsweb.web.tests')
 logging.basicConfig(level=logging.DEBUG)
@@ -118,16 +120,30 @@ class Record(models.Model):
     """Record"""
     view = models.ForeignKey(View)
     domain = models.ForeignKey(Domain)
+    record = models.CharField(maxlength=100)
+    ttl = models.CharField(maxlength=100)
+    ip = models.CharField(maxlength=100)
     rdtype = models.ForeignKey("RecordType")
     recordgroup = models.ForeignKey("RecordGroup")
     
     def save(self):
-        "Before save"
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain))
+        now_record_ip = set(nsupobj.queryRecord(self.record, self.rdtype))#now ip
+        
+        db_record_ip=set(map(lambda x:x.ip,
+                         Record.objects.filter(record=self.record,rdtype=self.rdtype)))#db ip
+        
+        ok_ip=list(db_record_ip&now_record_ip)#线上库中都有的ip
+        del_ip=list(now_record_ip-db_record_ip)#线上有而库中没有的ip
+        add_ip=list(db_record_ip-now_record_ip)#库中有而线上没有的ip
+        
+        nsupobj.removeRecord(del_ip)
+        nsupobj.addRecord(add_ip)
+        
         super(Record,self).save()
-        "After save"
 
     class Admin:
-        list_display = ('view','domain','rdtype','recordgroup')
+        list_display = ('view','domain','rdtype','ttl','ip','recordgroup')
         #search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
