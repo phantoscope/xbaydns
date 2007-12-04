@@ -235,4 +235,11 @@ $TTL 360 ;10 minute
         self.__saveAcldef(path)
 
     def reload(self):
+        """重新加载配置文件，返回0为成功"""
         return os.system("rndc reload")
+
+    def check_configfile(self):
+        """检查生成的named.conf的配置正确，返回0为正确"""
+        return os.system("named-checkconf -z")
+        """docstring for check_configfile"""
+        pass
