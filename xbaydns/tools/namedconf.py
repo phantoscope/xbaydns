@@ -11,7 +11,6 @@ import os,tempfile,datetime
 from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydns.tests.namedconftest')
-logging.basicConfig(level=logging.DEBUG)
 
 def pathIsExists(func):
     def mkconfdir(path,childpath):
@@ -116,15 +115,16 @@ class NamedConf(object):
         for d in domain:
             fname=self.getDomainFileName(d,view)
             s='''
-                zone "%(domain)s" {
-                    type master;
-                    file "%(fname)s";
-                };'''%{'domain':d,
-                       'fname':fname}
+    zone "%(domain)s" {
+        type master;
+        file "%(fname)s";
+    };'''%{'domain':d,
+           'fname':fname}
             cmds+=s
             if view not in self.domains:
                 self.domains[view]={}
             self.domains[view].update({d:s})
+            log.debug("domain is %s"%self.domains)
         return cmds
     '''
     获得zone文件名
