@@ -55,6 +55,7 @@ class NSUpdateTest(basetest.BaseTestCase):
         recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'IN', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
         nsupobj.addRecord(recordlist)
+        nsupobj.commitChanges()
         record_a = nsupobj.queryRecord('foo.example.com.', rdtype='A')
         record_a.sort()
         self.assertEqual(record_a, ['172.16.1.1', '192.168.1.1'])
@@ -72,11 +73,15 @@ class NSUpdateTest(basetest.BaseTestCase):
         #dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
         #dbfile.close()
         #os.system("rndc reload")
-        recordlist =  ['', 86400, 'IN', 'MX', ['10 foo']]
+        recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'IN', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
+        nsupobj.addRecord(recordlist)
+        nsupobj.commitChanges()
+        recordlist =  ['', 86400, 'IN', 'MX', ['10 foo']]
         nsupobj.removeRecord(recordlist)        
         recordlist = ['bar']
         nsupobj.removeRecord(recordlist, True)
+        nsupobj.commitChanges()
         record_a = nsupobj.queryRecord('foo.example.com.', rdtype='A')
         record_a.sort()
         self.assertEqual(record_a, ['172.16.1.1', '192.168.1.1'])
@@ -101,8 +106,11 @@ class NSUpdateTest(basetest.BaseTestCase):
         #dbfile.write("$ORIGIN example.com.\n$TTL 3600\nfoo\t\tIN\tA\t192.168.1.1\n\t\tIN\tA\t172.16.1.1\n\t\tIN\tMX\t10\tfoo\nbar\t\tIN\tCNAME\tfoo\n")
         #dbfile.close()
         #os.system("rndc reload")
+        recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'IN', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
         nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
-        record_a = nsupobj.queryRecord('foo', rdtype='A')
+        nsupobj.addRecord(recordlist)
+        nsupobj.commitChanges()
+        record_a = nsupobj.queryRecord('foo.example.com', rdtype='A')
         record_a.sort()
         self.assertEqual(record_a, ['172.16.1.1', '192.168.1.1'])
         record_cname = nsupobj.queryRecord('bar.example.com.', rdtype='CNAME')
