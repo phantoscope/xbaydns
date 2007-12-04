@@ -21,12 +21,18 @@ installdir = os.path.dirname(os.path.realpath(__file__)) + "/.."
 chroot_path = "/var/named"
 # 这里记录了named.conf所存储的路径
 namedconf = "/etc/namedb"
+# 这是bind的启动脚本
+namedstart = "/etc/rc.d/named start"
+# 这是bind的停止脚本
+namedstop = "/etc/rc.d/named stop"
 
 if (system == 'Darwin'):
     #操作系统为Mac OSX
     chroot_path = "/"
     namedconf = "/etc"
     named_user = "root"
+    namedstart = "service org.isc.named start"
+    namedstop = "service org.isc.named stop"
     if (release == '9.1.0'):
         #OSX 10.5&10.5.1
         pass
