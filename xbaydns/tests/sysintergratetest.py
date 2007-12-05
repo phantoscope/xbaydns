@@ -96,6 +96,8 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertEqual(qrec, ['172.16.1.1', '192.168.1.1'])
         qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME')
         self.assertEqual(qrec, ['www.hd.com.'])
+        qrec = nu.queryRecord('hd.com.', rdtype='MX')
+        self.assertEqual(qrec, ['10 www.hd.com.'])
         
 
     def test_intergrate(self):
