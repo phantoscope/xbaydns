@@ -79,7 +79,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","telecom.conf")))
         self.assertTrue( nc.check_configfile() == 0 )
-        for i in ["sina.com.cn","hd.com"]:
+        for i in ["abc.cn","hd.com"]:
             for j in ["cnc","telecom"]:
                 log.debug("check %s as %s"%(i,j))
                 self.assertTrue( os.system("named-checkzone %s %s"%(i,os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic","%s.%s.file"%(j,i)))) == 0 )
@@ -94,6 +94,8 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         qrec = nu.queryRecord('www.hd.com.', rdtype='A')
         qrec.sort()
         self.assertEqual(qrec, ['172.16.1.1', '192.168.1.1'])
+        qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME')
+        self.assertEqual(qrec, ['www.hd.com.'])
         
 
     def test_intergrate(self):
