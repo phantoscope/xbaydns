@@ -43,14 +43,20 @@ class NamedConfTest(basetest.BaseTestCase):
     def test_addView(self):
         cmd = self.nc.addView('internal',['127.0.0.1',])
         self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; %s };')
-        cmd = self.nc.addView('internal-tsig',tsig=['telcome',])
-        self.assertEqual(cmd.strip(),'view "internal-tsig" { match-clients { key telcome; }; %s };')
+        cmd = self.nc.addView('internal-tsig',tsig='telcome')
+        self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
+                         'key telcome-view-key { algorithm hmac-md5; secret dGVsY29tZS12aWV3LWtleQ==;};view "internal-tsig" { match-clients { key telcome; }; %s };')
     def test_updateView(self):
         cmd = self.nc.updateView('internal',['127.0.0.1',])
         self.assertEqual(cmd.strip(),'view "internal" { match-clients { 127.0.0.1; }; %s };')
+    def test_genSecret(self):
+        key = self.nc.genSecret('telcome-view-key')
+        self.assertEqual(base64.b64decode(key),"telcome-view-key")
     def test_loadViewKey(self):
+        self.nc.addView('internal',tsig='telcome')
         key = self.nc.loadViewKey('internal')
-        self.assertEqual(base64.b64decode(key),"internal-key")
+        self.assertEqual(key[0],"telcome-view-key")
+        self.assertEqual(base64.b64decode(key[1]),"telcome-view-key")
     def test_delView(self):
         self.nc.addView('internal',['127.0.0.1',])
         self.assertTrue(self.nc.delView('internal'))

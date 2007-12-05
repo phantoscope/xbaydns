@@ -7,6 +7,7 @@ Copyright (c) 2007 yanxu. All rights reserved.
 """
 
 import logging.config
+import base64
 import os,tempfile,datetime
 from xbaydns.conf import sysconf
 
@@ -31,6 +32,7 @@ class NamedConf(object):
     def __init__(self):
         self.acls={}
         self.views={}
+        self.keys={}
         self.domains={}
         self.acl_include=[]
     '''
@@ -67,12 +69,22 @@ class NamedConf(object):
     view 增加的view的名称 
     match-client 匹配于该view的acl汇总
     '''
-    def addView(self,view,matchClient=[],tsig=[]):
-        tsig=map(lambda x:'key %s'%x,tsig)
+    def addView(self,view,matchClient=[],tsig=''):
+        keys,key_tsig='',''
+        if tsig<>'':
+            keys='''
+key %s-view-key {
+    algorithm hmac-md5;
+    secret %s;
+};
+'''
+            keys=keys%(tsig,self.genSecret('%s-view-key'%tsig))
+            key_tsig='key %s'%tsig
         s='''view "%s" { match-clients { %s; }; %%s };
-        '''%(view,';'.join(matchClient+tsig))
-        self.views[view]=s
-        return s
+        '''%(view,';'.join(matchClient)+key_tsig)
+        self.views[view]=keys+s
+        self.keys[view]=tsig
+        return keys+s
     
     '''
     update view(view,match-client) 更新view 
@@ -81,9 +93,11 @@ class NamedConf(object):
     view 增加的view的名称 
     match-client 匹配于该view的acl汇总
     '''
-    def updateView(self,view,matchClient=[],tsig=[]):
+    def updateView(self,view,matchClient=[],tsig=''):
         return self.addView(view,matchClient,tsig)
     
+    def genSecret(self,key):
+        return base64.b64encode(key)
     '''
     load view(view,match-client) 更新view 
 
@@ -92,8 +106,10 @@ class NamedConf(object):
     match-client 匹配于该view的acl汇总
     '''
     def loadViewKey(self,view):
-        import base64
-        return base64.b64encode('%s-key'%view)
+        if view in self.keys:
+            key='%s-view-key'%self.keys[view]
+            return (key,self.genSecret(key))
+        return ("","")
     
     '''
     del view(view) 删除view 
