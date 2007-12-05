@@ -119,20 +119,20 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
             log.debug("req www.hd.com@telecom return %s"%qrec)
         except NSUpdateException:
             reqfailed = True
-        self.assertEqual(reqfailed)
+        self.assertTrue(reqfailed)
         reqfailed = False
         try:
             qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME', view='telecom')
         except NSUpdateException:
             reqfailed = True
         reqfailed = False
-        self.assertEqual(reqfailed)
+        self.assertTrue(reqfailed)
         try:
             qrec = nu.queryRecord('hd.com.', rdtype='MX', view='telecom')
         except NSUpdateException:
             reqfailed = True
         reqfailed = False
-        self.assertEqual(reqfailed)
+        self.assertTrue(reqfailed)
 
     def test_intergrate(self):
         """集成测试"""
