@@ -33,8 +33,8 @@ if (system == 'Darwin'):
     chroot_path = "/"
     namedconf = "/etc"
     named_user = "root"
-    namedstart = "rndc reload"
-    namedstop = "rndc stop;sleep 10"
+    namedstart = "sudo service org.isc.named start;sleep 2"
+    namedstop = "sudo service org.isc.named stop"
     if (release == '9.1.0'):
         #OSX 10.5&10.5.1
         pass
