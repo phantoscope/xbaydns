@@ -133,6 +133,29 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
             reqfailed = True
         self.assertTrue(reqfailed)
 
+    def _del_default_record(self):
+        """删除域名的测试"""
+        nu = NSUpdate('127.0.0.1', 'hd.com.',view="cnc")
+        recordlist =  [['', 86400, 'IN', 'MX', ['10 www']]]
+        nu.removeRecord(recordlist)
+        recordlist = ['www']
+        nu.removeRecord(recordlist,True)
+        nu.commitChanges()
+        reqfailed = False
+        try:
+            qrec = nu.queryRecord('www.hd.com.', rdtype='A', view='cnc')
+            log.debug("req www.hd.com@cnc return %s"%qrec)
+        except NSUpdateException:
+            reqfailed = True
+        self.assertTrue(reqfailed)
+        reqfailed = False
+        try:
+            qrec = nu.queryRecord('hd.com.', rdtype='MX', view='telecom')
+        except NSUpdateException:
+            reqfailed = True
+        self.assertTrue(reqfailed)
+
+
     def test_intergrate(self):
         """集成测试"""
         self._init_conf()
