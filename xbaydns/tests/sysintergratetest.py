@@ -90,6 +90,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         nu = NSUpdate('127.0.0.1', 'hd.com.', view='cnc')
         nu.addRecord(recordlist)
         nu.commitChanges()
+        #普通查，这时被match到了cnc，所以因该都可以查到
         nu = NSUpdate('127.0.0.1', 'hd.com.')
         qrec = nu.queryRecord('www.hd.com.', rdtype='A')
         qrec.sort()
@@ -98,7 +99,36 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertEqual(qrec, ['www.hd.com.'])
         qrec = nu.queryRecord('hd.com.', rdtype='MX')
         self.assertEqual(qrec, ['10 www.hd.com.'])
-        
+        #指定cnc view查询，应该全都通过
+        nu = NSUpdate('127.0.0.1', 'hd.com.', view='cnc')
+        qrec = nu.queryRecord('www.hd.com.', rdtype='A')
+        qrec.sort()
+        self.assertEqual(qrec, ['172.16.1.1', '192.168.1.1'])
+        qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME')
+        self.assertEqual(qrec, ['www.hd.com.'])
+        qrec = nu.queryRecord('hd.com.', rdtype='MX')
+        self.assertEqual(qrec, ['10 www.hd.com.'])
+        #指定了telecom view，应该全都没有
+        nu = NSUpdate('127.0.0.1', 'hd.com.', view='telecom')
+        reqfailed = False
+        try:
+            qrec = nu.queryRecord('www.hd.com.', rdtype='A')
+        except nsupdate.NSUpdateException:
+            reqfailed = True
+        self.assertEqual(reqfailed)
+        reqfailed = False
+        try:
+            qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME')
+        except nsupdate.NSUpdateException:
+            reqfailed = True
+        reqfailed = False
+        self.assertEqual(reqfailed)
+        try:
+            qrec = nu.queryRecord('hd.com.', rdtype='MX')
+        except nsupdate.NSUpdateException:
+            reqfailed = True
+        reqfailed = False
+        self.assertEqual(reqfailed)
 
     def test_intergrate(self):
         """集成测试"""
