@@ -116,11 +116,11 @@ def create_destdir():
     """创建系统目录，这里只是在tmp目录中建立"""
     
     tmpdir = mkdtemp()
-    os.makedirs("%s/%s/acl"%(tmpdir, sysconf.namedconf))
-    os.makedirs("%s/%s/dynamic"%(tmpdir, sysconf.namedconf))
+    os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"acl"))
+    os.makedirs(os.path.join(tmpdir, sysconf.namedconf,dynamic))
     os.chown("%s/%s/dynamic"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
-    os.mkdir("%s/%s/master"%(tmpdir, sysconf.namedconf))
-    os.mkdir("%s/%s/slave"%(tmpdir, sysconf.namedconf))
+    os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"master"))
+    os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"slave"))
     os.chown("%s/%s/slave"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
     return tmpdir
 
