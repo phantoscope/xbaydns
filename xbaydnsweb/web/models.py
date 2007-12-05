@@ -112,7 +112,7 @@ class Record(models.Model):
     recordgroup = models.ForeignKey("RecordGroup")
     
     def save(self):
-        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain))
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
         now_record_ip = set(nsupobj.queryRecord(self.record, self.rdtype))#now ip
         
         db_record_ip=set(map(lambda x:x.ip,
