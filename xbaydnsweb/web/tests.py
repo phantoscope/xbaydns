@@ -78,6 +78,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc=NamedConf()
         nc.addAcl('any',['127.0.0.1',])
         nc.addView('beijing',['any',])
+        log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.reload()
