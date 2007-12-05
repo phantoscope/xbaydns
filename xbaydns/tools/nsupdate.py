@@ -110,10 +110,16 @@ class NSUpdate:
         rtext = dns.rcode.to_text(rcode)
         return {'rcode':rcode, 'rtext':rtext}
         
-    def queryRecord(self, name, view = False, rdtype = 'A', 
+    def queryRecord(self, name, rdtype = 'A', usetcp = False, timeout = 30, rdclass = 'IN'):
+        '''
+        query a record in the view specified at initializing time.
+        '''
+        self.queryRecord_Independent(self, name, view = self.view, rdtype, usetcp, timeout, rdclass)
+                    
+    def queryRecord_Independent(self, name, view = False, rdtype = 'A', 
                     usetcp = False, timeout = 30, rdclass = 'IN'):
         '''
-        query a record though the specified NS server.
+        query a record though the specified NS server. if view == False, no view will be specified.
         '''
         resolv = dns.resolver.Resolver()
         resolv.nameservers = [self.addr]
