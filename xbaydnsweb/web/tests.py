@@ -93,6 +93,34 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain1),view='beijing')
         record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
         self.assertEqual(record_result,['10.210.132.70'])
+        
+    def test_updateRecord(self):
+        initconf.main()
+        nc=NamedConf()
+        nc.addAcl('yanxu-any',['127.0.0.1',])
+        nc.addView('beijing',['yanxu-any',])
+        log.debug(nc.loadViewKey('beijing'))
+        nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
+        nc.save()
+        nc.reload()
+        record1=Record.objects.create(view=self.view1,
+                                           domain=self.domain1,
+                                           record='www',
+                                           ttl='3600',
+                                           ip='10.210.132.70',
+                                           rdclass='IN',
+                                           rdtype=self.rt1,
+                                           recordgroup=self.rg1)
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain1),view='beijing')
+        record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
+        self.assertEqual(record_result,['10.210.132.70'])
+        
+        record2=Record.objects.get(id=1)
+        record2.ip='10.210.132.71'
+        record2.save()
+        
+        record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
+        self.assertEqual(record_result,['10.210.132.71'])
 
 def suite():
     """集合测试用例"""
