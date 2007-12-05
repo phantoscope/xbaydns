@@ -43,19 +43,19 @@ class NamedConfTest(basetest.BaseTestCase):
     def test_addView(self):
         cmd = self.nc.addView('home')
         self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
-                         'key "home-view-key" { algorithm hmac-md5; secret "aG9tZS12aWV3LWtleQ==";};view "home" { match-clients { key "home-view-key"; }; %s };')
+                         'include "defaultzone.conf";key "home-view-key" { algorithm hmac-md5; secret "aG9tZS12aWV3LWtleQ==";};view "home" { match-clients { key "home-view-key"; }; %s };')
     
         cmd = self.nc.addView('internal',['127.0.0.1',])
         self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
-                         'key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";key "internal-view-key"; }; %s };')
+                         'include "defaultzone.conf";key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";key "internal-view-key"; }; %s };')
         cmd = self.nc.addView('internal',['127.0.0.1','10.10.10.10/24',])
         self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
-                         'key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";"10.10.10.10/24";key "internal-view-key"; }; %s };')
+                         'include "defaultzone.conf";key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";"10.10.10.10/24";key "internal-view-key"; }; %s };')
     
     def test_updateView(self):
         cmd = self.nc.updateView('internal',['127.0.0.1',])
         self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
-                         'key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";key "internal-view-key"; }; %s };')
+                         'include "defaultzone.conf";key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";key "internal-view-key"; }; %s };')
     def test_genSecret(self):
         key = self.nc.genSecret('telcome-view-key')
         self.assertEqual(base64.b64decode(key),"telcome-view-key")

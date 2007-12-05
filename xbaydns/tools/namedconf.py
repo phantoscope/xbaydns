@@ -70,6 +70,7 @@ class NamedConf(object):
     '''
     def addView(self,view,matchClient=[]):
         tsig='%s-view-key'%view
+        include='''include "defaultzone.conf";\n'''
         if len(matchClient)>0:
             matchClient=map(lambda x:'"%s";'%x,matchClient)
             matchClient=''.join(matchClient)
@@ -85,8 +86,8 @@ key "%s" {
         key_tsig='key "%s"'%tsig
         s='''view "%s" { match-clients { %s%s; }; %%s };
         '''%(view,matchClient,key_tsig)
-        self.views[view]=keys+s
-        return keys+s
+        self.views[view]=include+keys+s
+        return include+keys+s
     
     '''
     update view(view,match-client) 更新view 
