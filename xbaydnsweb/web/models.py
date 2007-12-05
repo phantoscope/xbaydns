@@ -56,17 +56,22 @@ class View(models.Model):
 class ViewMatchClient(models.Model):
     """ViewMatch Model"""
     view = models.ForeignKey(View)
-    viewMatch = models.CharField(maxlength=100,verbose_name='IP地址')
+    #viewMatch = models.CharField(maxlength=100,verbose_name='acl名称')
+    acl = models.ManyToManyField(Acl,verbose_name='acl名称')
 
     class Admin:
-        list_display = ('view','viewMatch')
+        list_display = ('view','showacls')
         #search_fields = ('',)
     class Meta:
         verbose_name = 'View MatchClient'
         verbose_name_plural = 'View MatchClient管理'
+    def showacls(self):
+        return ','.join(map(lambda x:x.aclName,self.acl.all()))
+    showacls.short_description = 'Aiews'
+    showacls.allow_tags = True
 
     def __str__(self):
-        return ' '.join([str(self.view),self.viewMatch])
+        return str(self.view)
 
 class Domain(models.Model):
     """Domain Model"""
@@ -77,8 +82,8 @@ class Domain(models.Model):
         list_display = ('showviews','zone',)
         search_fields = ('zone',)
     class Meta:
-        verbose_name = 'Zone'
-        verbose_name_plural = 'Zone管理'
+        verbose_name = '域名'
+        verbose_name_plural = '域名管理'
     def showviews(self):
         return ','.join(map(lambda x:x.viewName,self.view.all()))
     showviews.short_description = 'Views'
@@ -103,12 +108,12 @@ class ViewGroup(models.Model):
 
 class Record(models.Model):
     """Record"""
-    view = models.ForeignKey(View)
+    #view = models.ForeignKey(View)
     domain = models.ForeignKey(Domain)
     record = models.CharField(maxlength=100)
-    ttl = models.CharField(maxlength=100)
+    ttl = models.CharField(maxlength=100,default='600')
     ip = models.CharField(maxlength=100)
-    rdclass = models.CharField(maxlength=100)
+    rdclass = models.CharField(maxlength=100,default='IN')
     rdtype = models.ForeignKey("RecordType")
     recordgroup = models.ForeignKey("RecordGroup")
     
@@ -135,7 +140,7 @@ class Record(models.Model):
         super(Record,self).delete()
 
     class Admin:
-        list_display = ('view','domain','rdtype','ttl','ip','recordgroup')
+        list_display = ('domain','rdtype','ttl','ip','recordgroup')
         #search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
@@ -182,20 +187,6 @@ class ViewMatch(models.Model):
     def __str__(self):
         return self.name
 
-class SOA(models.Model):
-    """SOA"""
-    name = models.CharField(maxlength=100)
-
-    class Admin:
-        list_display = ('name',)
-        search_fields = ('name',)
-    class Meta:
-        verbose_name = 'SOA'
-        verbose_name_plural = 'SOA管理'
-
-
-    def __str__(self):
-        return self.name
         
 class RecordType(models.Model):
     """RecordType"""
