@@ -108,7 +108,6 @@ class ViewGroup(models.Model):
 
 class Record(models.Model):
     """Record"""
-    view = models.ForeignKey(View)
     domain = models.ForeignKey(Domain)
     record = models.CharField(maxlength=100)
     ttl = models.CharField(maxlength=100,default='600')
@@ -118,33 +117,47 @@ class Record(models.Model):
     recordgroup = models.ForeignKey("RecordGroup")
     
     def save(self):
-        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
-        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-        add_data=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
-        if self.id!=None:
-            old_r=Record.objects.get(id=self.id)
-            del_data=[[old_r.record,int(old_r.ttl),old_r.rdclass,str(old_r.rdtype),[old_r.ip,]],]
-            nsupobj.removeRecord(del_data)
+        for view in self.getRecordViews():
+            nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=view)
+            #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
+            add_data=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
+            if self.id!=None:
+                old_r=Record.objects.get(id=self.id)
+                del_data=[[old_r.record,int(old_r.ttl),old_r.rdclass,str(old_r.rdtype),[old_r.ip,]],]
+                nsupobj.removeRecord(del_data)
         
-        nsupobj.addRecord(add_data)
-        nsupobj.commitChanges()
+            nsupobj.addRecord(add_data)
+            nsupobj.commitChanges()
         
         super(Record,self).save()
     def delete(self):
-        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
-        del_data=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
-        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-        nsupobj.removeRecord(del_data)
-        nsupobj.commitChanges()
+        for view in self.getRecordViews():
+            nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=view)
+            del_data=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
+            #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
+            nsupobj.removeRecord(del_data)
+            nsupobj.commitChanges()
         
         super(Record,self).delete()
 
     class Admin:
-        list_display = ('domain','rdtype','ttl','ip','recordgroup')
+        list_display = ('domain','rdtype','ttl','ip','recordgroup','showviews')
         #search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
         verbose_name_plural = '4.3 Record 管理'
+        
+    def getRecordViews(self):
+        views=[]
+        for vm in ViewMatch.objects.filter(recordgroup=self.recordgroup):
+            for vg in vm.viewgroup.all():
+                for view in View.objects.filter(viewgroup=vg):
+                    views.append(view.viewName)
+        return views
+    def showviews(self):
+        return ','.join(self.getRecordViews())
+    showviews.short_description = 'Views'
+    showviews.allow_tags = True
 
     def __str__(self):
         return '%s IN %s'%(self.domain,self.rdtype)

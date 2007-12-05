@@ -83,8 +83,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.reload()
-        record1=Record.objects.create(view=self.view1,
-                                           domain=self.domain1,
+        record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
                                            ip='10.210.132.70',
@@ -104,8 +103,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.reload()
-        record1=Record.objects.create(view=self.view1,
-                                           domain=self.domain1,
+        record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
                                            ip='10.210.132.70',
@@ -132,8 +130,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.reload()
-        record1=Record.objects.create(view=self.view1,
-                                           domain=self.domain1,
+        record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
                                            ip='10.210.132.70',
