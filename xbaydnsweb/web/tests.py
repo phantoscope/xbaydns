@@ -90,8 +90,8 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
                                            rdclass='IN',
                                            rdtype=self.rt1,
                                            recordgroup=self.rg1)
-        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain))
-        record_result=nsupobj.queryRecord('www', 'A')
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain1))
+        record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
         self.assertEqual(record_result,['10.210.132.70'])
 
 def suite():
