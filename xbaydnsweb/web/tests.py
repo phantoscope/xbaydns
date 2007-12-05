@@ -87,6 +87,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
                                            record='www',
                                            ttl='3600',
                                            ip='10.210.132.70',
+                                           rdclass='IN',
                                            rdtype=self.rt1,
                                            recordgroup=self.rg1)
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain))

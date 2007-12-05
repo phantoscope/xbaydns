@@ -108,19 +108,22 @@ class Record(models.Model):
     record = models.CharField(maxlength=100)
     ttl = models.CharField(maxlength=100)
     ip = models.CharField(maxlength=100)
+    rdclass = models.CharField(maxlength=100)
     rdtype = models.ForeignKey("RecordType")
     recordgroup = models.ForeignKey("RecordGroup")
     
     def save(self):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
-        now_record_ip = set(nsupobj.queryRecord(self.record, self.rdtype))#now ip
+        now_record_ip = set(nsupobj.queryRecord(str(self.domain), rdtype=self.rdtype))#now ip
         
         db_record_ip=set(map(lambda x:x.ip,
-                         Record.objects.filter(record=self.record,rdtype=self.rdtype)))#db ip
+                         Record.objects.filter(domain=self.domain,rdtype=self.rdtype)))#db ip
         
         ok_ip=list(db_record_ip&now_record_ip)#线上库中都有的ip
         del_ip=list(now_record_ip-db_record_ip)#线上有而库中没有的ip
+        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#Add record style
         add_ip=list(db_record_ip-now_record_ip)#库中有而线上没有的ip
+        add_ip=[self.record,int(self.ttl),self.rdclass,self.rdtype,add_ip]
         
         nsupobj.removeRecord(del_ip)
         nsupobj.addRecord(add_ip)
