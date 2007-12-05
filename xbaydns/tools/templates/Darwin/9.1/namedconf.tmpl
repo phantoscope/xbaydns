@@ -22,3 +22,16 @@ options {
     allow-transfer { 127.0.0.1; };
     allow-update { 127.0.0.1; };
 };
+
+logging {
+        category default {
+                _default_log;
+        };
+
+        channel _default_log  {
+                file "/var/log/named.log";
+                severity info;
+                print-time yes;
+        };
+};
+
