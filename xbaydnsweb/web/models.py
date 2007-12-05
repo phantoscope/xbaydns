@@ -114,11 +114,12 @@ class Record(models.Model):
     
     def save(self):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
+        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
+        data=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
         if self.id!=None:
-            nsupobj.removeRecord([self.ip,])
-        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#Add record style
-        add_ip=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
-        nsupobj.addRecord(add_ip)
+            nsupobj.removeRecord(data)
+        
+        nsupobj.addRecord(data)
         nsupobj.commitChanges()
         
         super(Record,self).save()
