@@ -45,7 +45,8 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         
         vg=ViewGroup.objects.create(name='default')
         self.view1=View.objects.create(viewName='beijing',viewgroup=vg)
-        self.viewT2=ViewMatchClient.objects.create(view=self.view1,viewMatch='127.0.0.1')
+        self.viewT2=ViewMatchClient.objects.create(view=self.view1)
+        self.viewT2.acl.add(self.acl1)
         
         self.rt1=RecordType.objects.create(name='A')
         self.rg1=RecordGroup.objects.create(name='rg1')

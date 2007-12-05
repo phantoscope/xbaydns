@@ -108,7 +108,7 @@ class ViewGroup(models.Model):
 
 class Record(models.Model):
     """Record"""
-    #view = models.ForeignKey(View)
+    view = models.ForeignKey(View)
     domain = models.ForeignKey(Domain)
     record = models.CharField(maxlength=100)
     ttl = models.CharField(maxlength=100,default='600')
