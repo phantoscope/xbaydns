@@ -66,7 +66,7 @@ except KeyError:
     sys.exit(errno.EINVAL)
         
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
-filename_map = dict(acl='acl/acldef.conf', defzone='defaultzone.conf')
+filename_map = dict(acl='acl/acldef.conf')
 default_soa = 'localhost'
 default_ns = 'ns1.sina.com.cn'
 default_admin = 'huangdong@gmail.com'
