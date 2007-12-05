@@ -200,6 +200,7 @@ def main():
     # that's my business
     # get named uid
     tmpdir = create_destdir()
+    os.chmod(tmpdir,0755)
     log.debug(tmpdir)
     if create_conf(tmpdir) == False or install_conf(tmpdir, chrootdir) == False:
         print "Create configuration files failed."
