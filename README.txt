@@ -32,6 +32,7 @@ Release Notes
 
 1.0
  * 支持FreeBSD 7.0操作系统
+ * 支持Mac OSX 10.5操作系统
  * 支持BIND 9.4.1P1
  * 支持DNS的初始化操作
  * 支持DNS的A、MX、NS、CNAME记录的管理
