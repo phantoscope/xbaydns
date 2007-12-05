@@ -43,8 +43,8 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.aclM3=AclMatch.objects.create(acl=self.acl3,aclMatch='10.10.10.1')
         self.aclM4=AclMatch.objects.create(acl=self.acl3,aclMatch='10.10.10.2')
         
-        vg=ViewGroup.objects.create(name='default')
-        self.view1=View.objects.create(viewName='beijing',viewgroup=vg)
+        self.vg=ViewGroup.objects.create(name='default')
+        self.view1=View.objects.create(viewName='beijing',viewgroup=self.vg)
         self.viewT2=ViewMatchClient.objects.create(view=self.view1)
         self.viewT2.acl.add(self.acl1)
         
@@ -52,6 +52,10 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.rg1=RecordGroup.objects.create(name='rg1')
         self.domain1=Domain.objects.create(zone='sina.com.cn')
         self.domain1.view.add(self.view1)
+        
+        self.vm1=ViewMatch.objects.create(name='china')
+        self.vm1.viewgroup.add(self.vg)
+        self.vm1.recordgroup.add(self.rg1)
         
     def tearDown(self):
         """清洁测试环境"""
