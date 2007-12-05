@@ -23,6 +23,7 @@ from django.test import TestCase
 from django.conf import settings
 from xbaydnsweb.web.models import *
 from xbaydnsweb.web.utils import *
+from xbaydns.tools import initconf
 from xbaydns.tools import namedconf
 from xbaydns.tools import nsupdate
 
@@ -44,7 +45,6 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         
         vg=ViewGroup.objects.create(name='default')
         self.view1=View.objects.create(viewName='beijing',viewgroup=vg)
-        self.viewT1=ViewTsig.objects.create(view=self.view1,tsig='telcom')
         self.viewT2=ViewMatchClient.objects.create(view=self.view1,viewMatch='127.0.0.1')
         
         self.rt1=RecordType.objects.create(name='A')
@@ -73,7 +73,22 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         acl "internal" { 127.0.0.1; };
         view "home" { match-clients { 127.0.0.1;key telcom; }; %s };
         '''
-
+    '''def test_saveRecord(self):
+        initconf.main()
+        nc=NamedConf()
+        nc.addView('beijing',['127.0.0.1',])
+        nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
+        nc.save()
+        record1=Record.objects.create(view=self.view1,
+                                           domain=self.domain1,
+                                           record='www',
+                                           ttl='3600',
+                                           ip='10.210.132.70',
+                                           rdtype=self.rt1,
+                                           recordgroup=self.rg1)
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain))
+        record_result=nsupobj.queryRecord('www', 'A')
+        self.assertEqual(record_result,['10.210.132.70'])'''
 
 def suite():
     """集合测试用例"""

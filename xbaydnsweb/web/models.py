@@ -67,21 +67,6 @@ class ViewMatchClient(models.Model):
 
     def __str__(self):
         return ' '.join([str(self.view),self.viewMatch])
-        
-class ViewTsig(models.Model):
-    """ViewTsig Model"""
-    view = models.ForeignKey(View)
-    tsig = models.CharField(maxlength=100)
-
-    class Admin:
-        list_display = ('view','tsig')
-        #search_fields = ('',)
-    class Meta:
-        verbose_name = 'View Tsig'
-        verbose_name_plural = 'View Tsig管理'
-
-    def __str__(self):
-        return "ViewTsig"
 
 class Domain(models.Model):
     """Domain Model"""
