@@ -25,6 +25,8 @@ namedconf = "/etc/namedb"
 namedstart = "/etc/rc.d/named start"
 # 这是bind的停止脚本
 namedstop = "/etc/rc.d/named stop"
+# 这是bind的重启脚本
+namedrestart = "/etc/rc.d/named restart"
 
 if (system == 'Darwin'):
     #操作系统为Mac OSX
