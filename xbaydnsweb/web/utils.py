@@ -20,9 +20,9 @@ def saveAllConf(path):
                 AclMatch.objects.filter(acl=acl))
         nc.addAcl(acl.aclName,matchs)
     for view in View.objects.all():
-        view_matchs=map(lambda x:x.viewMatch,
-                ViewMatchClient.objects.filter(view=view))
-        nc.addView(view.viewName,view_matchs)
+        for vmc in ViewMatchClient.objects.filter(view=view):
+            view_matchs=map(lambda x:x.aclName,vmc.acl.all())
+            nc.addView(view.viewName,view_matchs)
     domain_matchs = map(lambda x:x.zone,Domain.objects.all())
     nc.addDomain(domain_matchs)
     nc.save(path)
