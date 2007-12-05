@@ -147,7 +147,7 @@ def create_conf(tmpdir):
         shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, sysconf.namedconf))
         shutil.copyfile(TMPL_RNDC_KEY, "%s/%s/rndc.key"%(tmpdir, sysconf.namedconf))
         os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),0600)
-        os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_user,0)
+        os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_uid,0)
         namedconf = namedconf_file(sysconf.filename_map)
         tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedconf)
