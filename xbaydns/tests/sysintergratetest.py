@@ -23,6 +23,7 @@ logging.basicConfig(level=logging.DEBUG)
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf
 from xbaydns.tools.namedconf import *
+from xbaydns.tools.nsupdate import *
 
 class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
     """测试初始化配置"""
@@ -66,8 +67,10 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         #加入default的view信息
         nc.addView("cnc",["bj-cnc","tj-cnc"])
         nc.addView("telecom",["gd-telecom","gx-telecom"])
-        nc.addDomain(["sina.com.cn","hd.com"])
+        nc.addDomain(["abc.cn","hd.com"])
+        log.debug("save named.conf")
         nc.save()
+        #做生成的配置文件的所有检查
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","bj-cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","tj-cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl","gd-telecom.conf")))
@@ -82,6 +85,16 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
                 self.assertTrue( os.system("named-checkzone %s %s"%(i,os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic","%s.%s.file"%(j,i)))) == 0 )
         nc.named_restart()
         self.assertTrue(nc.reload() == 0)
+        #为domain增加域名
+        recordlist = [['www', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['ftp', 3600, 'IN', 'CNAME', ['www']], ['', 86400, 'IN', 'MX', ['10 www']]]
+        nu = NSUpdate('127.0.0.1', 'hd.com.', view='cnc')
+        nu.addRecord(recordlist)
+        nu.commitChanges()
+        nu = NSUpdate('127.0.0.1', 'hd.com.')
+        qrec = nu.queryRecord('www.hd.com.', rdtype='A')
+        qrec.sort()
+        self.assertEqual(qrec, ['172.16.1.1', '192.168.1.1'])
+        
 
     def test_intergrate(self):
         """集成测试"""
