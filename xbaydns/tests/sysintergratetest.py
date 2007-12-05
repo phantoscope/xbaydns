@@ -75,11 +75,12 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         self.assertTrue(os.path.isdir(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","cnc.conf")))
         self.assertTrue(os.path.isfile(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view","telecom.conf")))
-        self.assertTrue( os.system("named-checkconf") == 0 )
+        self.assertTrue( nc.check_configfile() == 0 )
         for i in ["sina.com.cn","hd.com"]:
             for j in ["cnc","telecom"]:
                 log.debug("check %s as %s"%(i,j))
                 self.assertTrue( os.system("named-checkzone %s %s"%(i,os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic","%s.%s.file"%(j,i)))) == 0 )
+        nc.named_restart()
         self.assertTrue(nc.reload() == 0)
 
     def test_intergrate(self):
