@@ -114,7 +114,7 @@ class NSUpdate:
         '''
         query a record in the view specified at initializing time.
         '''
-        self.queryRecord_Independent(name, view = self.view, rdtype = rdtype, 
+        return self.queryRecord_Independent(name, view = self.view, rdtype = rdtype, 
                                                     usetcp = usetcp, timeout = timeout, rdclass = rdclass)
 
     """
