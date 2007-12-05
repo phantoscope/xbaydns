@@ -114,13 +114,14 @@ def backup_conf(confdir, backdir):
 
 def create_destdir():
     """创建系统目录，这里只是在tmp目录中建立"""
+    
     tmpdir = mkdtemp()
-    os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"acl"))
-    os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"dynamic"))
-    os.chown(os.path.join(tmpdir, sysconf.namedconf,"dynamic"), sysconf.named_uid, 0)
-    os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"master"))
-    os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"slave"))
-    os.chown(os.path.join(tmpdir, sysconf.namedconf,"slave"), sysconf.named_uid, 0)
+    os.makedirs("%s/%s/acl"%(tmpdir, sysconf.namedconf))
+    os.makedirs("%s/%s/dynamic"%(tmpdir, sysconf.namedconf))
+    os.chown("%s/%s/dynamic"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
+    os.mkdir("%s/%s/master"%(tmpdir, sysconf.namedconf))
+    os.mkdir("%s/%s/slave"%(tmpdir, sysconf.namedconf))
+    os.chown("%s/%s/slave"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
     return tmpdir
 
 def create_conf(tmpdir):
@@ -132,23 +133,23 @@ def create_conf(tmpdir):
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
-        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
+        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
-        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
+        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
         tmpfile.write(defzone)
         tmpfile.close()
-        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf, "named.root"), "w")
+        tmpfile = open("%s/%s/named.root"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedroot)
         tmpfile.close()
-        shutil.copyfile(TMPL_EMPTY_DB, os.path.join(tmpdir, sysconf.namedconf,"master","empty.db"))
-        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, os.path.join(tmpdir, sysconf.namedconf,"master","localhost-forward.db"))
-        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, os.path.join(tmpdir, sysconf.namedconf,"master","localhost-reverse.db"))
-        shutil.copyfile(TMPL_RNDC_KEY, os.path.join(tmpdir, sysconf.namedconf,"rndc.key"))
-        os.chmod(os.path.join(tmpdir, sysconf.namedconf,"rndc.key"),0600)
-        os.chown(os.path.join(tmpdir, sysconf.namedconf,"rndc.key"),sysconf.named_uid,0)
+        shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_RNDC_KEY, "%s/%s/rndc.key"%(tmpdir, sysconf.namedconf))
+        os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),0600)
+        os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_uid,0)
         namedconf = namedconf_file(sysconf.filename_map)
-        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf,"named.conf"), "w")
+        tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedconf)
         tmpfile.close()
         return True
@@ -189,7 +190,7 @@ def main():
             backdir = optval
     # backup
     if backup == True:
-        realconfdir = os.path.join(chrootdir,sysconf.namedconf)
+        realconfdir = chrootdir + sysconf.namedconf
         if os.path.isdir(realconfdir) == True:
             ret = backup_conf(realconfdir, backdir)
             if ret == False:
@@ -201,13 +202,7 @@ def main():
     # get named uid
     tmpdir = create_destdir()
     os.chmod(tmpdir,0755)
-    log.debug("tmpdir is:%s"%tmpdir)
-    # 清除以前的旧目录
-    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
-    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
-    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
-    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
-    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
+    log.debug(tmpdir)
     if create_conf(tmpdir) == False or install_conf(tmpdir, chrootdir) == False:
         print "Create configuration files failed."
         return -1
