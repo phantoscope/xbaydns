@@ -45,7 +45,7 @@ class NSUpdateTest(basetest.BaseTestCase):
         returncode = initconf.main()
         nc = namedconf.NamedConf()
         nc.addAcl("hdacl",["any",])
-        nc.addView("hdview", tsig = ["hdacl",])
+        nc.addView("hdview")
         cmd = nc.addDomain(['example.com'])
         nc.save()
         nc.check_configfile()
@@ -75,7 +75,7 @@ class NSUpdateTest(basetest.BaseTestCase):
         #dbfile.close()
         #os.system("rndc reload")
         recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'IN', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
-        nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
+        nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.', view='hdview')
         nsupobj.addRecord(recordlist)
         nsupobj.commitChanges()
         recordlist =  [['', 86400, 'IN', 'MX', ['10 foo']]]
@@ -108,7 +108,7 @@ class NSUpdateTest(basetest.BaseTestCase):
         #dbfile.close()
         #os.system("rndc reload")
         recordlist = [['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['bar', 3600, 'IN', 'CNAME', ['foo']], ['', 86400, 'IN', 'MX', ['10 foo']]]
-        nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.')
+        nsupobj = nsupdate.NSUpdate('127.0.0.1', 'example.com.', view='hdview')
         nsupobj.addRecord(recordlist)
         nsupobj.commitChanges()
         record_a = nsupobj.queryRecord('foo.example.com', rdtype='A')

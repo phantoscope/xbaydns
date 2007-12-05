@@ -29,8 +29,8 @@ class NSUpdate:
         if view != False:
             # get TSIG
             namedconf_obj = namedconf.NamedConf()
-            key = namedconf_obj.loadViewKey(view)
-            self.tsigkey = dns.tsigkeyring.from_text({view: key})
+            keys = namedconf_obj.loadViewKey(view)
+            self.tsigkey = dns.tsigkeyring.from_text(keys)
         self.domain_info = self._getDomainInfo()
         self.updatemsg = dns.update.Update(self.domain, keyring = self.tsigkey)
         
@@ -120,8 +120,8 @@ class NSUpdate:
         if view != False:
             # get TSIG
             namedconf_obj = namedconf.NamedConf()
-            key = namedconf_obj.loadViewKey(view)
-            tsigkey = dns.tsigkeyring.from_text({view: key})
+            keys = namedconf_obj.loadViewKey(view)
+            tsigkey = dns.tsigkeyring.from_text(keys)
             resolv.use_tsig(tsigkey)
         try:
             resultset = resolv.query(name, dns.rdatatype.from_text(rdtype), 
