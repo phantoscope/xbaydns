@@ -114,21 +114,17 @@ class Record(models.Model):
     
     def save(self):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
-        now_record_ip = set(nsupobj.queryRecord(str(self.domain), rdtype=str(self.rdtype)))#now ip
-        
-        db_record_ip=set(map(lambda x:x.ip,
-                         Record.objects.filter(domain=self.domain,rdtype=self.rdtype)))#db ip
-        
-        ok_ip=list(db_record_ip&now_record_ip)#线上库中都有的ip
-        del_ip=list(now_record_ip-db_record_ip)#线上有而库中没有的ip
+        if self.id!=None:
+            nsupobj.removeRecord([self.ip,])
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#Add record style
-        add_ip=list(db_record_ip-now_record_ip)#库中有而线上没有的ip
-        add_ip=[self.record,int(self.ttl),self.rdclass,self.rdtype,add_ip]
-        
-        nsupobj.removeRecord(del_ip)
+        add_ip=[self.record,int(self.ttl),self.rdclass,self.rdtype,[self.ip,]]
         nsupobj.addRecord(add_ip)
         
         super(Record,self).save()
+    def delete(self):
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
+        nsupobj.removeRecord([self.ip,])
+        super(Record,self).delete()
 
     class Admin:
         list_display = ('view','domain','rdtype','ttl','ip','recordgroup')
