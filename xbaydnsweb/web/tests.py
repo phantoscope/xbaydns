@@ -76,8 +76,8 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
     def test_saveRecord(self):
         initconf.main()
         nc=NamedConf()
-        nc.addAcl('any',['127.0.0.1',])
-        nc.addView('beijing',['any',])
+        nc.addAcl('yanxu-any',['127.0.0.1',])
+        nc.addView('beijing',['yanxu-any',])
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
