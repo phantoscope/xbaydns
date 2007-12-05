@@ -117,7 +117,7 @@ def create_destdir():
     
     tmpdir = mkdtemp()
     os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"acl"))
-    os.makedirs(os.path.join(tmpdir, sysconf.namedconf,dynamic))
+    os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"dynamic"))
     os.chown(os.path.join(tmpdir, sysconf.namedconf,dynamic), sysconf.named_uid, 0)
     os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"master"))
     os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"slave"))
