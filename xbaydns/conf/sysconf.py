@@ -33,8 +33,8 @@ if (system == 'Darwin'):
     chroot_path = "/"
     namedconf = "/etc"
     named_user = "root"
-    namedstart = "service org.isc.named start"
-    namedstop = "service org.isc.named stop"
+    namedstart = "rndc stop;sleep 7"
+    namedstop = "rndc stop"
     if (release == '9.1.0'):
         #OSX 10.5&10.5.1
         pass
