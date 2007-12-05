@@ -127,7 +127,11 @@ class Record(models.Model):
         super(Record,self).save()
     def delete(self):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
-        nsupobj.removeRecord([self.ip,])
+        del_data=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
+        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
+        nsupobj.removeRecord(del_data)
+        nsupobj.commitChanges()
+        
         super(Record,self).delete()
 
     class Admin:
