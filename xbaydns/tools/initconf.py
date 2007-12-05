@@ -118,10 +118,10 @@ def create_destdir():
     tmpdir = mkdtemp()
     os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"acl"))
     os.makedirs(os.path.join(tmpdir, sysconf.namedconf,dynamic))
-    os.chown("%s/%s/dynamic"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
+    os.chown(os.path.join(tmpdir, sysconf.namedconf,dynamic), sysconf.named_uid, 0)
     os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"master"))
     os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"slave"))
-    os.chown("%s/%s/slave"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
+    os.chown(os.path.join(tmpdir, sysconf.namedconf,"slave"), sysconf.named_uid, 0)
     return tmpdir
 
 def create_conf(tmpdir):
@@ -133,18 +133,18 @@ def create_conf(tmpdir):
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
-        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
+        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
-        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
+        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
         tmpfile.write(defzone)
         tmpfile.close()
-        tmpfile = open("%s/%s/named.root"%(tmpdir, sysconf.namedconf), "w")
+        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf, "named.root"), "w")
         tmpfile.write(namedroot)
         tmpfile.close()
-        shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, sysconf.namedconf))
-        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, sysconf.namedconf))
-        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_EMPTY_DB, os.path.join(tmpdir, sysconf.namedconf,"master","empty.db"))
+        shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, os.path.join(tmpdir, sysconf.namedconf,"master","localhost-forward.db"))
+        shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, os.path.join(tmpdir, sysconf.namedconf,"master","localhost-reverse.db"))
         shutil.copyfile(TMPL_RNDC_KEY, "%s/%s/rndc.key"%(tmpdir, sysconf.namedconf))
         os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),0600)
         os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_uid,0)
