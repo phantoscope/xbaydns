@@ -112,19 +112,20 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         nu = NSUpdate('127.0.0.1', 'hd.com.', view='telecom')
         reqfailed = False
         try:
-            qrec = nu.queryRecord('www.hd.com.', rdtype='A')
+            qrec = nu.queryRecord('www.hd.com.', rdtype='A', view='telecom')
+            log.debug("req www.hd.com@telecom return %s"%qrec)
         except nsupdate.NSUpdateException:
             reqfailed = True
         self.assertEqual(reqfailed)
         reqfailed = False
         try:
-            qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME')
+            qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME', view='telecom')
         except nsupdate.NSUpdateException:
             reqfailed = True
         reqfailed = False
         self.assertEqual(reqfailed)
         try:
-            qrec = nu.queryRecord('hd.com.', rdtype='MX')
+            qrec = nu.queryRecord('hd.com.', rdtype='MX', view='telecom')
         except nsupdate.NSUpdateException:
             reqfailed = True
         reqfailed = False
