@@ -114,7 +114,7 @@ class Record(models.Model):
     
     def save(self):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=str(self.view))
-        now_record_ip = set(nsupobj.queryRecord(str(self.domain), rdtype=self.rdtype))#now ip
+        now_record_ip = set(nsupobj.queryRecord(str(self.domain), rdtype=str(self.rdtype)))#now ip
         
         db_record_ip=set(map(lambda x:x.ip,
                          Record.objects.filter(domain=self.domain,rdtype=self.rdtype)))#db ip
