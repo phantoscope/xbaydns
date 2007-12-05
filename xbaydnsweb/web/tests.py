@@ -58,6 +58,15 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         shutil.rmtree(self.basedir)
         basetest.BaseTestCase.tearDown(self)
 
+    def _init_sys(self):
+        """初始化系统"""
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
+        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
+        initconf.main()
+
     def test_Acl(self):
         self.assertEquals(str(self.acl1), 'internal')
     def test_AclMatch(self):
@@ -80,14 +89,14 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         view "home" { match-clients { 127.0.0.1;key telcom; }; %s };
         '''
     def test_saveRecord(self):
-        initconf.main()
+        self._init_sys()
         nc=NamedConf()
         nc.addAcl('yanxu-any',['127.0.0.1',])
         nc.addView('beijing',['yanxu-any',])
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
-        nc.reload()
+        nc.restart()
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
@@ -100,14 +109,14 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.assertEqual(record_result,['10.210.132.70'])
         
     def test_updateRecord(self):
-        initconf.main()
+        self._init_sys()
         nc=NamedConf()
         nc.addAcl('yanxu-any',['127.0.0.1',])
         nc.addView('beijing',['yanxu-any',])
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
-        nc.reload()
+        nc.restart()
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
@@ -127,14 +136,14 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.assertEqual(record_result,['10.210.132.71'])
         
     def test_deleteRecord(self):
-        initconf.main()
+        self._init_sys()
         nc=NamedConf()
         nc.addAcl('yanxu-any',['127.0.0.1',])
         nc.addView('beijing',['yanxu-any',])
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
-        nc.reload()
+        nc.restart()
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
