@@ -10,7 +10,7 @@ import logging.config
 import os,tempfile,datetime
 from xbaydns.conf import sysconf
 
-log = logging.getLogger('xbaydns.tests.namedconftest')
+log = logging.getLogger('xbaydns.tests.namedconf')
 
 def pathIsExists(func):
     def mkconfdir(path,childpath):

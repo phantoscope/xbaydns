@@ -43,7 +43,7 @@ import shlex
 
 from xbaydns.utils.command import CommandLine
 
-log = logging.getLogger('perbay.utils.shtools')
+log = logging.getLogger('xbaydns.utils.shtools')
 
 def execute(executable=None, file_=None, input_=None, output=None, args=None):
     """Generic external program execution.

@@ -40,7 +40,7 @@ import os
 import shlex
 import time
 
-log = logging.getLogger('perbay.utils.command')
+log = logging.getLogger('xbaydns.utils.command')
 
 __docformat__ = 'restructuredtext en'
 
