@@ -114,8 +114,15 @@ class NSUpdate:
         '''
         query a record in the view specified at initializing time.
         '''
-        self.queryRecord_Independent(self, name, view = self.view, rdtype, usetcp, timeout, rdclass)
-                    
+        self.queryRecord_Independent(name, view = self.view, rdtype = rdtype, 
+                                                    usetcp = usetcp, timeout = timeout, rdclass = rdclass)
+
+    """
+        def queryRecord_Independent(self, *arg, **args):
+            print arg
+            print args               
+    """
+    
     def queryRecord_Independent(self, name, view = False, rdtype = 'A', 
                     usetcp = False, timeout = 30, rdclass = 'IN'):
         '''
@@ -151,4 +158,4 @@ class NSUpdate:
             log.error("RESOLVER ERROR: No Nameservers.")
             raise NSUpdateException("RESOLVER ERROR: No Nameservers.")
         return [ record.to_text() for record in resultset ]
-
+        
