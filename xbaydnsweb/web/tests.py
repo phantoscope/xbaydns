@@ -149,7 +149,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         try:
             record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
         except nsupdate.NSUpdateException,e:
-            self.assertTrue(e.find("Name Not Exist")!=-1)
+            self.assertTrue(str(e).find("Name Not Exist")!=-1)
 
 def suite():
     """集合测试用例"""
