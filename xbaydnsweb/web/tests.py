@@ -73,12 +73,14 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         acl "internal" { 127.0.0.1; };
         view "home" { match-clients { 127.0.0.1;key telcom; }; %s };
         '''
-    '''def test_saveRecord(self):
+    def test_saveRecord(self):
         initconf.main()
         nc=NamedConf()
-        nc.addView('beijing',['127.0.0.1',])
+        nc.addAcl('any',['127.0.0.1',])
+        nc.addView('beijing',['any',])
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
+        nc.reload()
         record1=Record.objects.create(view=self.view1,
                                            domain=self.domain1,
                                            record='www',
@@ -88,7 +90,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
                                            recordgroup=self.rg1)
         nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain))
         record_result=nsupobj.queryRecord('www', 'A')
-        self.assertEqual(record_result,['10.210.132.70'])'''
+        self.assertEqual(record_result,['10.210.132.70'])
 
 def suite():
     """集合测试用例"""
