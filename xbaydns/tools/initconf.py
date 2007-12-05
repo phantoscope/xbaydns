@@ -203,6 +203,12 @@ def main():
     tmpdir = create_destdir()
     os.chmod(tmpdir,0755)
     log.debug(tmpdir)
+    #清理旧世界
+    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
+    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
+    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
+    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
+    shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
     if create_conf(tmpdir) == False or install_conf(tmpdir, chrootdir) == False:
         print "Create configuration files failed."
         return -1
