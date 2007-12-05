@@ -85,6 +85,8 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
                 self.assertTrue( os.system("named-checkzone %s %s"%(i,os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic","%s.%s.file"%(j,i)))) == 0 )
         nc.named_restart()
         self.assertTrue(nc.reload() == 0)
+
+    def _add_default_record(self):
         #为domain增加域名
         recordlist = [['www', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']], ['ftp', 3600, 'IN', 'CNAME', ['www']], ['', 86400, 'IN', 'MX', ['10 www']]]
         nu = NSUpdate('127.0.0.1', 'hd.com.', view='cnc')
@@ -111,6 +113,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         #指定了telecom view，应该全都没有
         nu = NSUpdate('127.0.0.1', 'hd.com.', view='telecom')
         reqfailed = False
+        log.debug("test telecom view record")
         try:
             qrec = nu.queryRecord('www.hd.com.', rdtype='A', view='telecom')
             log.debug("req www.hd.com@telecom return %s"%qrec)
@@ -135,6 +138,7 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         """集成测试"""
         self._init_conf()
         self._add_default_conf()
+        self._add_default_record()
 
 def suite():
     """集合测试用例"""
