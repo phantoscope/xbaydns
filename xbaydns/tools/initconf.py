@@ -136,7 +136,7 @@ def create_conf(tmpdir):
         tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
-        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['defzone']), "w")
+        tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
         tmpfile.write(defzone)
         tmpfile.close()
         tmpfile = open("%s/%s/named.root"%(tmpdir, sysconf.namedconf), "w")
