@@ -49,6 +49,7 @@ TMPL_NAMEDROOT = getProperTmpl('namedroot.tmpl')
 TMPL_LOCALHOST_FORWARD_DB = getProperTmpl('localhost-forward.db.tmpl')
 TMPL_LOCALHOST_REVERSE_DB = getProperTmpl('localhost-reverse.db.tmpl')
 TMPL_EMPTY_DB = getProperTmpl('empty.db.tmpl')
+TMPL_RNDC_KEY = getProperTmpl('rndc.key.tmpl')
 
 def acl_file(acls):
     '''
@@ -144,6 +145,8 @@ def create_conf(tmpdir):
         shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, sysconf.namedconf))
         shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, sysconf.namedconf))
         shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, sysconf.namedconf))
+        shutil.copyfile(TMPL_RNDC_KEY, "%s/%s/rndc.key"%(tmpdir, sysconf.namedconf))
+        os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),600)
         namedconf = namedconf_file(sysconf.filename_map)
         tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedconf)
