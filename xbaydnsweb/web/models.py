@@ -17,7 +17,7 @@ class Acl(models.Model):
     class Meta:
         ordering = ('aclName',)
         verbose_name = 'ACL名称'
-        verbose_name_plural = 'ACL名称管理'
+        verbose_name_plural = '1.1 ACL名称管理'
         
     def __str__(self):
         return self.aclName
@@ -32,7 +32,7 @@ class AclMatch(models.Model):
         #search_fields = ('',)
     class Meta:
         verbose_name = 'ACL'
-        verbose_name_plural = 'ACL管理'
+        verbose_name_plural = '1.2 ACL管理'
 
     def __str__(self):
         return ''.join([str(self.acl),self.aclMatch])
@@ -48,7 +48,7 @@ class View(models.Model):
     class Meta:
         ordering = ('viewName',)
         verbose_name = 'View'
-        verbose_name_plural = 'View管理'
+        verbose_name_plural = '2.1 View管理'
 
     def __str__(self):
         return self.viewName
@@ -64,7 +64,7 @@ class ViewMatchClient(models.Model):
         #search_fields = ('',)
     class Meta:
         verbose_name = 'View MatchClient'
-        verbose_name_plural = 'View MatchClient管理'
+        verbose_name_plural = '2.2 View MatchClient管理'
     def showacls(self):
         return ','.join(map(lambda x:x.aclName,self.acl.all()))
     showacls.short_description = 'Aiews'
@@ -83,7 +83,7 @@ class Domain(models.Model):
         search_fields = ('zone',)
     class Meta:
         verbose_name = '域名'
-        verbose_name_plural = '域名管理'
+        verbose_name_plural = '4.1 域名管理'
     def showviews(self):
         return ','.join(map(lambda x:x.viewName,self.view.all()))
     showviews.short_description = 'Views'
@@ -101,7 +101,7 @@ class ViewGroup(models.Model):
         search_fields = ('name',)
     class Meta:
         verbose_name = 'ViewGroup'
-        verbose_name_plural = 'View Group管理'
+        verbose_name_plural = '2.3 View Group管理'
 
     def __str__(self):
         return self.name
@@ -144,7 +144,7 @@ class Record(models.Model):
         #search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
-        verbose_name_plural = 'Record 管理'
+        verbose_name_plural = '4.3 Record 管理'
 
     def __str__(self):
         return '%s IN %s'%(self.domain,self.rdtype)
@@ -158,7 +158,7 @@ class RecordGroup(models.Model):
         search_fields = ('name',)
     class Meta:
         verbose_name = 'RecordGroup'
-        verbose_name_plural = 'Record Group管理'
+        verbose_name_plural = '3.1 Record Group管理'
 
     def __str__(self):
         return self.name
@@ -174,7 +174,7 @@ class ViewMatch(models.Model):
         search_fields = ('name',)
     class Meta:
         verbose_name = 'ViewMatch'
-        verbose_name_plural = 'View Match管理'
+        verbose_name_plural = '3.2 View Match管理'
     def showViewGroups(self):
         return ','.join(map(lambda x:x.name,self.viewgroup.all()))
     showViewGroups.short_description = 'View Group'
@@ -197,7 +197,7 @@ class RecordType(models.Model):
         search_fields = ('name',)
     class Meta:
         verbose_name = 'RecordType'
-        verbose_name_plural = 'Record Type管理'
+        verbose_name_plural = '4.2 Record Type管理'
 
 
     def __str__(self):
