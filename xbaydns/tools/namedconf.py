@@ -142,7 +142,6 @@ key "%s" {
                 if view not in self.domains:
                     self.domains[view]={}
                 self.domains[view].update({d:s})
-                log.debug("domain is %s"%self.domains)
         return cmds
     '''
     获得zone文件名
