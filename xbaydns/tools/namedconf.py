@@ -203,7 +203,7 @@ key %s {
                 value = v%'\n'.join(self.domains[k].values())
             else:
                 value = v%''
-            open(pathname,'a').write(value)
+            open(pathname,'w').write(value)
             
     '''
     保存view中声名的zone文件
