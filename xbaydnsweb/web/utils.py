@@ -22,9 +22,7 @@ def saveAllConf(path):
     for view in View.objects.all():
         view_matchs=map(lambda x:x.viewMatch,
                 ViewMatchClient.objects.filter(view=view))
-        tsig_matchs=map(lambda x:x.tsig,
-                ViewTsig.objects.filter(view=view))
-        nc.addView(view.viewName,view_matchs,tsig_matchs)
+        nc.addView(view.viewName,view_matchs)
     domain_matchs = map(lambda x:x.zone,Domain.objects.all())
     nc.addDomain(domain_matchs)
     nc.save(path)
