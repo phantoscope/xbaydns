@@ -91,7 +91,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
-        nc.restart()
+        nc.named_restart()
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
@@ -111,7 +111,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
-        nc.restart()
+        nc.named_restart()
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
@@ -138,7 +138,7 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
-        nc.restart()
+        nc.named_restart()
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
