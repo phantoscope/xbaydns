@@ -119,6 +119,7 @@ class Record(models.Model):
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#Add record style
         add_ip=[[self.record,int(self.ttl),self.rdclass,str(self.rdtype),[self.ip,]],]
         nsupobj.addRecord(add_ip)
+        nsupobj.commitChanges()
         
         super(Record,self).save()
     def delete(self):
