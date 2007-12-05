@@ -35,7 +35,7 @@ class AclMatch(models.Model):
         verbose_name_plural = '1.2 ACL管理'
 
     def __str__(self):
-        return ''.join([str(self.acl),self.aclMatch])
+        return ' '.join([str(self.acl),self.aclMatch])
 
 class View(models.Model):
     """View Model"""

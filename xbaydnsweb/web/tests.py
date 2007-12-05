@@ -60,6 +60,11 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
 
     def test_Acl(self):
         self.assertEquals(str(self.acl1), 'internal')
+    def test_AclMatch(self):
+        self.assertEqual(str(self.aclM1),'internal 127.0.0.1')
+        self.assertEqual(str(self.aclM2),'home1 10.10.10.10')
+        self.assertEqual(str(self.aclM3),'home2 10.10.10.1')
+        self.assertEqual(str(self.aclM4),'home2 10.10.10.2')
     def test_View(self):
         self.assertEquals(str(self.view1), 'beijing')
     def test_saveConfFile(self):
