@@ -146,8 +146,10 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         record2=Record.objects.get(id=1)
         record2.delete()
         
-        record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
-        self.assertEqual(record_result,[])
+        try:
+            record_result=nsupobj.queryRecord('www.sina.com.cn.', 'A')
+        except NSUpdateException,e:
+            self.assertTrue(e.find("Name Not Exist")!=-1)
 
 def suite():
     """集合测试用例"""
