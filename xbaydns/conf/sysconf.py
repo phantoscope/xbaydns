@@ -34,7 +34,7 @@ if (system == 'Darwin'):
     namedconf = "/etc"
     named_user = "root"
     namedstart = "rndc reload"
-    namedstop = "rndc stop;sleep 7"
+    namedstop = "rndc stop;sleep 10"
     if (release == '9.1.0'):
         #OSX 10.5&10.5.1
         pass
