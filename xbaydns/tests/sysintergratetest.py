@@ -29,11 +29,6 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
     """测试初始化配置"""
     def setUp(self):
         self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_sys'))
-        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"acl"),ignore_errors=True)
-        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"master"),ignore_errors=True)
-        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
-        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
-        shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
         basetest.BaseTestCase.setUp(self)
 
     def tearDown(self):
