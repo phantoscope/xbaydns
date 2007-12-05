@@ -71,7 +71,8 @@ class NamedConf(object):
     def addView(self,view,matchClient=[]):
         tsig='%s-view-key'%view
         if len(matchClient)>0:
-            matchClient=''.join(['"',';'.join(matchClient),'"',';'])
+            matchClient=map(lambda x:'"%s";'%x,matchClient)
+            matchClient=''.join(matchClient)
         else:
             matchClient=''
         keys='''

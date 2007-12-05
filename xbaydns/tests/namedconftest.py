@@ -48,6 +48,9 @@ class NamedConfTest(basetest.BaseTestCase):
         cmd = self.nc.addView('internal',['127.0.0.1',])
         self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
                          'key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";key "internal-view-key"; }; %s };')
+        cmd = self.nc.addView('internal',['127.0.0.1','10.10.10.10/24',])
+        self.assertEqual(cmd.strip().replace("\n","").replace("    "," "),
+                         'key "internal-view-key" { algorithm hmac-md5; secret "aW50ZXJuYWwtdmlldy1rZXk=";};view "internal" { match-clients { "127.0.0.1";"10.10.10.10/24";key "internal-view-key"; }; %s };')
     
     def test_updateView(self):
         cmd = self.nc.updateView('internal',['127.0.0.1',])
