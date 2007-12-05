@@ -20,9 +20,11 @@ class NSUpdateException(Exception):
     pass
 
 class NSUpdate:
-    def __init__(self, addr, domain, view = False, port = 53):
+    def __init__(self, addr, domain, view = False, port = 53, source = None, source_port = 0):
         self.addr = addr
         self.port = port
+        self.source = source
+        self.source_port = source_port
         self.domain = dns.name.from_text(domain)
         self.view = view
         self.tsigkey = None
@@ -98,7 +100,7 @@ class NSUpdate:
         else:
             query_wrapper = dns.query.udp
         try:
-            response = query_wrapper(self.updatemsg, self.addr, timeout, self.port)
+            response = query_wrapper(self.updatemsg, self.addr, timeout=timeout, port=self.port, source=self.source, source_port=self.source_port)
         except dns.query.BadResponse:
             log.error("UPDATE RESPONSE ERROR: Bad Response")
             raise NSUpdateException("UPDATE RESPONSE ERROR: Bad Response")
