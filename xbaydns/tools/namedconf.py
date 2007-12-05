@@ -32,7 +32,6 @@ class NamedConf(object):
     def __init__(self):
         self.acls={}
         self.views={}
-        self.keys={}
         self.domains={}
         self.acl_include=[]
     '''
@@ -69,21 +68,19 @@ class NamedConf(object):
     view 增加的view的名称 
     match-client 匹配于该view的acl汇总
     '''
-    def addView(self,view,matchClient=[],tsig=''):
-        keys,key_tsig='',''
-        if tsig<>'':
-            keys='''
-key %s-view-key {
+    def addView(self,view,matchClient=[]):
+        tsig='%s-view-key'%view
+        keys='''
+key %s {
     algorithm hmac-md5;
     secret %s;
 };
 '''
-            keys=keys%(tsig,self.genSecret('%s-view-key'%tsig))
-            key_tsig='key %s'%tsig
-        s='''view "%s" { match-clients { %s; }; %%s };
-        '''%(view,';'.join(matchClient)+key_tsig)
+        keys=keys%(tsig,self.genSecret(tsig))
+        key_tsig='key %s'%tsig
+        s='''view "%s" { match-clients { %s;%s; }; %%s };
+        '''%(view,';'.join(matchClient),key_tsig)
         self.views[view]=keys+s
-        self.keys[view]=tsig
         return keys+s
     
     '''
@@ -93,8 +90,8 @@ key %s-view-key {
     view 增加的view的名称 
     match-client 匹配于该view的acl汇总
     '''
-    def updateView(self,view,matchClient=[],tsig=''):
-        return self.addView(view,matchClient,tsig)
+    def updateView(self,view,matchClient=[]):
+        return self.addView(view,matchClient)
     
     def genSecret(self,key):
         return base64.b64encode(key)
@@ -106,10 +103,8 @@ key %s-view-key {
     match-client 匹配于该view的acl汇总
     '''
     def loadViewKey(self,view):
-        if view in self.keys:
-            key='%s-view-key'%self.keys[view]
-            return {key:self.genSecret(key)}
-        return {}
+        key='%s-view-key'%view
+        return {key:self.genSecret(key)}
     
     '''
     del view(view) 删除view 
