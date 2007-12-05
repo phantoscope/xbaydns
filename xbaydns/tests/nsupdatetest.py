@@ -45,7 +45,7 @@ class NSUpdateTest(basetest.BaseTestCase):
         returncode = initconf.main()
         nc = namedconf.NamedConf()
         nc.addAcl("hdacl",["any",])
-        nc.addView("hdview")
+        nc.addView("hdview", ["hdacl"])
         cmd = nc.addDomain(['example.com'])
         nc.save()
         nc.check_configfile()
