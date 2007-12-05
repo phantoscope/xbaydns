@@ -115,20 +115,20 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         reqfailed = False
         log.debug("test telecom view record")
         try:
-            qrec = nu.queryRecord('www.hd.com.', rdtype='A', view='telecom')
+            qrec = nu.queryRecord('www.hd.com.', rdtype='A')
             log.debug("req www.hd.com@telecom return %s"%qrec)
         except NSUpdateException:
             reqfailed = True
         self.assertTrue(reqfailed)
         reqfailed = False
         try:
-            qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME', view='telecom')
+            qrec = nu.queryRecord('ftp.hd.com.', rdtype='CNAME')
         except NSUpdateException:
             reqfailed = True
         self.assertTrue(reqfailed)
         reqfailed = False
         try:
-            qrec = nu.queryRecord('hd.com.', rdtype='MX', view='telecom')
+            qrec = nu.queryRecord('hd.com.', rdtype='MX')
         except NSUpdateException:
             reqfailed = True
         self.assertTrue(reqfailed)
@@ -143,14 +143,14 @@ class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
         nu.commitChanges()
         reqfailed = False
         try:
-            qrec = nu.queryRecord('www.hd.com.', rdtype='A', view='cnc')
+            qrec = nu.queryRecord('www.hd.com.', rdtype='A')
             log.debug("req www.hd.com@cnc return %s"%qrec)
         except NSUpdateException:
             reqfailed = True
         self.assertTrue(reqfailed)
         reqfailed = False
         try:
-            qrec = nu.queryRecord('hd.com.', rdtype='MX', view='telecom')
+            qrec = nu.queryRecord('hd.com.', rdtype='MX')
         except NSUpdateException:
             reqfailed = True
         self.assertTrue(reqfailed)
