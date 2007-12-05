@@ -190,7 +190,7 @@ def main():
             backdir = optval
     # backup
     if backup == True:
-        realconfdir = chrootdir + sysconf.namedconf
+        realconfdir = os.path.join(chrootdir,sysconf.namedconf)
         if os.path.isdir(realconfdir) == True:
             ret = backup_conf(realconfdir, backdir)
             if ret == False:
