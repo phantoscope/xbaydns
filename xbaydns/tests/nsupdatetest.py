@@ -49,7 +49,7 @@ class NSUpdateTest(basetest.BaseTestCase):
         cmd = nc.addDomain(['example.com'])
         nc.save()
         nc.check_configfile()
-        nc.restart()
+        nc.named_restart()
             
     def test_addRecord(self):
         self._initnamedconf()

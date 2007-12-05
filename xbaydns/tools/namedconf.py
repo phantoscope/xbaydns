@@ -241,5 +241,8 @@ $TTL 360 ;10 minute
     def check_configfile(self):
         """检查生成的named.conf的配置正确，返回0为正确"""
         return os.system("named-checkconf -z")
-        """docstring for check_configfile"""
-        pass
+
+    def named_restart(self):
+        """重启named"""
+        os.system(sysconf.namedstop)
+        return os.system(sysconf.namedstart)
