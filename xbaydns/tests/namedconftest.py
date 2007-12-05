@@ -55,8 +55,8 @@ class NamedConfTest(basetest.BaseTestCase):
     def test_loadViewKey(self):
         self.nc.addView('internal',tsig='telcome')
         key = self.nc.loadViewKey('internal')
-        self.assertEqual(key[0],"telcome-view-key")
-        self.assertEqual(base64.b64decode(key[1]),"telcome-view-key")
+        self.assertEqual(key.keys()[0],"telcome-view-key")
+        self.assertEqual(base64.b64decode(key.values()[0]),"telcome-view-key")
     def test_delView(self):
         self.nc.addView('internal',['127.0.0.1',])
         self.assertTrue(self.nc.delView('internal'))

@@ -108,8 +108,8 @@ key %s-view-key {
     def loadViewKey(self,view):
         if view in self.keys:
             key='%s-view-key'%self.keys[view]
-            return (key,self.genSecret(key))
-        return ("","")
+            return {key:self.genSecret(key)}
+        return {}
     
     '''
     del view(view) 删除view 
