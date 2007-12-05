@@ -114,11 +114,10 @@ def backup_conf(confdir, backdir):
 
 def create_destdir():
     """创建系统目录，这里只是在tmp目录中建立"""
-    
     tmpdir = mkdtemp()
     os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"acl"))
     os.makedirs(os.path.join(tmpdir, sysconf.namedconf,"dynamic"))
-    os.chown(os.path.join(tmpdir, sysconf.namedconf,dynamic), sysconf.named_uid, 0)
+    os.chown(os.path.join(tmpdir, sysconf.namedconf,"dynamic"), sysconf.named_uid, 0)
     os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"master"))
     os.mkdir(os.path.join(tmpdir, sysconf.namedconf,"slave"))
     os.chown(os.path.join(tmpdir, sysconf.namedconf,"slave"), sysconf.named_uid, 0)
@@ -145,11 +144,11 @@ def create_conf(tmpdir):
         shutil.copyfile(TMPL_EMPTY_DB, os.path.join(tmpdir, sysconf.namedconf,"master","empty.db"))
         shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, os.path.join(tmpdir, sysconf.namedconf,"master","localhost-forward.db"))
         shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, os.path.join(tmpdir, sysconf.namedconf,"master","localhost-reverse.db"))
-        shutil.copyfile(TMPL_RNDC_KEY, "%s/%s/rndc.key"%(tmpdir, sysconf.namedconf))
-        os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),0600)
-        os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_uid,0)
+        shutil.copyfile(TMPL_RNDC_KEY, os.path.join(tmpdir, sysconf.namedconf,"rndc.key"))
+        os.chmod(os.path.join(tmpdir, sysconf.namedconf,"rndc.key"),0600)
+        os.chown(os.path.join(tmpdir, sysconf.namedconf,"rndc.key"),sysconf.named_uid,0)
         namedconf = namedconf_file(sysconf.filename_map)
-        tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
+        tmpfile = open(os.path.join(tmpdir, sysconf.namedconf,"named.conf"), "w")
         tmpfile.write(namedconf)
         tmpfile.close()
         return True
