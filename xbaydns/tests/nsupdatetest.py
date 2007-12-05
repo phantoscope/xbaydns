@@ -48,7 +48,8 @@ class NSUpdateTest(basetest.BaseTestCase):
         nc.addView("hdview", tsig = ["hdacl",])
         cmd = nc.addDomain(['example.com'])
         nc.save()
-        nc.reload()
+        nc.check_configfile()
+        nc.restart()
             
     def test_addRecord(self):
         self._initnamedconf()
