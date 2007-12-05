@@ -70,6 +70,10 @@ class NamedConf(object):
     '''
     def addView(self,view,matchClient=[]):
         tsig='%s-view-key'%view
+        if len(matchClient)>0:
+            matchClient=';'.join(matchClient)+';'
+        else:
+            matchClient=''
         keys='''
 key %s {
     algorithm hmac-md5;
@@ -78,8 +82,8 @@ key %s {
 '''
         keys=keys%(tsig,self.genSecret(tsig))
         key_tsig='key %s'%tsig
-        s='''view "%s" { match-clients { %s;%s; }; %%s };
-        '''%(view,';'.join(matchClient),key_tsig)
+        s='''view "%s" { match-clients { %s%s; }; %%s };
+        '''%(view,matchClient,key_tsig)
         self.views[view]=keys+s
         return keys+s
     
