@@ -36,7 +36,7 @@ python setup.py install
 它将会把xbaydns的基础系统安装到你的操作系统中。
 
 2.初始化BIND配置
-执行initconf.py，它会初始化操作系统中的BIND相关配置。对于不同操作系统，我们还需要你自己确认操作系统的BIND的启动设备：
+执行xbdinit，它会初始化操作系统中的BIND相关配置。对于不同操作系统，我们还需要你自己确认操作系统的BIND的启动设备：
 	FreeBSD
 	/etc/rc.conf中设置了 named_enable="YES"你可以使用
 	/etc/rc.d/named restart
