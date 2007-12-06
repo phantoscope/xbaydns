@@ -14,7 +14,7 @@ import sys
 
 setup(
     name = 'xbaydns',
-    version = '1.0',
+    version = '1.0.0',
     description = 'xBayDNS System',
     long_description = \
 """DNS and GSLB Manager System""",
