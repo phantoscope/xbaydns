@@ -45,13 +45,15 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         
         self.vg=ViewGroup.objects.create(name='default')
         
-        self.view1=View.objects.create(viewName='beijing',viewgroup=self.vg)
+        self.view1=View.objects.create(viewName='beijing')
         self.view1.aclmatch.add(self.aclM1)
         self.view1.aclmatch.add(self.aclM2)
+        self.view1.viewgroup.add(self.vg)
         
-        self.view2=View.objects.create(viewName='shanghai',viewgroup=self.vg)
+        self.view2=View.objects.create(viewName='shanghai')
         self.view2.aclmatch.add(self.aclM3)
         self.view2.aclmatch.add(self.aclM4)
+        self.view2.viewgroup.add(self.vg)
         
         self.rt1=RecordType.objects.create(name='A')
         self.rg1=RecordGroup.objects.create(name='rg1')

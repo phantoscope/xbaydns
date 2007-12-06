@@ -39,12 +39,13 @@ class AclMatch(models.Model):
 class View(models.Model):
     """View Model"""
     viewName = models.CharField(maxlength=100,verbose_name='View名称')
-    viewgroup = models.ForeignKey("ViewGroup")
-    aclmatch = models.ManyToManyField(AclMatch)
+    #viewgroup = models.ForeignKey("ViewGroup")
+    viewgroup = models.ManyToManyField("ViewGroup")
+    aclmatch = models.ManyToManyField(AclMatch,verbose_name='ACL')
     
     class Admin:
-        list_display = ('viewName','viewgroup','showacls')
-        search_fields = ('viewName',)
+        list_display = ('viewName','showviewgroup','showacls')
+        #search_fields = ('viewName',)
     class Meta:
         ordering = ('viewName',)
         verbose_name = 'View'
@@ -53,6 +54,10 @@ class View(models.Model):
         return ','.join(map(lambda x:str(x),self.aclmatch.all()))
     showacls.short_description = 'Acl'
     showacls.allow_tags = True
+    def showviewgroup(self):
+        return ','.join(map(lambda x:str(x),self.viewgroup.all()))
+    showviewgroup.short_description = 'View Group'
+    showviewgroup.allow_tags = True
 
     def __str__(self):
         return self.viewName
