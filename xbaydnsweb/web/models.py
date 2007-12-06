@@ -2,7 +2,6 @@
 from django.db import models
 import logging.config
 from xbaydns.tools import nsupdate
-import traceback
 
 log = logging.getLogger('xbaydnsweb.web.tests')
 logging.basicConfig(level=logging.DEBUG)
@@ -41,53 +40,33 @@ class View(models.Model):
     """View Model"""
     viewName = models.CharField(maxlength=100,verbose_name='View名称')
     viewgroup = models.ForeignKey("ViewGroup")
+    aclmatch = models.ManyToManyField(AclMatch)
     
     class Admin:
-        list_display = ('viewName','viewgroup')
+        list_display = ('viewName','viewgroup','showacls')
         search_fields = ('viewName',)
     class Meta:
         ordering = ('viewName',)
         verbose_name = 'View'
         verbose_name_plural = '2.2 View管理'
+    def showacls(self):
+        return ','.join(map(lambda x:str(x),self.aclmatch.all()))
+    showacls.short_description = 'Acl'
+    showacls.allow_tags = True
 
     def __str__(self):
         return self.viewName
 
-class ViewMatchClient(models.Model):
-    """ViewMatch Model"""
-    view = models.ForeignKey(View)
-    #viewMatch = models.CharField(maxlength=100,verbose_name='acl名称')
-    acl = models.ManyToManyField(Acl,verbose_name='acl名称')
-
-    class Admin:
-        list_display = ('view','showacls')
-        #search_fields = ('',)
-    class Meta:
-        verbose_name = 'View MatchClient'
-        verbose_name_plural = '2.3 View MatchClient管理'
-    def showacls(self):
-        return ','.join(map(lambda x:x.aclName,self.acl.all()))
-    showacls.short_description = 'Aiews'
-    showacls.allow_tags = True
-
-    def __str__(self):
-        return str(self.view)
-
 class Domain(models.Model):
     """Domain Model"""
-    view = models.ManyToManyField(View)
     zone = models.CharField(maxlength=100)
 
     class Admin:
-        list_display = ('showviews','zone',)
+        list_display = ('zone',)
         search_fields = ('zone',)
     class Meta:
         verbose_name = '域名'
         verbose_name_plural = '4.1 域名管理'
-    def showviews(self):
-        return ','.join(map(lambda x:x.viewName,self.view.all()))
-    showviews.short_description = 'Views'
-    showviews.allow_tags = True
 
     def __str__(self):
         return self.zone

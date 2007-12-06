@@ -21,9 +21,10 @@ def saveAllConf(path=sysconf.namedconf):
                 AclMatch.objects.filter(acl=acl))
         nc.addAcl(acl.aclName,matchs)
     for view in View.objects.all():
-        for vmc in ViewMatchClient.objects.filter(view=view):
-            view_matchs=map(lambda x:x.aclName,vmc.acl.all())
-            nc.addView(view.viewName,view_matchs)
+        view_matchs=[]
+        for aclmatch in view.aclmatch.all():
+            view_matchs.append(aclmatch.acl.aclName)
+        nc.addView(view.viewName,view_matchs)
     domain_matchs = map(lambda x:x.zone,Domain.objects.all())
     nc.addDomain(domain_matchs)
     nc.save(path)

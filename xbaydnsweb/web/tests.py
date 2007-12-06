@@ -44,14 +44,18 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.aclM4=AclMatch.objects.create(acl=self.acl3,aclMatch='10.10.10.2')
         
         self.vg=ViewGroup.objects.create(name='default')
+        
         self.view1=View.objects.create(viewName='beijing',viewgroup=self.vg)
-        self.viewT2=ViewMatchClient.objects.create(view=self.view1)
-        self.viewT2.acl.add(self.acl1)
+        self.view1.aclmatch.add(self.aclM1)
+        self.view1.aclmatch.add(self.aclM2)
+        
+        self.view2=View.objects.create(viewName='shanghai',viewgroup=self.vg)
+        self.view2.aclmatch.add(self.aclM3)
+        self.view2.aclmatch.add(self.aclM4)
         
         self.rt1=RecordType.objects.create(name='A')
         self.rg1=RecordGroup.objects.create(name='rg1')
         self.domain1=Domain.objects.create(zone='sina.com.cn')
-        self.domain1.view.add(self.view1)
         
         self.vm1=ViewMatch.objects.create(name='china')
         self.vm1.viewgroup.add(self.vg)
@@ -59,7 +63,8 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         
     def tearDown(self):
         """清洁测试环境"""
-        shutil.rmtree(self.basedir)
+        log.debug(self.basedir)
+        #shutil.rmtree(self.basedir)
         basetest.BaseTestCase.tearDown(self)
 
     def _init_sys(self):
@@ -77,10 +82,13 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         self.assertEquals(str(self.view1), 'beijing')
     def test_saveConfFile(self):
         saveAllConf(self.basedir)
-        self.assertTrue(os.stat(os.path.join(self.basedir,'acl/internal.conf')))
-        self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home1.conf')))
-        self.assertTrue(os.stat(os.path.join(self.basedir,'acl/home2.conf')))
-        self.assertTrue(os.stat(os.path.join(self.basedir,'view/beijing.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'acl/internal.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'acl/home1.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'acl/home2.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'view/beijing.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'view/shanghai.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'dynamic/beijing.sina.com.cn.file')))
+        self.assertTrue(os.path.isfile(os.path.join(self.basedir,'dynamic/shanghai.sina.com.cn.file')))
         '''
         acl "home1" { 10.10.10.10; };
         acl "home2" { 10.10.10.1;10.10.10.2; };
