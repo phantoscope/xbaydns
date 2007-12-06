@@ -11,7 +11,7 @@ import base64
 import os,tempfile,datetime
 from xbaydns.conf import sysconf
 
-log = logging.getLogger('xbaydns.tests.namedconf')
+log = logging.getLogger('xbaydns.tools.namedconf')
 
 def pathIsExists(func):
     def mkconfdir(path,childpath):
