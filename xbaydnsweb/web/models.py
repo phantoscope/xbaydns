@@ -92,7 +92,7 @@ class Record(models.Model):
     ttl = models.CharField(maxlength=100,default='600')
     ip = models.CharField(maxlength=100)
     rdclass = models.CharField(maxlength=100,default='IN')
-    rdtype = models.ForeignKey("RecordType")
+    rdtype = models.ForeignKey("RecordType",default='1')
     recordgroup = models.ForeignKey("RecordGroup")
     
     def save(self):
