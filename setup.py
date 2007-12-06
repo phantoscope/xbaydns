@@ -26,5 +26,10 @@ setup(
     zip_safe = False,
 
     packages = find_packages(exclude=['*tests*']),
-    test_suite = 'xbaydns.tests.suite'
+    test_suite = 'xbaydns.tests.suite',
+    entry_points = {
+        'console_scripts': [
+            'xdinit = xbaydns.tools.initconf:main'
+        ]
+    }
 )
