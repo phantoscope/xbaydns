@@ -52,6 +52,10 @@ python setup.py install
 在解开的包中有一个目录叫xbaydnsweb，在其中有全套的web系统，安装好Django后，到这个目录中执行：
 python manage.py runserver
 
+4。将xBayDNS的sync加入crontab中
+你希望用户增加的域名多久生效就在crontab中设置多久运行一次，运行这个sync脚本需要root权限，脚本为
+xbdsync
+它通常在/usr/local/bin中
 
 Release Notes
 =============
