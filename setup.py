@@ -29,7 +29,7 @@ setup(
     test_suite = 'xbaydns.tests.suite',
     entry_points = {
         'console_scripts': [
-            'xdinit = xbaydns.tools.initconf:main'
+            'xbdinit = xbaydns.tools.initconf:main'
         ]
     }
 )
