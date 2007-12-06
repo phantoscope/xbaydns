@@ -15,8 +15,8 @@ class Acl(models.Model):
         search_fields = ('aclName',)
     class Meta:
         ordering = ('aclName',)
-        verbose_name = 'ACL名称'
-        verbose_name_plural = '1.1 ACL名称管理'
+        verbose_name = '地址片名称'
+        verbose_name_plural = '1.1 地址片名称管理'
         
     def __str__(self):
         return self.aclName
@@ -30,8 +30,8 @@ class AclMatch(models.Model):
         list_display = ('acl','aclMatch')
         #search_fields = ('',)
     class Meta:
-        verbose_name = 'ACL'
-        verbose_name_plural = '1.2 ACL管理'
+        verbose_name = '地址片'
+        verbose_name_plural = '1.2 地址片管理'
 
     def __str__(self):
         return ' '.join([str(self.acl),self.aclMatch])
@@ -48,8 +48,8 @@ class View(models.Model):
         #search_fields = ('viewName',)
     class Meta:
         ordering = ('viewName',)
-        verbose_name = 'View'
-        verbose_name_plural = '2.2 View管理'
+        verbose_name = '用户片'
+        verbose_name_plural = '2.2 用户片管理'
     def showacls(self):
         return ','.join(map(lambda x:str(x),self.aclmatch.all()))
     showacls.short_description = 'Acl'
@@ -84,8 +84,8 @@ class ViewGroup(models.Model):
         list_display = ('name',)
         search_fields = ('name',)
     class Meta:
-        verbose_name = 'ViewGroup'
-        verbose_name_plural = '2.1 View Group管理'
+        verbose_name = '用户视图'
+        verbose_name_plural = '2.1 用户视图管理'
 
     def __str__(self):
         return self.name
