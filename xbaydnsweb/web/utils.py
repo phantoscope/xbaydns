@@ -9,11 +9,12 @@ Copyright (c) 2007 yanxu. All rights reserved.
 import logging.config
 from xbaydnsweb.web.models import *
 from xbaydns.tools.namedconf import *
+from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydnsweb.web.utils')
 logging.basicConfig(level=logging.DEBUG)
 
-def saveAllConf(path):
+def saveAllConf(path=sysconf.namedconf):
     nc = NamedConf()
     for acl in Acl.objects.all():
         matchs=map(lambda x:x.aclMatch,
