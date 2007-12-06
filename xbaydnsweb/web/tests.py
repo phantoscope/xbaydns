@@ -106,6 +106,10 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.named_restart()
+        
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.namedconf,'view/beijing.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.namedconf,'view/shanghai.conf')))
+        
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
@@ -122,10 +126,15 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc=NamedConf()
         nc.addAcl('yanxu-any',['127.0.0.1',])
         nc.addView('beijing',['yanxu-any',])
+        nc.addView('shanghai',['yanxu-any',])
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.named_restart()
+        
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.namedconf,'view/beijing.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.namedconf,'view/shanghai.conf')))
+        
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
@@ -149,10 +158,15 @@ class ModelsTest(basetest.BaseTestCase,TestCase):
         nc=NamedConf()
         nc.addAcl('yanxu-any',['127.0.0.1',])
         nc.addView('beijing',['yanxu-any',])
+        nc.addView('shanghai',['yanxu-any',])
         log.debug(nc.loadViewKey('beijing'))
         nc.addDomain(['sina.com.cn','mail.sina.com.cn'])
         nc.save()
         nc.named_restart()
+        
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.namedconf,'view/beijing.conf')))
+        self.assertTrue(os.path.isfile(os.path.join(sysconf.namedconf,'view/shanghai.conf')))
+        
         record1=Record.objects.create(domain=self.domain1,
                                            record='www',
                                            ttl='3600',
