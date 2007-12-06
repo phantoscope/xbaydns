@@ -14,7 +14,7 @@ import sys
 
 setup(
     name = 'xbaydns',
-    version = '0.1',
+    version = '1.0',
     description = 'Easy DNS Interface',
     long_description = \
 """Easy DNS Interface.""",
