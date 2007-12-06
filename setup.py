@@ -15,9 +15,9 @@ import sys
 setup(
     name = 'xbaydns',
     version = '1.0',
-    description = 'Easy DNS Interface',
+    description = 'xBayDNS System',
     long_description = \
-"""Easy DNS Interface.""",
+"""DNS and GSLB Manager System""",
     author = 'xBayDNS Team',
     author_email = 'huangdong@gmail.com',
     license = 'BSD License',
