@@ -48,7 +48,7 @@ class View(models.Model):
     class Meta:
         ordering = ('viewName',)
         verbose_name = 'View'
-        verbose_name_plural = '2.1 View管理'
+        verbose_name_plural = '2.2 View管理'
 
     def __str__(self):
         return self.viewName
@@ -64,7 +64,7 @@ class ViewMatchClient(models.Model):
         #search_fields = ('',)
     class Meta:
         verbose_name = 'View MatchClient'
-        verbose_name_plural = '2.2 View MatchClient管理'
+        verbose_name_plural = '2.3 View MatchClient管理'
     def showacls(self):
         return ','.join(map(lambda x:x.aclName,self.acl.all()))
     showacls.short_description = 'Aiews'
@@ -101,7 +101,7 @@ class ViewGroup(models.Model):
         search_fields = ('name',)
     class Meta:
         verbose_name = 'ViewGroup'
-        verbose_name_plural = '2.3 View Group管理'
+        verbose_name_plural = '2.1 View Group管理'
 
     def __str__(self):
         return self.name
