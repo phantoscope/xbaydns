@@ -28,6 +28,30 @@ xBayDNS需要以下软件：
  * Django （0.96.1）
  * dnspython （1.6）
  * python（2.5）
+ * setuptool
+
+1.安装xbaydns基础系统
+下载xbaydnsx.x.tar.gz，将它解压，执行安装脚本：
+python setup.py install
+它将会把xbaydns的基础系统安装到你的操作系统中。
+
+2.初始化BIND配置
+执行initconf.py，它会初始化操作系统中的BIND相关配置。对于不同操作系统，我们还需要你自己确认操作系统的BIND的启动设备：
+	FreeBSD
+	/etc/rc.conf中设置了 named_enable="YES"你可以使用
+	/etc/rc.d/named restart
+	了解是不是能正常启动bind。
+
+	Mac OSX 10.5
+	使用launchctl  load了org.isc.named的job。你可以使用
+	service org.isc.named stop
+	service org.isc.named start
+	了解是不是能正常启动bind。
+
+3.启动xBayDNS WebAdmin
+在解开的包中有一个目录叫xbaydnsweb，在其中有全套的web系统，安装好Django后，到这个目录中执行：
+python manage.py runserver
+
 
 Release Notes
 =============
