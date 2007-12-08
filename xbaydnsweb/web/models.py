@@ -125,7 +125,7 @@ class Record(models.Model):
         super(Record,self).delete()
 
     class Admin:
-        list_display = ('domain','rdtype','ttl','ip','recordgroup','showviews')
+        list_display = ('domain','record','rdtype','ttl','ip','recordgroup','showviews')
         #search_fields = ('domain','record')
     class Meta:
         verbose_name = 'Record'
