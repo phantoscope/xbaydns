@@ -1,4 +1,5 @@
 # encoding: utf-8
+from django.utils.translation import gettext_lazy as _
 from django.db import models
 import logging.config
 from xbaydns.tools import nsupdate
@@ -15,8 +16,8 @@ class Acl(models.Model):
         search_fields = ('aclName',)
     class Meta:
         ordering = ('aclName',)
-        verbose_name = '地址片名称'
-        verbose_name_plural = '1.1 地址片名称管理'
+        verbose_name = _('acl_verbose_name')
+        verbose_name_plural = _('acl_verbose_name_plural')
         
     def __str__(self):
         return self.aclName

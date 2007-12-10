@@ -62,6 +62,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 )
 
 ROOT_URLCONF = 'xbaydnsweb.urls'
@@ -79,4 +80,9 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 	'django.contrib.admin',
 	'xbaydnsweb.web',
+)
+
+gettext = lambda s: s
+LANGUAGES = (
+  ('zh-cn', gettext('Simplified Chinese')),
 )
