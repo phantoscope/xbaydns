@@ -4,8 +4,7 @@ from django.db import models
 import logging.config
 from xbaydns.tools import nsupdate
 
-log = logging.getLogger('xbaydnsweb.web.tests')
-logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger('xbaydnsweb.web.models')
 
 class Acl(models.Model):
     """Acl Model"""
