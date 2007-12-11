@@ -51,6 +51,7 @@ from xbaydns.utils import shtools
 from xbaydns.utils.command import CommandLine,_combine,TimeoutError,FileSet
 
 log = logging.getLogger('xbaydns.tests.commandtest')
+#logging.basicConfig(level=logging.DEBUG)
 
 class CommandTest(basetest.BaseTestCase):
     """

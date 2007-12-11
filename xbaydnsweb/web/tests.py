@@ -16,7 +16,7 @@ import unittest
 import base64
 
 log = logging.getLogger('xbaydnsweb.web.tests')
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 from django.test.utils import *
 from django.test import TestCase
@@ -25,7 +25,7 @@ from xbaydnsweb.web.models import *
 from xbaydnsweb.web.utils import *
 from xbaydns.tools import initconf
 from xbaydns.tools import namedconf
-from xbaydns.tools import nsupdate
+from xbaydns.dnsapi import nsupdate
 
 class ModelsTest(basetest.BaseTestCase,TestCase):
     def setUp(self):

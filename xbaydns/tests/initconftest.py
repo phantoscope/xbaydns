@@ -17,7 +17,7 @@ import time
 import unittest
 
 log = logging.getLogger('xbaydns.tests.initconftest')
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf

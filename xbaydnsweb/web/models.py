@@ -2,7 +2,7 @@
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 import logging.config
-from xbaydns.tools import nsupdate
+from xbaydns.dnsapi import nsupdate
 
 log = logging.getLogger('xbaydnsweb.web.models')
 

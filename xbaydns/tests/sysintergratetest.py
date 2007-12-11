@@ -18,12 +18,12 @@ import tempfile
 import unittest
 
 log = logging.getLogger('xbaydns.tests.sysintergratetest')
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf
 from xbaydns.tools.namedconf import *
-from xbaydns.tools.nsupdate import *
+from xbaydns.dnsapi.nsupdate import *
 
 class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):
     """测试初始化配置"""
