@@ -12,7 +12,7 @@ from xbaydns.dnsapi.namedconf import *
 from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydnsweb.web.utils')
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 
 def saveAllConf(path=sysconf.namedconf):
     nc = NamedConf()
