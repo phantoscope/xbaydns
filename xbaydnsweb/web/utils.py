@@ -8,7 +8,7 @@ Copyright (c) 2007 yanxu. All rights reserved.
 """
 import logging.config
 from xbaydnsweb.web.models import *
-from xbaydns.tools.namedconf import *
+from xbaydns.dnsapi.namedconf import *
 from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydnsweb.web.utils')

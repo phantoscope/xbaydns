@@ -22,7 +22,7 @@ log = logging.getLogger('xbaydns.tests.sysintergratetest')
 
 from xbaydns.tools import initconf
 from xbaydns.conf import sysconf
-from xbaydns.tools.namedconf import *
+from xbaydns.dnsapi.namedconf import *
 from xbaydns.dnsapi.nsupdate import *
 
 class SysIntergrate_ConfigInit_Test(basetest.BaseTestCase):

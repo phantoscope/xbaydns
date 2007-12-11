@@ -24,7 +24,7 @@ from django.conf import settings
 from xbaydnsweb.web.models import *
 from xbaydnsweb.web.utils import *
 from xbaydns.tools import initconf
-from xbaydns.tools import namedconf
+from xbaydns.dnsapi import namedconf
 from xbaydns.dnsapi import nsupdate
 
 class ModelsTest(basetest.BaseTestCase,TestCase):

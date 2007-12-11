@@ -21,7 +21,7 @@ log = logging.getLogger('xbaydns.tests.nsupdatetest')
 #logging.basicConfig(level=logging.DEBUG)
 
 from xbaydns.tools import initconf
-from xbaydns.tools import namedconf
+from xbaydns.dnsapi import namedconf
 from xbaydns.dnsapi import nsupdate 
 from xbaydns.conf import sysconf
 from xbaydns.utils import shtools

@@ -12,7 +12,7 @@ import dns.exception, dns.name, dns.query, dns.rcode, dns.rdata, dns.rdataclass,
             dns.rdataset, dns.rdatatype, dns.rdtypes, dns.resolver, \
             dns.tsigkeyring, dns.update, dns.zone
 import logging.config
-from xbaydns.tools import namedconf
+from xbaydns.dnsapi import namedconf
 
 log = logging.getLogger('xbaydns.dnsapi.nsupdate')
 

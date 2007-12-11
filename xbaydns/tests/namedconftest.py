@@ -18,7 +18,7 @@ import base64
 log = logging.getLogger('xbaydns.tests.namedconftest')
 logging.basicConfig(level=logging.DEBUG)
 
-from xbaydns.tools.namedconf import *
+from xbaydns.dnsapi.namedconf import *
 import datetime
 
 class NamedConfTest(basetest.BaseTestCase):
