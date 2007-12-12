@@ -18,11 +18,11 @@ setup(
     description = 'xBayDNS System',
     long_description = \
 """DNS and GSLB Manager System""",
-    author = 'xBayDNS Team',
+    author = 'xBay Team',
     author_email = 'huangdong@gmail.com',
     license = 'BSD License',
     url = 'http://xbaydns.googlecode.com',
-    download_url = 'http://xbaydns.googlecode.com',
+    download_url = 'http://code.google.com/p/xbaydns/downloads/list',
     zip_safe = False,
 
     packages = find_packages(exclude=['*tests*']),
