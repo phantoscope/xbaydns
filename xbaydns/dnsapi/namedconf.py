@@ -116,7 +116,7 @@ key "%s" {
     del view(view) 删除view 
 
     参数说明： 
-    view 增加的view的名称
+    view 要删除的view的名称
     '''
     def delView(self,view):
         if view in self.views:
