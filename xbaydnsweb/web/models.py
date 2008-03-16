@@ -8,7 +8,7 @@ log = logging.getLogger('xbaydnsweb.web.models')
 
 class Acl(models.Model):
     """Acl Model"""
-    aclName = models.CharField(maxlength=100)
+    aclName = models.CharField(max_length=100)
     
     class Admin:
         list_display = ('aclName',)
@@ -18,13 +18,13 @@ class Acl(models.Model):
         verbose_name = _('acl_verbose_name')
         verbose_name_plural = '1.1 '+str(_('acl_verbose_name_plural'))
         
-    def __str__(self):
+    def __unicode__(self):
         return self.aclName
 
 class AclMatch(models.Model):
     """AclMatch Model"""
     acl = models.ForeignKey(Acl)
-    aclMatch = models.CharField(maxlength=100)
+    aclMatch = models.CharField(max_length=100)
 
     class Admin:
         list_display = ('acl','aclMatch')
@@ -33,12 +33,12 @@ class AclMatch(models.Model):
         verbose_name = _('aclmatch_verbose_name')
         verbose_name_plural = '1.2 '+str(_('aclmatch_verbose_name_plural'))
 
-    def __str__(self):
+    def __unicode__(self):
         return ' '.join([str(self.acl),self.aclMatch])
 
 class View(models.Model):
     """View Model"""
-    viewName = models.CharField(maxlength=100,verbose_name=str(_('view_verbose_name'))+'名称')
+    viewName = models.CharField(max_length=100,verbose_name=str(_('view_verbose_name'))+'名称')
     #viewgroup = models.ForeignKey("ViewGroup")
     viewgroup = models.ManyToManyField("ViewGroup")
     aclmatch = models.ManyToManyField(AclMatch,verbose_name=_('aclmatch_verbose_name'))
@@ -59,12 +59,12 @@ class View(models.Model):
     showviewgroup.short_description = 'View Group'
     showviewgroup.allow_tags = True
 
-    def __str__(self):
+    def __unicode__(self):
         return self.viewName
 
 class Domain(models.Model):
     """Domain Model"""
-    zone = models.CharField(maxlength=100)
+    zone = models.CharField(max_length=100)
 
     class Admin:
         list_display = ('zone',)
@@ -73,12 +73,12 @@ class Domain(models.Model):
         verbose_name = _('domain_verbose_name')
         verbose_name_plural = '4.1 '+str(_('domain_verbose_name_plural'))
 
-    def __str__(self):
+    def __unicode__(self):
         return self.zone
 
 class ViewGroup(models.Model):
     """ViewGourp"""
-    name = models.CharField(maxlength=100)
+    name = models.CharField(max_length=100)
 
     class Admin:
         list_display = ('name',)
@@ -87,16 +87,16 @@ class ViewGroup(models.Model):
         verbose_name = _('viewgroup_verbose_name')
         verbose_name_plural = '2.1 '+str(_('viewgroup_verbose_name_plural'))
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 class Record(models.Model):
     """Record"""
     domain = models.ForeignKey(Domain)
-    record = models.CharField(maxlength=100)
-    ttl = models.CharField(maxlength=100,default='600')
-    ip = models.CharField(maxlength=100)
-    rdclass = models.CharField(maxlength=100,default='IN')
+    record = models.CharField(max_length=100)
+    ttl = models.CharField(max_length=100,default='600')
+    ip = models.CharField(max_length=100)
+    rdclass = models.CharField(max_length=100,default='IN')
     rdtype = models.ForeignKey("RecordType",default='1')
     recordgroup = models.ForeignKey("RecordGroup")
     
@@ -143,12 +143,12 @@ class Record(models.Model):
     showviews.short_description = _('view_verbose_name')
     showviews.allow_tags = True
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s IN %s'%(self.domain,self.rdtype)
 
 class RecordGroup(models.Model):
     """RecordGroup"""
-    name = models.CharField(maxlength=100)
+    name = models.CharField(max_length=100)
 
     class Admin:
         list_display = ('name',)
@@ -157,12 +157,12 @@ class RecordGroup(models.Model):
         verbose_name = _('recordgroup_verbose_name')
         verbose_name_plural = '3.1 '+str(_('recordgroup_verbose_name_plural'))
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
 class ViewMatch(models.Model):
     """ViewMatch"""
-    name = models.CharField(maxlength=100)
+    name = models.CharField(max_length=100)
     viewgroup = models.ManyToManyField(ViewGroup)
     recordgroup = models.ManyToManyField(RecordGroup)
 
@@ -181,13 +181,13 @@ class ViewMatch(models.Model):
     showRecordGroups.short_description = _('recordgroup_verbose_name')
     showRecordGroups.allow_tags = True
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
         
 class RecordType(models.Model):
     """RecordType"""
-    name = models.CharField(maxlength=100)
+    name = models.CharField(max_length=100)
 
     class Admin:
         list_display = ('name',)
@@ -197,5 +197,5 @@ class RecordType(models.Model):
         verbose_name_plural = '4.2 Record Type管理'
 
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
