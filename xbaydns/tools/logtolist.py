@@ -9,6 +9,9 @@ Copyright (c) 2008 xBayDNS Team. All rights reserved.
 import re
 
 def logtolist(s):
+    data={}
     c=re.compile("\d+\.\d+\.\d+\.\d+")
-    return c.findall(s)
+    for ip in c.findall(s):
+        data[ip]=''
+    return data.keys()
 
