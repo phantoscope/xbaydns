@@ -19,6 +19,10 @@ DIG_CMD = "dig +noanswer +noquestion @%s . NS"
 DIG_RE = re.compile("Query time: (\d+) msec")
 MAXQUERIES = 5
 QUERY_INTERVAL = 5
+MAX_TESTING = 5
+
+pool_sema = threading.BoundedSemaphore(MAX_TESTING)
+file_mutex = threading.Lock()
 
 def getlatency_ping(ip):
     latencys = {}
@@ -50,12 +54,13 @@ def getlatency_queryns(ip):
             runtimes_lst.append(round((time_end - time_start) * 1000, 3))
         time.sleep(QUERY_INTERVAL)
         count += 1
-    latencys['query']['avg'] = float(sum(querytime_lst))/len(querytime_lst)
-    latencys['query']['min'] = min(querytime_lst)
-    latencys['query']['max'] = max(querytime_lst)
-    latencys['run']['avg'] = sum(runtimes_lst)/len(querytime_lst)
-    latencys['run']['min'] = min(runtimes_lst)
-    latencys['run']['max'] = max(runtimes_lst)
+    if len(querytime_lst) > 0:
+        latencys['query']['avg'] = float(sum(querytime_lst))/len(querytime_lst)
+        latencys['query']['min'] = min(querytime_lst)
+        latencys['query']['max'] = max(querytime_lst)
+        latencys['run']['avg'] = sum(runtimes_lst)/len(runtimes_lst)
+        latencys['run']['min'] = min(runtimes_lst)
+        latencys['run']['max'] = max(runtimes_lst)
     return latencys
 
 def getlatency_gateway(ip):
@@ -83,17 +88,39 @@ def getlatency(ip):
     else:
         pingtype = "PING_HOST"
         latency = latencys['avg']
-    print pingtype, latency
+    print ip, pingtype, latency
+    return (pingtype, latency)
+
+def threadmain(ip, fileobj):
+    pool_sema.acquire(True)
+    pingtype, latency = getlatency(ip)
+    pool_sema.release()
+    file_mutex.acquire()
+    fileobj.write("%s,%s,%s,%s\n"%(ip, pingtype, latency, time.strftime("%Y-%m-%d %H:%M:%S")))
+    file_mutex.release()
 
 def main():
-    #print getlatency_ping('202.108.35.50')
-    #print getlatency_gateway('202.108.35.50')
-    #print getlatency_queryns('10.210.12.10')
-    #print getlatency_queryns('202.106.182.153')
-    getlatency('202.108.35.50')
-    getlatency('10.210.12.10')
-    getlatency('202.106.182.153')
-    getlatency('202.106.0.20')
-    
+#    print getlatency_ping('202.108.35.50')
+#    print getlatency_gateway('202.108.35.50')
+#    print getlatency_queryns('10.210.12.10')
+#    print getlatency_queryns('202.106.182.153')
+#    getlatency('202.108.35.50')
+#    getlatency('10.210.12.10')
+#    getlatency('202.106.182.153')
+#    getlatency('202.106.0.20')
+    threads = []
+    iplst = open("./iplst.txt", "r")
+    latency_file = open("./latency.txt", "a")
+    while True:
+        ip = iplst.readline().strip('\n')
+        if ip == '':
+            break
+        threads.append(threading.Thread(target=threadmain, args=(ip, latency_file)))
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    latency_file.close()
+
 if __name__ == '__main__':
     sys.exit(main())
