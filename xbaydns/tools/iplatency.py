@@ -34,10 +34,9 @@ def getlatency_ping(ip):
     return latencys
 
 def getlatency_queryns(ip):
-    latencys = {}
-    query_totaltime = 0
-    run_totaltime = 0
-    sample_count = 0
+    latencys = dict(query={}, run={})
+    querytime_lst = []
+    runtimes_lst = []
     count = 0
     while count < MAXQUERIES:
         time_start = time.time()
@@ -47,14 +46,16 @@ def getlatency_queryns(ip):
         dig.close()
         querytime = DIG_RE.findall(output)
         if len(querytime) != 0:
-            query_totaltime += int(querytime[0])
-            print querytime[0]
-            run_totaltime += round((time_end - time_start) * 1000, 3)
-            sample_count += 1
+            querytime_lst.append(int(querytime[0]))
+            runtimes_lst.append(round((time_end - time_start) * 1000, 3))
         time.sleep(QUERY_INTERVAL)
         count += 1
-    latencys['query'] = float(query_totaltime)/sample_count
-    latencys['run'] = run_totaltime/sample_count
+    latencys['query']['avg'] = float(sum(querytime_lst))/len(querytime_lst)
+    latencys['query']['min'] = min(querytime_lst)
+    latencys['query']['max'] = max(querytime_lst)
+    latencys['run']['avg'] = sum(runtimes_lst)/len(querytime_lst)
+    latencys['run']['min'] = min(runtimes_lst)
+    latencys['run']['max'] = max(runtimes_lst)
     return latencys
 
 def getlatency_gateway(ip):
@@ -64,11 +65,35 @@ def getlatency_gateway(ip):
     gateway_ip = socket.inet_ntoa(struct.pack("I", socket.ntohl(gateway_ip_nl)))
     return getlatency_ping(gateway_ip)
 
+def getlatency(ip):
+    latencys = getlatency_ping(ip)
+    if len(latencys) == 0:
+        latencys = getlatency_queryns(ip)
+        if len(latencys) == 0:
+            latencys = getlatency_gateway(ip)
+            if len(latencys) == 0:
+                pingtype = "OUT_OF_REACH"
+                latency = -1
+            else:
+                pingtype = "PING_GATEWAY"
+                latency = latencys['avg']
+        else:
+            pingtype = "NS_QUERY"
+            latency = latencys['run']['avg']
+    else:
+        pingtype = "PING_HOST"
+        latency = latencys['avg']
+    print pingtype, latency
+
 def main():
-    print getlatency_ping('202.108.35.50')
-    print getlatency_gateway('202.108.35.50')
-    print getlatency_queryns('10.210.12.10')
-    print getlatency_queryns('202.106.182.153')
+    #print getlatency_ping('202.108.35.50')
+    #print getlatency_gateway('202.108.35.50')
+    #print getlatency_queryns('10.210.12.10')
+    #print getlatency_queryns('202.106.182.153')
+    getlatency('202.108.35.50')
+    getlatency('10.210.12.10')
+    getlatency('202.106.182.153')
+    getlatency('202.106.0.20')
     
 if __name__ == '__main__':
     sys.exit(main())
