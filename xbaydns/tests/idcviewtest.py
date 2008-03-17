@@ -26,11 +26,13 @@ class LogToListTest(basetest.BaseTestCase):
         """初始化测试环境"""
         self.basedir = os.path.realpath(tempfile.mkdtemp(suffix='xbaydns_test'))
         basetest.BaseTestCase.setUp(self)
+        self.__initfile()
 
     def tearDown(self):
         """清洁测试环境"""
         shutil.rmtree(self.basedir)
         basetest.BaseTestCase.tearDown(self)
+        self.__rmfile()
         
     def __initfile(self):
         f=open('/tmp/10.10.10.10_20080317','w')
@@ -49,10 +51,13 @@ class LogToListTest(basetest.BaseTestCase):
         f.write('20.10.10.21,pinggate,0.605,2008-03-17 00:05:00\n')
         f.write('20.10.10.22,ping,0.405,2008-03-17 00:05:00\n')
         f.close()
+    def __rmfile(self):
+        os.remove('/tmp/10.10.10.10_20080317')
+        os.remove('/tmp/11.11.11.11_20080317')
         
     def test_convfiles(self):
         files=['/tmp/10.10.10.10_20080317','/tmp/11.11.11.11_20080317']
-        s=convfiles(files)
+        s=idcview.convfiles(files)
 
 def suite():
     """集合测试用例"""
