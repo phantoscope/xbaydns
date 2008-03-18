@@ -99,14 +99,6 @@ def threadmain(ip, fileobj):
     file_mutex.release()
 
 def main():
-#    print getlatency_ping('202.108.35.50')
-#    print getlatency_gateway('202.108.35.50')
-#    print getlatency_queryns('10.210.12.10')
-#    print getlatency_queryns('202.106.182.153')
-#    getlatency('202.108.35.50')
-#    getlatency('10.210.12.10')
-#    getlatency('202.106.182.153')
-#    getlatency('202.106.0.20')
     threads = []
     input = "/dev/stdin"
     output = "/dev/stdout"
