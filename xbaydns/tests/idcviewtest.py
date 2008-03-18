@@ -57,7 +57,9 @@ class LogToListTest(basetest.BaseTestCase):
         
     def test_convfiles(self):
         files=['/tmp/10.10.10.10_20080317','/tmp/11.11.11.11_20080317']
-        s=idcview.convfiles(files)
+        data=idcview.convfiles(files)
+        self.assertTrue(isinstance(data,list))
+        print data
 
 def suite():
     """集合测试用例"""
