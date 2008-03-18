@@ -4,7 +4,7 @@
 iplatency.py
 
 Created by Razor <bg1tpt AT gmail.com> on 2008-03-17.
-Copyright (c) 2007 xBayDNS Team. All rights reserved.
+Copyright (c) 2008 xBayDNS Team. All rights reserved.
 
 """
 
