@@ -10,15 +10,16 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 from decimal import Decimal
 from operator import itemgetter
 
+RULE={
+    'OUT_OF_REACH':
+}
+
 def pingtype_weight(pingtype,v,data_value=0):
     pingtype=pingtype.upper()
     if pingtype == 'OUT_OF_REACH':
         return 0
-    else:
-        if data_value==0:
-            return v
-        else:
-            return (data_value+v)/2
+    if data_value!=0:
+        return (data_value+v)/2
     return v
 
 def convfiles(files):
