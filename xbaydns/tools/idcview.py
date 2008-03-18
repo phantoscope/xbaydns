@@ -26,6 +26,8 @@ def convfiles(files):
     for f in files:
         for r in open(f):
             #OUT_OF_REACH,PING_GATEWAY,-1
+            if r.strip()=='':
+                continue
             ip,pingtype,pingavg,pingtime=map(lambda x:x.strip(),r.split(','))
             if ip not in data:
                 data[ip]=pingtype_weight(pingtype, Decimal(pingavg) )
