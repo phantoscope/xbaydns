@@ -74,7 +74,7 @@ def getlatency(ip):
     latencys = getlatency_ping(ip)
     if len(latencys) == 0:
         latencys = getlatency_queryns(ip)
-        if len(latencys) == 0:
+        if len(latencys['query']) == 0:
             latencys = getlatency_gateway(ip)
             if len(latencys) == 0:
                 pingtype = "OUT_OF_REACH"
@@ -88,7 +88,6 @@ def getlatency(ip):
     else:
         pingtype = "PING_HOST"
         latency = latencys['avg']
-    print ip, pingtype, latency
     return (pingtype, latency)
 
 def threadmain(ip, fileobj):
@@ -109,8 +108,24 @@ def main():
 #    getlatency('202.106.182.153')
 #    getlatency('202.106.0.20')
     threads = []
-    iplst = open("./iplst.txt", "r")
-    latency_file = open("./latency.txt", "a")
+    input = "/dev/stdin"
+    output = "/dev/stdout"
+    if len(sys.argv) == 1:
+        pass
+    elif len(sys.argv) == 2:
+        input = sys.argv[1]
+    elif len(sys.argv) == 3:
+        input = sys.argv[1]
+        output = sys.argv[2]
+    else:
+        print "Usage: xxxxxxxxxx"
+        return 1
+    try:
+        iplst = open(input, "r")
+        latency_file = open(output, "a")
+    except IOError, e:
+        print e.strerror
+        return 1
     while True:
         ip = iplst.readline().strip('\n')
         if ip == '':
@@ -121,6 +136,7 @@ def main():
     for t in threads:
         t.join()
     latency_file.close()
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main())
