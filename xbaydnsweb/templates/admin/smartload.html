@@ -3,10 +3,26 @@
 
 {% block title %}智能探测结果{% endblock %}
 
+{% block stylesheet %}{% admin_media_prefix %}css/forms.css{% endblock %}
+
+{% block extrahead %}
+<script type="text/javascript" src="../../../jsi18n/"></script>
+<script type="text/javascript" src="/media/js/core.js"></script>
+<script type="text/javascript" src="/media/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/media/js/SelectBox.js"></script>
+<script type="text/javascript" src="/media/js/SelectFilter2.js"></script>
+{% endblock %}
+
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="../../">{% trans "Home" %}</a> &rsaquo; 智能探测结果</div>{% endblock %}
 
 {% block content %}
 <div id="content-main">
 
+	<div class="form-row">
+		{{f.now_viewmatch}}
+	</div>
+
 </div>
+
+<script type="text/javascript">addEvent(window, "load", function(e) { SelectFilter.init("id_now_viewmatch", "当前ViewMatch", 0, "/media/"); });</script>
 {% endblock %}
