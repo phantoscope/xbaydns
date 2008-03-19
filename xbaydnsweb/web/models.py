@@ -163,8 +163,8 @@ class RecordGroup(models.Model):
 class ViewMatch(models.Model):
     """ViewMatch"""
     name = models.CharField(max_length=100)
-    viewgroup = models.ManyToManyField(ViewGroup)
-    recordgroup = models.ManyToManyField(RecordGroup)
+    viewgroup = models.ManyToManyField(ViewGroup,filter_interface=models.HORIZONTAL)
+    recordgroup = models.ManyToManyField(RecordGroup,filter_interface=models.HORIZONTAL)
 
     class Admin:
         list_display = ('name','showViewGroups','showRecordGroups')
