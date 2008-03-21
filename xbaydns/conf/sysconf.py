@@ -43,17 +43,19 @@ elif (system == "FreeBSD"):
     chroot_path = "/var/named"
     namedconf = "/etc/namedb"
     named_user = "bind"
-    if (release == "6.2"):
+    if (release >= "6.2"):
         pass
-    elif (release == "7.0"):
-        pass
+    else
+        raise "Unsupported release."
 elif (system == "OpenBSD"):
     # 操作系统为OpenBSD
     named_user = "named"
     chroot_path = "/var/named"
     namedconf = "/etc"
-    if (release ==  "4.2"):
+    if (release >=  "4.2"):
         pass
+    else
+        raise "Unsupported release."
 elif (system == "Linux"):
     # 操作系统为Linux
     named_user = "bind"
