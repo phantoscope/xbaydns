@@ -219,14 +219,14 @@ key "%s" {
 $ORIGIN .
 $TTL 360 ;10 minute
 %(domain)s IN SOA %(soa)s. %(admin)s. (
-            %(time)s ; serial
-            60         ; refresh (1 minute)
-            3600       ; retry (1 hour)
-            604800     ; expire (1 week)
-            3600       ; minimum (1 hour)
-            )
+	    %(time)s	; serial
+	    60		; refresh (1 minute)
+	    3600	; retry (1 hour)
+	    604800	; expire (1 week)
+	    3600	; minimum (1 hour)
+	    )
 
-           IN NS %(ns)s.
+	IN NS %(ns)s.
 '''%{'domain':domain,'time':self.getSerial(),
                      'ns':sysconf.default_ns,'soa':sysconf.default_soa,
                      'admin':sysconf.default_admin}
