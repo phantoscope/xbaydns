@@ -110,7 +110,9 @@ def main():
         input = sys.argv[1]
         output = sys.argv[2]
     else:
-        print "Usage: xxxxxxxxxx"
+        print '''Usage:  %s
+        %s iplistfile
+        %s iplistfile outputfile'''%(__file__, __file__, __file__)
         return 1
     try:
         iplst = open(input, "r")
