@@ -8,15 +8,15 @@ Copyright (c) 2008 xBayDNS Team. All rights reserved.
 
 """
 
-import os, re, socket, struct, sys, time
+import os, re, struct, sys, time
 import threading
 
 PING_CMD = "ping -c5 -q %s"
 PING_RE = re.compile(".* min/avg/max/\D+ = ([0-9.]+)/([0-9.]+)/([0-9.]+).* ms")
-NETMASK_C = 0xFFFFFF00
-DEFAULT_GATEWAY = 1
 DIG_CMD = "dig +noanswer +noquestion @%s . NS"
 DIG_RE = re.compile("Query time: (\d+) msec")
+TRACERT_CMD = "traceroute -w1 %s"
+TRACERT_RE = re.compile("(\(\d+.\d+.\d+.\d+\))")
 MAXQUERIES = 5
 QUERY_INTERVAL = 5
 MAX_TESTING = 5
@@ -64,11 +64,15 @@ def getlatency_queryns(ip):
     return latencys
 
 def getlatency_gateway(ip):
-    ip_nl = socket.htonl(struct.unpack("I", socket.inet_aton(ip))[0])        # "I" unsigned int
-    net_nl = ip_nl & NETMASK_C
-    gateway_ip_nl = net_nl + DEFAULT_GATEWAY
-    gateway_ip = socket.inet_ntoa(struct.pack("I", socket.ntohl(gateway_ip_nl)))
-    return getlatency_ping(gateway_ip)
+    tracert = os.popen(TRACERT_CMD%ip, "r")
+    output = tracert.read()
+    tracert.close()
+    lines = output.rstrip('\n').split('\n')
+    if TRACERT_RE.findall(lines[-1])[0] == ip:
+        gateway_ip = TRACERT_RE.findall(lines[-2])[0]
+        if gateway_ip != '':
+            return getlatency_ping(gateway_ip)
+    return []
 
 def getlatency(ip):
     latencys = getlatency_ping(ip)
