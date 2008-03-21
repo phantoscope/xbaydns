@@ -84,7 +84,7 @@ def getlatency(ip):
                 latency = latencys['avg']
         else:
             pingtype = "NS_QUERY"
-            latency = latencys['run']['avg']
+            latency = latencys['query']['avg']
     else:
         pingtype = "PING_HOST"
         latency = latencys['avg']
