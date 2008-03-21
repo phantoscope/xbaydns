@@ -20,20 +20,20 @@ pool_sema = threading.BoundedSemaphore(MAX_TESTING)
 file_mutex = threading.Lock()
 
 def getlatency_ping(ip):
-    latencys = {}
+    latencies = {}
     ping = os.popen(PING_CMD%ip, "r")
     while True:
         output = ping.readline()
         if output == '':
             break
         if pingre_obj.match(output) != None:
-            latencys['min'], latencys['avg'], latencys['max'] = pingre_obj.match(output).groups()
+            latencies['min'], latencies['avg'], latencies['max'] = pingre_obj.match(output).groups()
             break
     ping.close()
-    return latencys
+    return latencies
 
 def getlatency_queryns(ip):
-    latencys = dict(query={}, run={})
+    latencies = dict(query={}, run={})
     querytime_lst = []
     runtimes_lst = []
     count = 0
@@ -50,13 +50,13 @@ def getlatency_queryns(ip):
         time.sleep(QUERY_INTERVAL)
         count += 1
     if len(querytime_lst) > 0:
-        latencys['query']['avg'] = float(sum(querytime_lst))/len(querytime_lst)
-        latencys['query']['min'] = min(querytime_lst)
-        latencys['query']['max'] = max(querytime_lst)
-        latencys['run']['avg'] = sum(runtimes_lst)/len(runtimes_lst)
-        latencys['run']['min'] = min(runtimes_lst)
-        latencys['run']['max'] = max(runtimes_lst)
-    return latencys
+        latencies['query']['avg'] = float(sum(querytime_lst))/len(querytime_lst)
+        latencies['query']['min'] = min(querytime_lst)
+        latencies['query']['max'] = max(querytime_lst)
+        latencies['run']['avg'] = sum(runtimes_lst)/len(runtimes_lst)
+        latencies['run']['min'] = min(runtimes_lst)
+        latencies['run']['max'] = max(runtimes_lst)
+    return latencies
 
 def getlatency_gateway(ip):
     tracert = os.popen(TRACERT_CMD%ip, "r")
@@ -71,23 +71,23 @@ def getlatency_gateway(ip):
     return []
 
 def getlatency(ip):
-    latencys = getlatency_ping(ip)
-    if len(latencys) == 0:
-        latencys = getlatency_queryns(ip)
-        if len(latencys['query']) == 0:
-            latencys = getlatency_gateway(ip)
-            if len(latencys) == 0:
+    latencies = getlatency_ping(ip)
+    if len(latencies) == 0:
+        latencies = getlatency_queryns(ip)
+        if len(latencies['query']) == 0:
+            latencies = getlatency_gateway(ip)
+            if len(latencies) == 0:
                 pingtype = "OUT_OF_REACH"
                 latency = -1
             else:
                 pingtype = "PING_GATEWAY"
-                latency = latencys['avg']
+                latency = latencies['avg']
         else:
             pingtype = "NS_QUERY"
-            latency = latencys['query']['avg']
+            latency = latencies['query']['avg']
     else:
         pingtype = "PING_HOST"
-        latency = latencys['avg']
+        latency = latencies['avg']
     return (pingtype, latency)
 
 def threadmain(ip, fileobj):
