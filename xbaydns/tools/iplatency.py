@@ -10,16 +10,11 @@ Copyright (c) 2008 xBayDNS Team. All rights reserved.
 
 import os, re, struct, sys, time
 import threading
+from iplatency_conf import *
 
-PING_CMD = "ping -c5 -q %s"
-PING_RE = re.compile(".* min/avg/max/\D+ = ([0-9.]+)/([0-9.]+)/([0-9.]+).* ms")
-DIG_CMD = "dig +noanswer +noquestion @%s . NS"
-DIG_RE = re.compile("Query time: (\d+) msec")
-TRACERT_CMD = "traceroute -w1 %s"
-TRACERT_RE = re.compile("(\(\d+.\d+.\d+.\d+\))")
-MAXQUERIES = 5
-QUERY_INTERVAL = 5
-MAX_TESTING = 5
+pingre_obj = re.compile(PING_RE)
+digre_obj = re.compile(DIG_RE)
+tracertre_obj = re.compile(TRACERT_RE)
 
 pool_sema = threading.BoundedSemaphore(MAX_TESTING)
 file_mutex = threading.Lock()
@@ -31,8 +26,8 @@ def getlatency_ping(ip):
         output = ping.readline()
         if output == '':
             break
-        if PING_RE.match(output) != None:
-            latencys['min'], latencys['avg'], latencys['max'] = PING_RE.match(output).groups()
+        if pingre_obj.match(output) != None:
+            latencys['min'], latencys['avg'], latencys['max'] = pingre_obj.match(output).groups()
             break
     ping.close()
     return latencys
@@ -48,7 +43,7 @@ def getlatency_queryns(ip):
         output = dig.read()
         time_end = time.time()
         dig.close()
-        querytime = DIG_RE.findall(output)
+        querytime = digre_obj.findall(output)
         if len(querytime) != 0:
             querytime_lst.append(int(querytime[0]))
             runtimes_lst.append(round((time_end - time_start) * 1000, 3))
@@ -68,10 +63,11 @@ def getlatency_gateway(ip):
     output = tracert.read()
     tracert.close()
     lines = output.rstrip('\n').split('\n')
-    if TRACERT_RE.findall(lines[-1])[0] == ip:
-        gateway_ip = TRACERT_RE.findall(lines[-2])[0]
-        if gateway_ip != '':
-            return getlatency_ping(gateway_ip)
+    host_ip = tracertre_obj.findall(lines[-1])
+    if host_ip != [] and host_ip[0] == ip:
+        gateway_ip = tracertre_obj.findall(lines[-2])
+        if gateway_ip != [] and gateway_ip[0] != '':
+            return getlatency_ping(gateway_ip[0])
     return []
 
 def getlatency(ip):
