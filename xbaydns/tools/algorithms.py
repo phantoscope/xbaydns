@@ -45,7 +45,7 @@ def ecintersection(*devides):
                 ec_insect[element] = ec_dict[element]
                 continue
             ec_insect[element].intersection_update(ec_dict[element])
-    print ec_insect
+    #print ec_insect
 
     # convert to factor set
     factor_set = []
@@ -58,7 +58,8 @@ def ecintersection(*devides):
             pass
         factor_set.append(ec)
         i += 1
-    print factor_set
+    #print factor_set
+    return factor_set
 
 # test
-ecintersection([[0,1], [2,3,4], [5]], [[0],[1,2], [3,4], [5]])
+#ecintersection([[0,1], [2,3,4], [5]], [[0],[1,2], [3,4], [5]])
