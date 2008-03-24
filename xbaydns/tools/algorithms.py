@@ -51,21 +51,25 @@ def ecintersection(*devides):
 
     # convert to factor set
     factor_set = []
-    i = 0
     for ec in ec_insect.itervalues():
-        try:
-            if factor_set[i - 1] == ec:
-                continue
-        except IndexError:
-            pass
-        factor_set.append(ec)
-        i += 1
+        seen = False
+        for factor in factor_set:
+            if factor == ec:
+                seen = True
+                break
+        if seen == False:
+            factor_set.append(ec)
     #print factor_set
     return factor_set
 
 # test
 import ipdevide_gen
-testdev = ipdevide_gen.ipdevide_gen(4, 3)
+testdev = ipdevide_gen.ipdevide_gen(4000, 3)
 for dev in testdev:
     print "dev: %s"%str(dev)
-print "factor set: %s"%str(ecintersection(*testdev))
+start = time.time()
+result = ecintersection(*testdev)
+end = time.time()
+print "factor set: %s"%str(result)
+print "cost time: %f"%(end-start)
+

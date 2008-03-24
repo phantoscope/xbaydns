@@ -4,7 +4,7 @@ import random
 def ipdevide_gen(ip_count, devides_count):
     ips = set()
     devides = []
-    while len(ips) <= ip_count:
+    while len(ips) < ip_count:
         ips.add(ipgen())
     for i in range(devides_count):
         devides.append(randevide(list(ips)[:]))
@@ -16,7 +16,7 @@ def ipgen():
 def randevide(ips):
     devide = []
     while True:
-        ipcount = random.randint(0, len(ips))
+        ipcount = random.randint(1, len(ips))
         ec = []
         for i in range(ipcount):
             while True:
