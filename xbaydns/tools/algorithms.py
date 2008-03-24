@@ -44,6 +44,8 @@ def ecintersection(*devides):
             except KeyError:
                 ec_insect[element] = ec_dict[element]
                 continue
+            if len(ec_dict[element]) == 0:
+                continue
             ec_insect[element].intersection_update(ec_dict[element])
     #print ec_insect
 
@@ -58,8 +60,9 @@ def ecintersection(*devides):
             pass
         factor_set.append(ec)
         i += 1
-    #print factor_set
+    print factor_set
     return factor_set
 
 # test
-#ecintersection([[0,1], [2,3,4], [5]], [[0],[1,2], [3,4], [5]])
+#ecintersection([[0,1], [2,3,4], [5]], [[0],[1,2], [3,4]])
+#ecintersection([['21.18.162.179', '54.184.18.160', '201.152.125.234', '212.165.165.198'], [], ['65.218.173.80']], [['212.165.165.198', '65.218.173.80', '201.152.125.234'], ['21.18.162.179', '54.184.18.160']], [[], [], ['21.18.162.179', '201.152.125.234', '54.184.18.160', '65.218.173.80'], ['212.165.165.198']])
