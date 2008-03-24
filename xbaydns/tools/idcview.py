@@ -9,6 +9,7 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 
 from decimal import Decimal
 from operator import itemgetter
+import sys
 
 def pingtype_weight(pingtype,v,data_value=-1):
     if data_value == -1:data_value=v
@@ -28,9 +29,21 @@ def convfiles(files):
                 continue
             ip,pingtype,pingavg,pingtime=map(lambda x:x.strip(),r.split(','))
             if ip not in data:
-                data[ip]=pingtype_weight(pingtype,Decimal(pingavg),-1 )
+                data[ip]=[pingtype_weight(pingtype,Decimal(pingavg))]
             else:
-                data[ip]=pingtype_weight(pingtype,Decimal(pingavg),data[ip] )
+                data[ip].append(pingtype_weight(pingtype,Decimal(pingavg)))
+    for ip in data.keys():
+        data[ip].sort()
     data=sorted(data.items(),key=itemgetter(1))
     return data
     
+agentfiles = sys.argv[1:]
+datafile = "idcview_out.txt"
+datafile_obj = open(datafile, "w")
+data = convfiles(agentfiles)
+for ip, latencies in data:
+    datafile_obj.write("%s"%ip)
+    for latency in latencies:
+        datafile_obj.write(",%.3f"%latency)
+    datafile_obj.write('\n')
+datafile_obj.close()
