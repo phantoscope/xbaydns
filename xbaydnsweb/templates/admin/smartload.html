@@ -15,7 +15,13 @@
 {% load webtags %}
 
 <div id="content-main">
+	{% if msg %}
+	{{msg}}<br/>
+	{% endif %}
 	{% resultToHtml result %}
+	<form action="/admin/smartload/" method="POST">
+		<input type="submit" value="应用结果">
+	</form>
 	{# <table> #}
 	{# 	<tr> #}
 	{# 		<td> #}
