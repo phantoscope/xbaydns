@@ -19,71 +19,34 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: web/models.py:19
-msgid "acl_verbose_name"
-msgstr "地址片名称"
-
-#: web/models.py:20
-msgid "acl_verbose_name_plural"
-msgstr "地址片名称管理"
-
-#: web/models.py:34
-#: web/models.py:45
-msgid "aclmatch_verbose_name"
-msgstr "地址片"
-
-#: web/models.py:35
-msgid "aclmatch_verbose_name_plural"
-msgstr "地址片管理"
-
-#: web/models.py:42
-#: web/models.py:52
-#: web/models.py:144
-msgid "view_verbose_name"
-msgstr "用户片"
-
-#: web/models.py:53
-msgid "view_verbose_name_plural"
-msgstr "用户片管理"
-
-#: web/models.py:74
+#: web/models.py:18
 msgid "domain_verbose_name"
 msgstr "域名"
 
-#: web/models.py:75
+#: web/models.py:19
 msgid "domain_verbose_name_plural"
 msgstr "域名管理"
 
-#: web/models.py:85
-#: web/models.py:178
-msgid "viewgroup_verbose_name"
-msgstr "用户视图"
+#: web/models.py:34
+msgid "idc_verbose_name"
+msgstr "机房"
 
-#: web/models.py:86
-msgid "viewgroup_verbose_name_plural"
-msgstr "用户视图管理"
+#: web/models.py:35
+msgid "idc_verbose_name_plural"
+msgstr "机房管理"
 
-#: web/models.py:132
+#: web/models.py:52
 msgid "record_verbose_name"
-msgstr "Record"
+msgstr "记录"
 
-#: web/models.py:133
+#: web/models.py:53
 msgid "record_verbose_name_plural"
-msgstr "Record管理"
+msgstr "记录管理"
 
-#: web/models.py:158
-#: web/models.py:182
-msgid "recordgroup_verbose_name"
-msgstr "RecordGroup"
+#: web/models.py:73
+msgid "result_verbose_name"
+msgstr "智能结果"
 
-#: web/models.py:159
-msgid "recordgroup_verbose_name_plural"
-msgstr "Record Group管理"
-
-#: web/models.py:174
-msgid "viewmatch_verbose_name"
-msgstr "ViewMatch"
-
-#: web/models.py:175
-msgid "viewmatch_verbose_name_plural"
-msgstr "View Match管理"
+#: web/models.py:74
+msgid "result_verbose_name_plural"
+msgstr "智能结果管理"
