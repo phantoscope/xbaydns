@@ -16,7 +16,7 @@ class Domain(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name = _('domain_verbose_name')
-        verbose_name_plural = '1.1 '+str(_('domain_verbose_name_plural'))
+        verbose_name_plural = _('domain_verbose_name_plural')
     def __unicode__(self):
         return self.name
 
@@ -31,7 +31,7 @@ class IDC(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name = _('idc_verbose_name')
-        verbose_name_plural = '1.2 '+str(_('idc_verbose_name_plural'))
+        verbose_name_plural = _('idc_verbose_name_plural')
     def __unicode__(self):
         return self.name
 
@@ -76,7 +76,7 @@ class Record(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name = _('record_verbose_name')
-        verbose_name_plural = '1.3 '+str(_('record_verbose_name_plural'))
+        verbose_name_plural = _('record_verbose_name_plural')
     def __unicode__(self):
         return '%s.%s in %s'%(self.name,self.domain,self.idc)
 
@@ -92,7 +92,7 @@ class Result(models.Model):
     class Meta:
         ordering = ('record',)
         verbose_name = _('result_verbose_name')
-        verbose_name_plural = '1.4 '+str(_('result_verbose_name_plural'))
+        verbose_name_plural = _('result_verbose_name_plural')
     def __unicode__(self):
         return "%s to %s go %s"%(self.ip,self.record,self.idc)
 
