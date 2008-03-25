@@ -8,7 +8,7 @@ log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
     """Domain Model"""
-    name = models.CharField(max_length=100,verbose_name='域名',help_text='Example:sina.com.cn')
+    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:sina.com.cn')
 
     class Admin:
         list_display = ('name',)
@@ -22,8 +22,8 @@ class Domain(models.Model):
 
 class IDC(models.Model):
     """IDC Model"""
-    name = models.CharField(max_length=100,verbose_name='名称',help_text='Example:西单机房')
-    alias = models.CharField(max_length=100,verbose_name='别名',help_text='用于Agent的别名,例如:xd')
+    name = models.CharField(max_length=100,verbose_name=_('idc_name_verbose_name'),help_text='Example:西单机房')
+    alias = models.CharField(max_length=100,verbose_name=_('idc_alias_verbose_name'),help_text='用于Agent的别名,例如:xd')
 
     class Admin:
         list_display = ('name','alias')
@@ -37,10 +37,10 @@ class IDC(models.Model):
 
 class Record(models.Model):
     """Record Model"""
-    name = models.CharField(max_length=100,verbose_name='名称',help_text='例如:www')
-    domain = models.ForeignKey(Domain,verbose_name='所属域名')
-    idc = models.ForeignKey(IDC,verbose_name='所属机房')
-    ip = models.IPAddressField(verbose_name='解析IP',help_text='例如:202.101.34.44')
+    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
+    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
+    ip = models.IPAddressField(verbose_name=_('record_ip_verbose_name'),help_text='例如:202.101.34.44')
     
     def save(self):
         try:
@@ -82,9 +82,9 @@ class Record(models.Model):
 
 class Result(models.Model):
     """Result Model"""
-    ip = models.IPAddressField(verbose_name='来源IP',help_text='例如:202.101.34.44')
-    record = models.ForeignKey(Record,verbose_name='访问记录')
-    idc = models.ForeignKey(IDC,verbose_name='访问机房')
+    ip = models.IPAddressField(verbose_name=_('result_ip_verbose_name'),help_text='例如:202.101.34.44')
+    record = models.ForeignKey(Record,verbose_name=_('result_record_verbose_name'))
+    idc = models.ForeignKey(IDC,verbose_name=_('result_idc_verbose_name'))
 
     class Admin:
         list_display = ('ip','record','idc')

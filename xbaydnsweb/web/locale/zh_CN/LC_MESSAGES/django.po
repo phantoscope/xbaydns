@@ -50,3 +50,44 @@ msgstr "智能结果"
 #: web/models.py:74
 msgid "result_verbose_name_plural"
 msgstr "智能结果管理"
+
+#: web/models.py:11
+msgid "domain_name_verbose_name"
+msgstr "域名"
+
+#: web/models.py:25
+msgid "idc_name_verbose_name"
+msgstr "名称"
+
+#: web/models.py:26
+msgid "idc_alias_verbose_name"
+msgstr "别名"
+
+#: web/models.py:40
+msgid "record_name_verbose_name"
+msgstr "名称"
+
+#: web/models.py:41
+msgid "record_domain_verbose_name"
+msgstr "所属域名"
+
+#: web/models.py:42
+msgid "record_idc_verbose_name"
+msgstr "所属机房"
+
+#: web/models.py:43
+msgid "record_ip_verbose_name"
+msgstr "解析IP"
+
+#: web/models.py:85
+msgid "result_ip_verbose_name"
+msgstr "来源IP"
+
+#: web/models.py:86
+msgid "result_record_verbose_name"
+msgstr "访问记录"
+
+#: web/models.py:87
+msgid "result_idc_verbose_name"
+msgstr "访问机房"
+
