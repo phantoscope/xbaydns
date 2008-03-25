@@ -13,6 +13,7 @@ OSTYPE="`uname`"
 KEYBITS=2048
 INSTALLPATH="/data0/xbaydns"
 MASTER_PUB="ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAsGSPcihMTxXki3WCdTq+gTf5WlzC8uVFTDqloIeiwNEMJFpgEKYx28lsEiEElT1ovP260yPr3L02OsUeeq/rRG4ow4FZjH+1xoFYgRbfY0Juls5HKS3b8NotflOdZWmG85JXjC/fxSPpnmwjx3cS/q5WweXmzcA5h24fjZXp+xJJ5DZUAq9RlDtA/8ROZD4H6EUnu/KwGpvpb6p/pvOrcohw8Wk6m8gT6H8n6gt0XRsRPo0PUry9CzOxjiJl0/sz86aSU+NlSCnxmqigx6FfO2s4KpbVfV8kzsvlwW7X8aVUtU7NE3/d7VE+M8ZV2v/KR4+MUHJr9aYBhxbbe8aT1w== root@razor"
+MASTERIP="10.210.132.71"
 
 if [ "`id -u`" != "0" ]; then
 	echo "Run this script using root user."
