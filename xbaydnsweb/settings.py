@@ -17,6 +17,13 @@ DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+TEST_DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'ado_mssql'.
+TEST_DATABASE_NAME = 'xbaydns_test.db'             # Or path to database file if using sqlite3.
+TEST_DATABASE_USER = ''             # Not used with sqlite3.
+TEST_DATABASE_PASSWORD = ''         # Not used with sqlite3.
+TEST_DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+TEST_DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
