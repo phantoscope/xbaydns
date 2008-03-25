@@ -1,10 +1,10 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block title %}{{ title }} | xBayDNS Admin{% endblock %}
+{% block title %}{{ title }} | {% trans "xBayDNS Title" %}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">xBayDNS Administrator</h1>
+<h1 id="site-name">{% trans "xBayDNS Site Name" %}</h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

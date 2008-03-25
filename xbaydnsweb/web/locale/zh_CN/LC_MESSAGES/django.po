@@ -91,3 +91,27 @@ msgstr "访问记录"
 msgid "result_idc_verbose_name"
 msgstr "访问机房"
 
+#: templates/admin/smartload.html:4
+#: templates/admin/smartload.html:11
+msgid "SmartTitle"
+msgstr "智能探测结果"
+
+#: templates/admin/smartload.html:23
+msgid "SmartSubmitButton"
+msgstr "应用结果"
+
+#: templates/admin/base_site.html:4
+msgid "xBayDNS Title"
+msgstr "xBayDNS Admin"
+
+#: templates/admin/base_site.html:7
+msgid "xBayDNS Site Name"
+msgstr "xBayDNS Administrator"
+
+#: web/views.py:11
+msgid "Smart View Msg Complete"
+msgstr "生成成功"
+
+#: web/views.py:15
+msgid "Smart View Msg Error"
+msgstr "生成失败"

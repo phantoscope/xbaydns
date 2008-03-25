@@ -1,14 +1,14 @@
 {% extends "admin/base_site.html" %}
 {% load adminmedia admin_list i18n %}
 
-{% block title %}智能探测结果{% endblock %}
+{% block title %}{% trans "SmartTitle" %}{% endblock %}
 
 {% block stylesheet %}{% admin_media_prefix %}css/forms.css{% endblock %}
 
 {% block extrahead %}
 {% endblock %}
 
-{% block breadcrumbs %}<div class="breadcrumbs"><a href="../../">{% trans "Home" %}</a> &rsaquo; 智能探测结果</div>{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="../../">{% trans "Home" %}</a> &rsaquo; {% trans "SmartTitle" %}</div>{% endblock %}
 
 {% block content %}
 
@@ -20,7 +20,7 @@
 	{% endif %}
 	{% resultToHtml result %}
 	<form action="/admin/smartload/" method="POST">
-		<input type="submit" value="应用结果">
+		<input type="submit" value="{% trans "SmartSubmitButton" %}">
 	</form>
 	{# <table> #}
 	{# 	<tr> #}

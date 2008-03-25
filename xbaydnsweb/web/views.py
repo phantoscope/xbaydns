@@ -1,17 +1,18 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
+from django.utils.translation import ugettext as _
 from xbaydnsweb.web.models import Record,Result
 from xbaydnsweb.web.templatetags.webtags import resultToHtml
 from xbaydnsweb.web.utils import saveAllConf
 
 def smartload(request):
     if request.method == 'POST':
-        msg = "生成成功"
+        msg = _("Smart View Msg Complete")
         try:
             saveAllConf('/tmp/')
         except:
-            msg = "生成失败"
+            msg = _("Smart View Msg Error")
     result={}
     for record in Record.objects.all():
         if record.name not in result:
