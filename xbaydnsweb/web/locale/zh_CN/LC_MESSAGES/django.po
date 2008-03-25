@@ -115,3 +115,12 @@ msgstr "生成成功"
 #: web/views.py:15
 msgid "Smart View Msg Error"
 msgstr "生成失败"
+
+#: templates/admin/index.html:46
+msgid "MyApp Title"
+msgstr "自定义模块"
+
+#: templates/admin/index.html:49
+msgid "MyApp Smart"
+msgstr "查看智能探测结果"
+
