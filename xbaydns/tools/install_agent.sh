@@ -32,6 +32,8 @@ esac
 # generate ssh key
 mkdir -p ${INSTALLPATH}/.ssh
 ssh-keygen -t rsa -b ${KEYBITS} -f ${INSTALLPATH}/.ssh/id_rsa -N ''
+echo "Please paste the public key to the master's authorized_keys (the line below):"
+cat ${INSTALLPATH}/.ssh/id_rsa.pub
 
 # add the master's public key to authorized
 echo ${MASTER_PUB} > ${INSTALLPATH}/.ssh/authorized_keys
@@ -43,4 +45,3 @@ echo ${MASTER_PUB} > ${INSTALLPATH}/.ssh/authorized_keys
 grep -v iplatency /etc/crontab > /tmp/crontab.xbaydns
 echo "*	*/1	*	*	*	${USER}	${INSTALLPATH}/iplatency/iplatency_agent.sh" >> /tmp/crontab.xbaydns
 mv /tmp/crontab.xbaydns /etc/crontab
-
