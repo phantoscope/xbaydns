@@ -25,7 +25,8 @@ fi
 case ${OSTYPE} in
 	FreeBSD) 
 		pw groupadd ${GROUP} -g${GID}
-		pw useradd ${USER} -u${UID} -s/sbin/nologin -d${INSTALLPATH}
+		pw useradd ${USER} -u${UID} -s/usr/libexec/smrsh -d${INSTALLPATH}
+		ln -s `which rsync` /usr/libexec/sm.bin/rsync
 	;;
 	*) echo "Not implement";;
 esac
