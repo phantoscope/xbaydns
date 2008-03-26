@@ -45,7 +45,7 @@ elif (system == "FreeBSD"):
     named_user = "bind"
     if (release >= "6.2"):
         pass
-    else
+    else:
         raise "Unsupported release."
 elif (system == "OpenBSD"):
     # 操作系统为OpenBSD
@@ -54,7 +54,7 @@ elif (system == "OpenBSD"):
     namedconf = "/etc"
     if (release >=  "4.2"):
         pass
-    else
+    else:
         raise "Unsupported release."
 elif (system == "Linux"):
     # 操作系统为Linux
