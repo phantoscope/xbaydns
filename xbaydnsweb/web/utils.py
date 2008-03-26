@@ -31,7 +31,7 @@ def saveAllConf(path=sysconf.namedconf):
         #每个View对应一种ACL
         nc.addView('view_%s'%idc,[aclname,])
     #追加所有的Domain
-    domain_matchs = map(lambda x:'.'.join([x.name,str(x.domain)]),Record.objects.all())
+    domain_matchs = map(lambda x:'%s.%s'%(x.name,x.domain),Record.objects.all())
     nc.addDomain(domain_matchs)
     nc.save(path)
 
