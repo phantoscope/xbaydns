@@ -70,8 +70,8 @@ class Record(models.Model):
         list_display = ('name','domain','idc','ip')
         search_fields = ('name','domain','idc','ip')
         fields = (
-                ('域名信息', {'fields': ('name','domain',)}),
-                ('机房信息', {'fields': ('ip','idc',)}),
+                (_('record_fields_domaininfo_verbose_name'), {'fields': ('name','domain',)}),
+                (_('record_fields_idcinfo_verbose_name'), {'fields': ('ip','idc',)}),
         )
     class Meta:
         ordering = ('name',)

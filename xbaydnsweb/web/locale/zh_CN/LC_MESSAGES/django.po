@@ -79,6 +79,14 @@ msgstr "所属机房"
 msgid "record_ip_verbose_name"
 msgstr "解析IP"
 
+#: web/models.py:73
+msgid "record_fields_domaininfo_verbose_name"
+msgstr "域名信息"
+
+#: web/models.py:74
+msgid "record_fields_idcinfo_verbose_name"
+msgstr "机房信息"
+
 #: web/models.py:85
 msgid "result_ip_verbose_name"
 msgstr "来源IP"

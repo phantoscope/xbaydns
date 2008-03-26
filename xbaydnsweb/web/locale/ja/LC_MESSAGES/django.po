@@ -79,6 +79,14 @@ msgstr "IDCの所属"
 msgid "record_ip_verbose_name"
 msgstr "IP"
 
+#: web/models.py:73
+msgid "record_fields_domaininfo_verbose_name"
+msgstr "ドメイン情報"
+
+#: web/models.py:74
+msgid "record_fields_idcinfo_verbose_name"
+msgstr "IDC情報"
+
 #: web/models.py:85
 msgid "result_ip_verbose_name"
 msgstr "IPから"
