@@ -70,7 +70,6 @@ class NamedConf(object):
     '''
     def addView(self,view,matchClient=[]):
         tsig='%s-view-key'%view
-        include='''include "defaultzone.conf";\n'''
         if len(matchClient)>0:
             matchClient=map(lambda x:'"%s";'%x,matchClient)
             matchClient=''.join(matchClient)
@@ -86,8 +85,8 @@ key "%s" {
         key_tsig='key "%s"'%tsig
         s='''view "%s" { match-clients { %s%s; }; %%s };
         '''%(view,matchClient,key_tsig)
-        self.views[view]=include+keys+s
-        return include+keys+s
+        self.views[view]=keys+s
+        return keys+s
     
     '''
     update view(view,match-client) 更新view 
@@ -128,7 +127,7 @@ key "%s" {
     add domain(domain) 增加一个DNS域。
     '''
     def addDomain(self,domain=[]):
-    	cmds=''
+    	cmds='include "defaultzone.conf";'
         for view in self.views.keys():
             for d in domain:
                 fname=self.getDomainFileName(d,view)
