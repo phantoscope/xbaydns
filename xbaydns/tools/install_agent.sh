@@ -45,5 +45,5 @@ rsync -az -e 'ssh -i ${INSTALLPATH}/.ssh/id_rsa' ${USER}@${MASTERIP}:${INSTALLPA
 
 # add to cron
 grep -v iplatency /etc/crontab > /tmp/crontab.xbaydns
-echo "*	*/1	*	*	*	${USER}	${INSTALLPATH}/iplatency/iplatency_agent.sh" >> /tmp/crontab.xbaydns
+echo "*	*/1	*	*	*	${USER}	/bin/sh ${INSTALLPATH}/iplatency/iplatency_agent.sh" >> /tmp/crontab.xbaydns
 mv /tmp/crontab.xbaydns /etc/crontab
