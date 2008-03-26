@@ -1,6 +1,7 @@
 # encoding: utf-8
 from django.utils.translation import gettext_lazy as _
 from django.db import models
+import traceback
 import logging.config
 from xbaydns.dnsapi import nsupdate
 
@@ -44,9 +45,9 @@ class Record(models.Model):
     
     def save(self):
         try:
-            nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=self.idc.alias)
+            nsupobj = nsupdate.NSUpdate('10.210.132.70',str(self.domain),view=self.idc.alias)
             #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-            add_data=[[self.name,3600,'IN','A',[self.ip,]],]
+            add_data=[['%s.%s'%(self.name,self.domain),3600,'IN','A',[self.ip,]],]
             if self.id!=None:
                 old_r=Record.objects.get(id=self.id)
                 del_data=[[old_r.name,3600,'IN','A',[old_r.ip,]],]
@@ -54,16 +55,18 @@ class Record(models.Model):
             nsupobj.addRecord(add_data)
             nsupobj.commitChanges()
         except:
+            print traceback.print_exc()
             print "NSUpdate Error!"
         super(Record,self).save()
     def delete(self):
         try:
-            nsupobj = nsupdate.NSUpdate('127.0.0.1',str(self.domain),view=self.idc.alias)
-            del_data=[[self.name,3600,'IN','A',[self.ip,]],]
+            nsupobj = nsupdate.NSUpdate('10.210.132.70',str(self.domain),view=self.idc.alias)
+            del_data=[['%s.%s'%(self.name,self.domain),3600,'IN','A',[self.ip,]],]
             #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
             nsupobj.removeRecord(del_data)
             nsupobj.commitChanges()
         except:
+            print traceback.print_exc()
             print "NSUpdate Error!"
         super(Record,self).delete()
     class Admin:
