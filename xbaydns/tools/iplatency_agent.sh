@@ -18,5 +18,5 @@ IPLST="/data0/xbaydns/iplst/iplst.txt"
 AGENT_PRIVATE_KEY="/data0/xbaydns/.ssh/id_rsa"
 
 mkdir -p ${OUTPUT_DIR}
-ssh -i ${AGENT_PRIVATE_KEY} iplatency@${CONTROLLER} cat ${IPLST} |
+ssh -i ${AGENT_PRIVATE_KEY} iplatency@${CONTROLLER_IP} cat ${IPLST} |
 ${IPLATENCY_PATH} >> ${OUTPUT_FILE}
