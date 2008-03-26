@@ -17,6 +17,6 @@ def resultToHtml(results):
     for record,idcs in results.items():
         s='%s'%record
         for idc,ips in idcs.items():
-            s+='-%s:%s'%(idc,','.join(ips))
-        html+='<li>%s</li>'%s
+            s+='<li>%s:%s</li>'%(idc,','.join(ips))
+        html+='<ul>%s</ul>'%s
     return '<ul>%s</ul>'%html
