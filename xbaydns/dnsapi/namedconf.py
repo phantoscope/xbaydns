@@ -139,7 +139,8 @@ key "%s" {
            'fname':fname}
                 cmds+=s
                 if view not in self.domains:
-                    self.domains[view]={}
+                    include = 'include "defaultzone.conf";'
+                    self.domains[view]={'defaultzone':include}
                 self.domains[view].update({d:s})
         return cmds
     '''
