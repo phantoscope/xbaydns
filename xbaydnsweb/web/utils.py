@@ -16,13 +16,20 @@ log = logging.getLogger('xbaydnsweb.web.utils')
 
 def saveAllConf(path=sysconf.namedconf):
     nc = NamedConf()
-    #将所有来源IP追加到一个ACL
+    #将分组来源IP追加到一个ACL
     allip={}
     for result in Result.objects.all():
-        allip[result.ip]=''
-    nc.addAcl('allacls',allip.keys())
-    #View中只有AllACL一个ACL
-    nc.addView('allviews',['allacls'])
+        k=result.idc.alias
+        if k not in allip:
+            allip[k]=[]
+        allip[k].append(result.ip)
+    print "allip",allip
+    for idc in allip.keys():
+        aclname='acl_%s'%idc
+        print "aclname",aclname
+        nc.addAcl(aclname,allip[idc])
+        #每个View对应一种ACL
+        nc.addView('view_%s'%idc,[aclname,])
     #追加所有的Domain
     domain_matchs = map(lambda x:'.'.join([x.name,str(x.domain)]),Record.objects.all())
     nc.addDomain(domain_matchs)
