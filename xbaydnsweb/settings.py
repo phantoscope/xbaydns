@@ -94,4 +94,5 @@ INSTALLED_APPS = (
 gettext = lambda s: s
 LANGUAGES = (
   ('zh-cn', gettext('Simplified Chinese')),
+  ('ja', gettext('Japanese')),
 )
