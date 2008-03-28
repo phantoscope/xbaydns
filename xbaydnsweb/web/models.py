@@ -45,13 +45,16 @@ class Record(models.Model):
     
     def save(self):
         try:
-            nsupobj = nsupdate.NSUpdate('10.210.132.70',str(self.domain),view=self.idc.alias)
+            nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
             #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-            add_data=[['%s.%s'%(self.name,self.domain),3600,'IN','A',[self.ip,]],]
+            add_data=[[str(self.name),3600,'IN','A',[str(self.ip),]],]
             if self.id!=None:
-                old_r=Record.objects.get(id=self.id)
-                del_data=[[old_r.name,3600,'IN','A',[old_r.ip,]],]
-                nsupobj.removeRecord(del_data)
+                record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
+                if len(record_a)!=0:
+                    old_r=Record.objects.get(id=self.id)
+                    del_data=[[old_r.name,3600,'IN','A',[old_r.ip,]],]
+                    nsupobj.removeRecord(del_data)
+            print add_data
             nsupobj.addRecord(add_data)
             nsupobj.commitChanges()
         except:
@@ -60,11 +63,13 @@ class Record(models.Model):
         super(Record,self).save()
     def delete(self):
         try:
-            nsupobj = nsupdate.NSUpdate('10.210.132.70',str(self.domain),view=self.idc.alias)
-            del_data=[['%s.%s'%(self.name,self.domain),3600,'IN','A',[self.ip,]],]
-            #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-            nsupobj.removeRecord(del_data)
-            nsupobj.commitChanges()
+            nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
+            record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
+            if len(record_a)!=0:
+                del_data=[[str(self.name),3600,'IN','A',[str(self.ip),]],]
+                #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
+                nsupobj.removeRecord(del_data)
+                nsupobj.commitChanges()
         except:
             print traceback.print_exc()
             print "NSUpdate Error!"

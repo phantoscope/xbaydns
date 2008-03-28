@@ -218,7 +218,7 @@ key "%s" {
                 zonedata='''
 $ORIGIN .
 $TTL 360 ;10 minute
-%(domain)s. IN SOA %(soa)s. %(admin)s. (
+%(domain)s IN SOA %(soa)s. %(admin)s. (
 	    %(time)s	; serial
 	    60		; refresh (1 minute)
 	    3600	; retry (1 hour)
