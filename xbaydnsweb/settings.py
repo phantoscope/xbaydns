@@ -96,3 +96,5 @@ LANGUAGES = (
   ('zh-cn', gettext('Simplified Chinese')),
   ('ja', gettext('Japanese')),
 )
+
+OUTPUT_CONF = '/tmp/'

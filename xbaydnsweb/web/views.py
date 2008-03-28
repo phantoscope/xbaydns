@@ -5,12 +5,13 @@ from django.utils.translation import ugettext as _
 from xbaydnsweb.web.models import Record,Result
 from xbaydnsweb.web.templatetags.webtags import resultToHtml
 from xbaydnsweb.web.utils import saveAllConf
+from django.conf import settings
 
 def smartload(request):
     if request.method == 'POST':
         msg = _("Smart View Msg Complete")
         try:
-            saveAllConf('/tmp/')
+            saveAllConf(OUTPUT_CONF)
         except:
             msg = _("Smart View Msg Error")
     result={}
