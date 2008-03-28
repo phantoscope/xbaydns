@@ -6,13 +6,15 @@ from xbaydnsweb.web.models import Record,Result
 from xbaydnsweb.web.templatetags.webtags import resultToHtml
 from xbaydnsweb.web.utils import saveAllConf
 from django.conf import settings
+import traceback
 
 def smartload(request):
     if request.method == 'POST':
         msg = _("Smart View Msg Complete")
         try:
-            saveAllConf(OUTPUT_CONF)
+            saveAllConf(settings.OUTPUT_CONF)
         except:
+            print traceback.print_exc()
             msg = _("Smart View Msg Error")
     result={}
     for record in Record.objects.all():
