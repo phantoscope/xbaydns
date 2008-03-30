@@ -22,8 +22,10 @@ def main():
         ip,idc=r[0],r[1]
         print ip,idc
         for record in Record.objects.filter(idc__alias=idc):
-            result_idc=IDC.objects.get(alias=idc)
-            Result.objects.create(ip=ip,record=record,idc=result_idc)
+            #result_idc=IDC.objects.get(alias=idc)
+            Result.objects.create(ip=ip,record=record,idc=record.idc)
+    for record in Record.objects.filter(is_defaultidc=True):
+        Result.objects.create(ip='any',record=record,idc=record.idc)
 
 if __name__ == '__main__':
     main()

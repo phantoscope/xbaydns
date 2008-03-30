@@ -79,6 +79,10 @@ msgstr "所属机房"
 msgid "record_ip_verbose_name"
 msgstr "解析IP"
 
+#: web/models.py:45
+msgid "record_is_defaultidc_verbose_name"
+msgstr "默认机房"
+
 #: web/models.py:73
 msgid "record_fields_domaininfo_verbose_name"
 msgstr "域名信息"

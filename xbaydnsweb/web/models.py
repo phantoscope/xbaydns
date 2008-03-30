@@ -42,6 +42,7 @@ class Record(models.Model):
     domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
     ip = models.IPAddressField(verbose_name=_('record_ip_verbose_name'),help_text='例如:202.101.34.44')
+    is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     
     def save(self):
         try:
@@ -75,12 +76,13 @@ class Record(models.Model):
             print "NSUpdate Error!"
         super(Record,self).delete()
     class Admin:
-        list_display = ('name','domain','idc','ip')
+        list_display = ('name','domain','idc','ip','is_defaultidc')
         search_fields = ('name','domain','idc','ip')
         fields = (
                 (_('record_fields_domaininfo_verbose_name'), {'fields': ('name','domain',)}),
-                (_('record_fields_idcinfo_verbose_name'), {'fields': ('ip','idc',)}),
+                (_('record_fields_idcinfo_verbose_name'), {'fields': ('ip','idc','is_defaultidc',)}),
         )
+        #list_filter = ('is_defaultidc', 'idc')
     class Meta:
         ordering = ('name',)
         verbose_name = _('record_verbose_name')
@@ -90,7 +92,7 @@ class Record(models.Model):
 
 class Result(models.Model):
     """Result Model"""
-    ip = models.IPAddressField(verbose_name=_('result_ip_verbose_name'),help_text='例如:202.101.34.44')
+    ip = models.CharField(max_length=100,verbose_name=_('result_ip_verbose_name'),help_text='例如:202.101.34.44')
     record = models.ForeignKey(Record,verbose_name=_('result_record_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('result_idc_verbose_name'))
 
