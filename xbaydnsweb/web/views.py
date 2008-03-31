@@ -18,10 +18,11 @@ def smartload(request):
             msg = _("Smart View Msg Error")
     result={}
     for record in Record.objects.all():
-        if record.name not in result:
-            result[record.name]={}
+        k="%s.%s"%(record.name,record.domain)
+        if k not in result:
+            result[k]={}
         for rs in Result.objects.filter(record=record):
-            if rs.idc.name not in result[record.name]:
-                result[record.name][rs.idc.name]=[]
-            result[record.name][rs.idc.name].append(rs.ip)
+            if rs.idc.name not in result[k]:
+                result[k][rs.idc.name]=[]
+            result[k][rs.idc.name].append(rs.ip)
     return render_to_response('admin/smartload.html',locals())
