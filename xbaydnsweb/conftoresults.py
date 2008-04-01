@@ -35,6 +35,7 @@ def main():
         print ip
         flag={}
         for idc,fasttime in findFastSpeed(agents,times):
+            if fasttime==-1.00:continue
             records=Record.objects.filter(idc__alias=idc)
             print records
             for j,record in enumerate(records):
