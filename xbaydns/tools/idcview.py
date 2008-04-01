@@ -11,6 +11,7 @@ from decimal import Decimal
 from operator import itemgetter
 import os, sys
 
+'''
 def pingtype_weight(pingtype,v,data_value=-1):
     if data_value == -1:data_value=v
     pingtype=pingtype.upper()
@@ -43,14 +44,51 @@ def convfiles(files):
         data[ip].sort(cmp=cmptuple)
     data=sorted(data.items(),key=itemgetter(1))
     return data
-    
+'''
+
+def convfiles(files):
+    agents = []
+    data = {}
+    for filename in files:
+        agent_name = filename.split('_')[0]
+        agents.append(agent_name)
+        file_obj = open(filename, "r")
+        line = file_obj.readline()
+        preip, pingtype, latency, datetime = line.split(',')
+        if preip not in data:
+            data[preip] = {}
+        latency_sum = Decimal(latency)
+        record_count = 1
+        for line in file_obj:
+            ip, pingtype, latency, datetime = line.split(',')
+            if preip != ip:
+                if preip not in data:
+                    data[preip] = {}
+                data[preip][agent_name] = latency_sum/record_count
+                preip = ip
+                latency_sum = Decimal(latency)
+                record_count = 1
+            else:
+                latency_sum += Decimal(latency)
+                record_count += 1
+    return (agents, data)
+
+
 agentfiles = sys.argv[1:]
+agents, data = convfiles(agentfiles)
 datafile = "idcview_out.txt"
 datafile_obj = open(datafile, "w")
-data = convfiles(agentfiles)
-for ip, latencies in data:
-    datafile_obj.write("%s,%s"%(ip, latencies[0][0]))
-    for latency in latencies:
-        datafile_obj.write(",%.3f"%latency[1])
-    datafile_obj.write('\n')
+# write header
+header = ""
+for agent_name in agents:
+    header += "%s,"%agent_name
+datafile_obj.write("%s\n"%header[:-1])
+for ip, latency_agents in data.items():
+    datafile_obj.write("%s"%ip)
+    for agent_name in agents:
+        if agent_name not in latency_agents:
+            datafile_obj.write(",-1")
+        else:
+            datafile_obj.write(",%.2f"%latency_agents[agent_name])
+    datafile_obj.write("\n")
 datafile_obj.close()
