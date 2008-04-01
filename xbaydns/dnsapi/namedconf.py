@@ -213,6 +213,7 @@ key "%s" {
     def __saveDomains(self,path=sysconf.namedconf):
         for view,domains in self.domains.items():
             for domain,value in domains.items():
+                if domain=='defaultzone':continue
                 f=open(os.path.join(path,"%s"
                         %self.getDomainFileName(domain,view)),"w")
                 zonedata='''
