@@ -17,6 +17,7 @@ from operator import itemgetter
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
+    if reduce(lambda x,y:x==y, times):return []
     values=dict(zip(agents,times))
     values_sort=sorted( values.items(), key=itemgetter(1) )
     print "values_sort",values_sort
@@ -24,7 +25,6 @@ def findFastSpeed(agents,times):
 
 def main():
     map(lambda x:x.delete(),Result.objects.all())
-    
     for i,r in enumerate(open("/tmp/idcview_out.txt")):
         if i==0:
             agents=r.split(',')
