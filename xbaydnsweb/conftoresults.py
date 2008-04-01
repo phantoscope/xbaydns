@@ -34,21 +34,26 @@ def main():
         ip,times=r[0],r[1:]
         print ip
         flag={}
-        for j,(idc,fasttime) in enumerate(findFastSpeed(agents,times)):
+        for idc,fasttime in findFastSpeed(agents,times):
             records=Record.objects.filter(idc__alias=idc)
-            if len(records)>0:
-                print records
-                flagkey='%s.%s'%(records[0].name,records[0].domain)
-                print "flagkey",flagkey,flag.get(flagkey,False)
-                if flag.get(flagkey,False):
-                    print "True:True"
-                    continue
-            print "XXXXXXXXX"
-            for record in records:
-                Result.objects.create(ip=ip,record=record,idc=record.idc)
+            print records
+            for j,record in enumerate(records):
+                print record
                 flagkey='%s.%s'%(record.name,record.domain)
-                print "flagkey2",flagkey
-                flag[flagkey]=True
+                print "flagkey",flagkey,flag.get(flagkey,False),j
+                if flagkey in flag:
+                    if j!=0:
+                        #if record.name!=records[j-1].name or record.domain!=records[j-1].domain:
+                        if flag.get(flagkey,'')!=records[j-1].idc:
+                            print "True:True"
+                            continue
+                    elif j==0:
+                        if flagkey in flag:
+                            print "True:True"
+                            continue
+                print "GOGO"
+                Result.objects.create(ip=ip,record=record,idc=record.idc)
+                flag[flagkey]=record.idc
     for record in Record.objects.filter(is_defaultidc=True):
         Result.objects.create(ip='any',record=record,idc=record.idc)
 
