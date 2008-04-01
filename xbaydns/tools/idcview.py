@@ -71,6 +71,9 @@ def convfiles(files):
             else:
                 latency_sum += Decimal(latency)
                 record_count += 1
+        if preip not in data:
+            data[preip] = {}
+            data[preip][agent_name] = latency_sum/record_count           
     return (agents, data)
 
 
