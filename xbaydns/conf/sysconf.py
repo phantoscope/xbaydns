@@ -2,6 +2,20 @@
 # encoding: utf-8
 """
 这个文件中记录了所有的全局静态配置变量。现在只有named.conf所属路径和nameddb目录存储路径。
+可以使用环境变量来设置配置，环境变量定义如下：
+bind启动时的chroot目录，如果没有使用chroot设置为/
+XBAYDNS_CHROOT_PATH
+bind的配置文件路径
+XBAYDNS_BIND_CONF
+bind的启动脚本
+XBAYDNS_BIND_START
+bind的停止脚本
+XBAYDNS_BIND_STOP
+bind的重启脚本
+XBAYDNS_BIND_RESTART
+运行bind的用户
+XBAYDNS_BIND_USER
+所有的环境变量会
 """
 
 
@@ -21,25 +35,17 @@ installdir = os.path.dirname(os.path.realpath(__file__)) + "/.."
 
 #TODO: the following varirable should read from configuration ile
 #    : varible not defined in configuration should be set to ''
-chroot_path = "/var/named"
+chroot_path = ""
 # 这里记录了named.conf所存储的路径
-namedconf = "/etc/namedb"
-
-named_user = "bind"
-
+namedconf = ""
+# bind运行的用户名
+named_user = ""
 # 这是bind的启动脚本
-namedstart = "/etc/rc.d/named start"
+namedstart = ""
 # 这是bind的停止脚本
-namedstop = "/etc/rc.d/named stop"
+namedstop = ""
 # 这是bind的重启脚本
-namedrestart = "/etc/rc.d/named restart"
-
-chroot_path = os.getenv('XBAYDNS_CHROOT_PATH', chroot_path)
-namedconf  = os.getenv('XBAYDNS_BIND_CONF', namedconf)
-named_user  = os.getenv('XBAYDNS_BIND_USER', named_user)
-namedstart = os.getenv('XBAYDNS_BIND_START', namedstart)
-namedstop = os.getenv('XBAYDNS_BIND_STOP', namedstop)
-namedrestart = os.getenv('XBAYDNS_BIND_RESTART', namedrestart)
+namedrestart = ""
 
 namedef = {'Darwin':
                 {'chroot_path':'/', 
@@ -86,8 +92,14 @@ if     ((system == 'Darwin') and (release == '9.1.0')) \
             namedstop = namedef[system]['namedstop']
         if len(namedrestart) == 0:
             namedrestart = namedef[system]['namedrestart']
-else:
-    raise "Unsupported release."
+
+chroot_path = os.getenv('XBAYDNS_CHROOT_PATH', chroot_path)
+namedconf  = os.getenv('XBAYDNS_BIND_CONF', namedconf)
+named_user  = os.getenv('XBAYDNS_BIND_USER', named_user)
+namedstart = os.getenv('XBAYDNS_BIND_START', namedstart)
+namedstop = os.getenv('XBAYDNS_BIND_STOP', namedstop)
+namedrestart = os.getenv('XBAYDNS_BIND_RESTART', namedrestart)
+
 
 try:
     named_uid = pwd.getpwnam(named_user)[2]
