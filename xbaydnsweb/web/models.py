@@ -50,11 +50,14 @@ class Record(models.Model):
             #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
             add_data=[[str(self.name),3600,'IN','A',[str(self.ip),]],]
             if self.id!=None:
-                record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
-                if len(record_a)!=0:
-                    old_r=Record.objects.get(id=self.id)
-                    del_data=[[old_r.name,3600,'IN','A',[old_r.ip,]],]
-                    nsupobj.removeRecord(del_data)
+                try:
+                    record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
+                    if len(record_a)!=0:
+                        old_r=Record.objects.get(id=self.id)
+                        del_data=[[old_r.name,3600,'IN','A',record_a],]
+                        nsupobj.removeRecord(del_data)
+                except:
+                    print traceback.print_exc()
             print add_data
             nsupobj.addRecord(add_data)
             nsupobj.commitChanges()
@@ -67,7 +70,7 @@ class Record(models.Model):
             nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
             record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
             if len(record_a)!=0:
-                del_data=[[str(self.name),3600,'IN','A',[str(self.ip),]],]
+                del_data=[[str(self.name),3600,'IN','A',record_a],]
                 #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
                 nsupobj.removeRecord(del_data)
                 nsupobj.commitChanges()
