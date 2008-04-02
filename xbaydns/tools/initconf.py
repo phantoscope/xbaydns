@@ -144,16 +144,19 @@ def create_conf(tmpdir):
         tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
         tmpfile.write(defzone)
         tmpfile.close()
-        print ("create named.conf file and init file")
+        print ("create named.root file and init file")
         tmpfile = open("%s/%s/named.root"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedroot)
         tmpfile.close()
+        print ("copy template file to %s"tmpdir)
         shutil.copyfile(TMPL_EMPTY_DB, "%s/%s/master/empty.db"%(tmpdir, sysconf.namedconf))
         shutil.copyfile(TMPL_LOCALHOST_FORWARD_DB, "%s/%s/master/localhost-forward.db"%(tmpdir, sysconf.namedconf))
         shutil.copyfile(TMPL_LOCALHOST_REVERSE_DB, "%s/%s/master/localhost-reverse.db"%(tmpdir, sysconf.namedconf))
         shutil.copyfile(TMPL_RNDC_KEY, "%s/%s/rndc.key"%(tmpdir, sysconf.namedconf))
+        print ("chmod and chown config file")
         os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),0600)
         os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_uid,0)
+        print ("create named.conf file and init file")
         namedconf = namedconf_file(sysconf.filename_map)
         tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedconf)
@@ -162,6 +165,7 @@ def create_conf(tmpdir):
         
 def install_conf(tmpdir, chrootdir):
     """将tmpdir中的临时文件安装到最终的使用目录中去"""
+    print ("cp tmp file to %s"chrootdir)
     ret = shtools.execute(executable="cp", args="-Rp %s/ %s"%(tmpdir, chrootdir))
     if ret == 0:
         ret = shtools.execute(executable="rm", args="-rf %s"%tmpdir)
