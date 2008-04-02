@@ -2,6 +2,19 @@
 # encoding: utf-8
 """
 这个文件中记录了所有的全局静态配置变量。现在只有named.conf所属路径和nameddb目录存储路径。
+可以使用环境变量来设置配置，环境变量定义如下：
+是否使用环境变量配置（YES为使用）
+XBAYDNS_ENV="YES"
+bind启动时的chroot目录，如果没有使用chroot设置为/
+XBAYDNS_CHROOT_PATH="/var/named"
+bind的配置文件路径
+XBAYDNS_BIND_CONF="/etc/namedb"
+bind的启动脚本
+XBAYDNS_BIND_START="/etc/rc.d/named start"
+bind的停止脚本
+XBAYDNS_BIND_STOP="/etc/rc.d/named stop"
+bind的重启脚本
+XBAYDNS_BIND_RESTART="/etc/rc.d/named restart"
 """
 
 
@@ -28,7 +41,19 @@ namedstop = "/etc/rc.d/named stop"
 # 这是bind的重启脚本
 namedrestart = "/etc/rc.d/named restart"
 
-if (system == 'Darwin'):
+if (os.getenv("XBAYDNS_ENV") == "YES")
+    #通过环境变量，自定义适配
+    if (os.getenv("XBAYDNS_CHROOT_PATH","") != "")
+        chroot_path = os.getenv("XBAYDNS_CHROOT_PATH")
+    if (os.getenv("XBAYDNS_BIND_CONF","") != "")
+        namedconf = os.getenv("XBAYDNS_BIND_CONF")
+    if (os.getenv("XBAYDNS_BIND_START","") != "")
+        namedstart = os.getenv("XBAYDNS_BIND_START")
+    if (os.getenv("XBAYDNS_BIND_STOP","") != "")
+        namedstop = os.getenv("XBAYDNS_BIND_STOP")
+    if (os.getenv("XBAYDNS_BIND_RESTART","") != "")
+        namedstop = os.getenv("XBAYDNS_BIND_RESTART")
+elif (system == 'Darwin'):
     #操作系统为Mac OSX
     chroot_path = "/"
     namedconf = "/etc"
