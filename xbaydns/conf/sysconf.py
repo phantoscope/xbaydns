@@ -96,7 +96,7 @@ try:
     named_uid = pwd.getpwnam(named_user)[2]
 except KeyError:
     print "No such a user %s. I'll exit."%named_user
-    sys.exit(errno.EINVAL)
+    sys.exit(-1)
         
 default_acl = dict(internal=('127.0.0.1', '10.217.24.0/24'))
 filename_map = dict(acl='acl/acldef.conf')
