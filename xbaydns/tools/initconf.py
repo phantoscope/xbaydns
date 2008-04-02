@@ -126,19 +126,25 @@ def create_destdir():
 
 def create_conf(tmpdir):
     """在tmpdir目录中创建配置文件"""
+    print ("gen acl file")
     acl = acl_file(sysconf.default_acl)
+    print ("gen default zone file")
     defzone = defaultzone_file()
+    print ("gen named root file")
     namedroot = named_root_file()
 
     if acl == False or defzone == False or namedroot == False:
         return False
     else:
+        print ("create acl file and init acl")
         tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.filename_map['acl']), "w")
         tmpfile.write(acl)
         tmpfile.close()
+        print ("create default zone file and init file")
         tmpfile = open("%s/%s/%s"%(tmpdir, sysconf.namedconf, sysconf.default_zone_file), "w")
         tmpfile.write(defzone)
         tmpfile.close()
+        print ("create named.conf file and init file")
         tmpfile = open("%s/%s/named.root"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedroot)
         tmpfile.close()
