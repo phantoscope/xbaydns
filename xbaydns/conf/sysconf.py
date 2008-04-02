@@ -24,6 +24,7 @@ import os
 import platform
 import pwd
 import sys
+import errno
 
 system, _, release, version, machine, processor = platform.uname()
 system, release, version = platform.system_alias(system, release,version)
