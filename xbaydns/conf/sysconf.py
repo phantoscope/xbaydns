@@ -71,8 +71,8 @@ namedef = {'Darwin':
                 'namedstop':'/etc/rc.d/named stop'},
            'Linux':
                 {'chroot_path':'/', 
-                'namedconf':'/etc/bind', 
-                'named_user':'bind', 
+                'namedconf':'/etc', 
+                'named_user':'named', 
                 'namedstart':'/etc/rc.d/named start',
                 'namedrestart':'/etc/rc.d/named restart',
                 'namedstop':'/etc/rc.d/named stop'}}

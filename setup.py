@@ -26,6 +26,7 @@ setup(
     zip_safe = False,
 
     packages = find_packages(exclude=['*tests*']),
+    include_package_data = True,
     test_suite = 'xbaydns.tests.suite',
     entry_points = {
         'console_scripts': [
