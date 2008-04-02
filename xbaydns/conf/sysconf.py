@@ -41,17 +41,17 @@ namedstop = "/etc/rc.d/named stop"
 # 这是bind的重启脚本
 namedrestart = "/etc/rc.d/named restart"
 
-if (os.getenv("XBAYDNS_ENV") == "YES")
+if (os.getenv("XBAYDNS_ENV") == "YES"):
     #通过环境变量，自定义适配
-    if (os.getenv("XBAYDNS_CHROOT_PATH","") != "")
+    if (os.getenv("XBAYDNS_CHROOT_PATH","") != ""):
         chroot_path = os.getenv("XBAYDNS_CHROOT_PATH")
-    if (os.getenv("XBAYDNS_BIND_CONF","") != "")
+    if (os.getenv("XBAYDNS_BIND_CONF","") != ""):
         namedconf = os.getenv("XBAYDNS_BIND_CONF")
-    if (os.getenv("XBAYDNS_BIND_START","") != "")
+    if (os.getenv("XBAYDNS_BIND_START","") != ""):
         namedstart = os.getenv("XBAYDNS_BIND_START")
-    if (os.getenv("XBAYDNS_BIND_STOP","") != "")
+    if (os.getenv("XBAYDNS_BIND_STOP","") != ""):
         namedstop = os.getenv("XBAYDNS_BIND_STOP")
-    if (os.getenv("XBAYDNS_BIND_RESTART","") != "")
+    if (os.getenv("XBAYDNS_BIND_RESTART","") != ""):
         namedstop = os.getenv("XBAYDNS_BIND_RESTART")
 elif (system == 'Darwin'):
     #操作系统为Mac OSX
