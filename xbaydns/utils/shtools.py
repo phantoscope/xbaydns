@@ -44,6 +44,7 @@ import shlex
 from xbaydns.utils.command import CommandLine
 
 log = logging.getLogger('xbaydns.utils.shtools')
+logging.basicConfig(level=logging.ERROR)
 
 def execute(executable=None, file_=None, input_=None, output=None, args=None):
     """Generic external program execution.
