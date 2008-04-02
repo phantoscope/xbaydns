@@ -166,7 +166,7 @@ def create_conf(tmpdir):
 def install_conf(tmpdir, chrootdir):
     """将tmpdir中的临时文件安装到最终的使用目录中去"""
     print ("cp %s's file to %s"%(tmpdir,chrootdir))
-    ret = shtools.execute(executable="cp", args="-Rp %s/%s %s/%s/../"%(tmpdir,namedconf, chroot,namedconf))
+    ret = shtools.execute(executable="cp", args="-Rp %s/%s %s/%s/../"%(tmpdir,sysconf.namedconf, chroot,sysconf.namedconf))
     if ret == 0:
         ret = shtools.execute(executable="rm", args="-rf %s"%tmpdir)
         if ret == 0:
