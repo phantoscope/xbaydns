@@ -13,7 +13,11 @@ sys.path.append(os.path.join('/Users/yanxu/python/xbaydns/source/trunk/xbaydnswe
 os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
 
 from xbaydnsweb.web.models import IDC,Result,Record
+from xbaydns.dnsapi import nsupdate
+import traceback
 from operator import itemgetter
+
+CONF_FILE='/tmp/idcview_out.txt'
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
@@ -23,9 +27,29 @@ def findFastSpeed(agents,times):
     print "values_sort",values_sort
     return values_sort
 
+def record_nsupdate(record):
+    try:
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view="view_%s"%record.idc.alias)
+        #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
+        add_data=[[str(record.name),3600,'IN','A',[str(record.ip),]],]
+        try:
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype='A')
+            print "record_a",record_a
+            if len(record_a)!=0:
+                del_data=[[record.name,3600,'IN','A',record_a],]
+                nsupobj.removeRecord(del_data)
+        except:
+            print traceback.print_exc()
+        print add_data
+        nsupobj.addRecord(add_data)
+        nsupobj.commitChanges()
+    except:
+        print traceback.print_exc()
+        print "NSUpdate Error!"
+
 def main():
     map(lambda x:x.delete(),Result.objects.all())
-    for i,r in enumerate(open("/tmp/idcview_out.txt")):
+    for i,r in enumerate(open(CONF_FILE)):
         if i==0:
             agents=r.split(',')
             agents=map(lambda x:x.strip(),agents)
@@ -55,8 +79,10 @@ def main():
                 print "GOGO"
                 Result.objects.create(ip=ip,record=record,idc=record.idc)
                 flag[flagkey]=record.idc
+                record_nsupdate(record)
     for record in Record.objects.filter(is_defaultidc=True):
         Result.objects.create(ip='any',record=record,idc=record.idc)
+        record_nsupdate(record)
 
 if __name__ == '__main__':
     main()
