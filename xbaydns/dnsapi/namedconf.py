@@ -233,6 +233,7 @@ $TTL 360 ;10 minute
                      'admin':sysconf.default_admin}
                 f.write(zonedata)
                 f.close()
+        os.system("chown -R %s:wheel %s/dynamic/"%(sysconf.named_user,sysconf.namedconf))
 
     '''
     保存acldef.conf文件,保存所有生成的include语句
