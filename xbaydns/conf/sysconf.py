@@ -15,6 +15,8 @@ bind的停止脚本
 XBAYDNS_BIND_STOP="/etc/rc.d/named stop"
 bind的重启脚本
 XBAYDNS_BIND_RESTART="/etc/rc.d/named restart"
+运行bind的用户
+XBAYDNS_BIND_USER="named"
 """
 
 
@@ -40,6 +42,8 @@ namedstart = "/etc/rc.d/named start"
 namedstop = "/etc/rc.d/named stop"
 # 这是bind的重启脚本
 namedrestart = "/etc/rc.d/named restart"
+# 运行bind的用户
+named_user = "named"
 
 if (os.getenv("XBAYDNS_ENV") == "YES"):
     #通过环境变量，自定义适配
@@ -53,6 +57,8 @@ if (os.getenv("XBAYDNS_ENV") == "YES"):
         namedstop = os.getenv("XBAYDNS_BIND_STOP")
     if (os.getenv("XBAYDNS_BIND_RESTART","") != ""):
         namedstop = os.getenv("XBAYDNS_BIND_RESTART")
+    if (os.getenv("XBAYDNS_BIND_USER","") != ""):
+        named_user = os.getenv("XBAYDNS_BIND_USER")
 elif (system == 'Darwin'):
     #操作系统为Mac OSX
     chroot_path = "/"
