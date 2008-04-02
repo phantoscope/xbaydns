@@ -165,10 +165,11 @@ def create_conf(tmpdir):
         
 def install_conf(tmpdir, chrootdir):
     """将tmpdir中的临时文件安装到最终的使用目录中去"""
-    print ("cp %s's file to %s"%(tmpdir,chrootdir))
+    print ("copy %s's file to %s/%s"%(tmpdir,chrootdir,sysconf.namedconf))
     ret = shtools.execute(executable="cp", args="-Rp %s/%s %s/%s/../"%(tmpdir,sysconf.namedconf, chrootdir,sysconf.namedconf))
     if ret == 0:
         ret = shtools.execute(executable="rm", args="-rf %s"%tmpdir)
+        print ("clean temp dir")
         if ret == 0:
             return True
     else:
@@ -223,6 +224,7 @@ def main():
         print "Create configuration files failed."
         return -1
     else:
+        print ("init xbaydns bind config file ok!")
         return 0
 
 if __name__ == '__main__':
