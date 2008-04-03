@@ -109,4 +109,20 @@ class Result(models.Model):
     def __unicode__(self):
         return "%s to %s go %s"%(self.ip,self.record,self.idc)
 
+class IPArea(models.Model):
+    """IP Area Management"""
+    ip = models.CharField(max_length=100,verbose_name='',help_text='')
+    view = models.CharField(max_length=100)
+    acl = models.CharField(max_length=100)
+    
+    class Admin:
+        list_display = ('ip','view','acl')
+        #search_fields = ('ip','record','idc')
+    class Meta:
+        ordering = ('view','acl')
+        verbose_name = 'IPArea'
+        verbose_name_plural = 'IPArea'
+
+    def __unicode__(self):
+        return self.ip
 
