@@ -71,14 +71,16 @@ def ecintersection_matrix(*devides):
         ec_matrix = zeros((len(complete_set),)*2)
 '''
 
-# test
-import ipdevide_gen
-testdev = ipdevide_gen.ipdevide_gen(40000, 3)
-for dev in testdev:
-    print "dev: %s"%str(dev)
-start = time.time()
-result = ecintersection(*testdev)
-end = time.time()
-print "factor set: %s"%str(result)
-print "cost time: %f"%(end-start)
+if __name__=='__main__':
+    # test
+    import ipdevide_gen
+    testdev = ipdevide_gen.ipdevide_gen(4, 3)#4个IP3组
+    print testdev
+    for dev in testdev:
+        print "dev: %s"%str(dev)
+    start = time.time()
+    result = ecintersection(*testdev)
+    end = time.time()
+    print "factor set: %s"%str(result)
+    print "cost time: %f"%(end-start)
 
