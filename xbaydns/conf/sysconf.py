@@ -103,7 +103,7 @@ named_user  = os.getenv('XBAYDNS_BIND_USER', named_user)
 namedstart = os.getenv('XBAYDNS_BIND_START', namedstart)
 namedstop = os.getenv('XBAYDNS_BIND_STOP', namedstop)
 namedrestart = os.getenv('XBAYDNS_BIND_RESTART', namedrestart)
-xbaydnsdb = os.getenv('XBAYDNS_DB_PATH', namedrestart)
+xbaydnsdb = os.getenv('XBAYDNS_DB_PATH', xbaydnsdb)
 
 try:
     named_uid = pwd.getpwnam(named_user)[2]

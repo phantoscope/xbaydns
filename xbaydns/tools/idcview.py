@@ -9,52 +9,22 @@ Copyright (c) 2007 xBayDNS Team. All rights reserved.
 
 from decimal import Decimal
 from operator import itemgetter
-import os, sys
+import os, sys, time
 
-'''
-def pingtype_weight(pingtype,v,data_value=-1):
-    if data_value == -1:data_value=v
-    pingtype=pingtype.upper()
-    rule={
-        'OUT_OF_REACH':0,
-        'other':(data_value+v)/2,
-    }
-    return rule.get(pingtype,rule.get('other'))
-    
-def cmptuple(x, y):
-    if (x[1] - y[1] < 0): return -1
-    elif (x[1] - y[1] == 0): return 0
-    else: return 1
-
-def convfiles(files):
-    data={}
-    for f in files:
-        filename = os.path.basename(f)
-        agent_ip, sampledate = filename.split('_')
-        for r in open(f):
-            #OUT_OF_REACH,PING_GATEWAY,-1
-            if r.strip()=='':
-                continue
-            ip,pingtype,pingavg,pingtime=map(lambda x:x.strip(),r.split(','))
-            if ip not in data:
-                data[ip]=[(agent_ip, pingtype_weight(pingtype,Decimal(pingavg)))]
-            else:
-                data[ip].append((agent_ip, pingtype_weight(pingtype,Decimal(pingavg))))
-    for ip in data.keys():
-        data[ip].sort(cmp=cmptuple)
-    data=sorted(data.items(),key=itemgetter(1))
-    return data
-'''
+from xbaydns.conf import sysconf
 
 def convfiles(files):
     agents = []
     data = {}
     for filename in files:
-        agent_name = filename.split('_')[0]
+        agent_name = os.path.basename(filename).split('_')[0]
         agents.append(agent_name)
         file_obj = open(filename, "r")
         line = file_obj.readline()
-        preip, pingtype, latency, datetime = line.split(',')
+        try:
+            preip, pingtype, latency, datetime = line.split(',')
+        except Exception, e:
+            print line
         if preip not in data:
             data[preip] = {}
         latency_sum = Decimal(latency)
@@ -73,25 +43,54 @@ def convfiles(files):
                 record_count += 1
         if preip not in data:
             data[preip] = {}
-        data[preip][agent_name] = latency_sum/record_count           
+        data[preip][agent_name] = latency_sum/record_count
     return (agents, data)
 
+if len(sys.argv) == 1:
+    logdir = os.path.join(sysconf.xbaydnsdb, 'agent_logs')
+    if os.path.isdir(logdir) == False:
+        print "No such a directory %s"%logdir
+        sys.exit(1)
+    else:
+        agentfiles = os.listdir(logdir)
+else:
+    agentfiles = sys.argv[1:]
 
-agentfiles = sys.argv[1:]
+agentfiles = map(lambda x:os.path.join(logdir, x), agentfiles)
+
+if len(agentfiles) == 0:
+    print "No logs in the directory %s"%sysconf.xbaydnsdb
+    sys.exit(1)
+
+outputdir = os.path.join(sysconf.xbaydnsdb, 'idcview')
+if os.path.isdir(outputdir) == False:
+    try:
+        os.mkdir(outputdir)
+    except OSError, e:
+        print e.strerror
+        sys.exit(1)
+outputfile = "%s/idcview.%s"%(outputdir, time.strftime("%Y-%m-%d"))
 agents, data = convfiles(agentfiles)
-datafile = "idcview_out.txt"
-datafile_obj = open(datafile, "w")
+outputfile_obj = open(outputfile, "w")
 # write header
 header = ""
 for agent_name in agents:
     header += "%s,"%agent_name
-datafile_obj.write("%s\n"%header[:-1])
+outputfile_obj.write("%s\n"%header[:-1])
 for ip, latency_agents in data.items():
-    datafile_obj.write("%s"%ip)
+    outputfile_obj.write("%s"%ip)
     for agent_name in agents:
         if agent_name not in latency_agents:
-            datafile_obj.write(",-1")
+            outputfile_obj.write(",-1")
         else:
-            datafile_obj.write(",%.2f"%latency_agents[agent_name])
-    datafile_obj.write("\n")
-datafile_obj.close()
+            outputfile_obj.write(",%.2f"%latency_agents[agent_name])
+    outputfile_obj.write("\n")
+outputfile_obj.close()
+outputlink = "%s/idcview.current"%outputdir
+if os.path.islink(outputlink) == True:
+    os.remove(outputlink)
+try:
+    os.symlink(outputfile, outputlink)
+except OSError, e:
+    print e.strerror
+    sys.exit(1)
