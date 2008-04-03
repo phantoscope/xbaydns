@@ -80,7 +80,7 @@ namedef = {'Darwin':
                 'namedrestart':'/etc/rc.d/named restart',
                 'namedstop':'/etc/rc.d/named stop'}}
 
-if     ((system == 'Darwin') and (release == '9.1.0')) \
+if     ((system == 'Darwin') and (release >= '9.1.0')) \
     or ((system == 'FreeBSD') and (release >= '6.2')) \
     or ((system == 'OpenBSD') and (release >= '4.2')) \
     or (system == 'Linux'): 
