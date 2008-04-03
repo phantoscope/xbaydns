@@ -95,7 +95,7 @@ class Record(models.Model):
 
 class Result(models.Model):
     """Result Model"""
-    ip = models.CharField(max_length=100,verbose_name=_('result_ip_verbose_name'),help_text='例如:202.101.34.44')
+    ip = models.IPAddressField(verbose_name=_('result_ip_verbose_name'),help_text='例如:202.101.34.44')
     record = models.ForeignKey(Record,verbose_name=_('result_record_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('result_idc_verbose_name'))
 

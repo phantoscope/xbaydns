@@ -58,8 +58,8 @@ def main():
                 print "GOGO"
                 Result.objects.create(ip=ip,record=record,idc=record.idc)
                 flag[flagkey]=record.idc
-    for record in Record.objects.filter(is_defaultidc=True):
-        Result.objects.create(ip='any',record=record,idc=record.idc)
+    #for record in Record.objects.filter(is_defaultidc=True):
+    #    Result.objects.create(ip='any',record=record,idc=record.idc)
 
 if __name__ == '__main__':
     main()
