@@ -53,10 +53,9 @@ if len(sys.argv) == 1:
         sys.exit(1)
     else:
         agentfiles = os.listdir(logdir)
+        agentfiles = map(lambda x:os.path.join(logdir, x), agentfiles)
 else:
     agentfiles = sys.argv[1:]
-
-agentfiles = map(lambda x:os.path.join(logdir, x), agentfiles)
 
 if len(agentfiles) == 0:
     print "No logs in the directory %s"%sysconf.xbaydnsdb
