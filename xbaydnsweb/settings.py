@@ -1,5 +1,6 @@
 # Django settings for xbaydnsweb project.
 import os
+from xbaydns.conf import sysconf
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -97,4 +98,4 @@ LANGUAGES = (
   ('ja', gettext('Japanese')),
 )
 
-OUTPUT_CONF = '/tmp/'
+OUTPUT_CONF = "%s/%s"%(sysconf.chroot_path,sysconf.namedconf)
