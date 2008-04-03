@@ -29,18 +29,20 @@ def record_nsupdate(record):
             record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype='A')
             print "record_a",record_a
             if len(record_a)!=0:
-                del_data=[[record.name,3600,'IN','A',record_a],]
+                del_data=[[str(record.name),3600,'IN','A',record_a],]
                 nsupobj.removeRecord(del_data)
         except:
             print traceback.print_exc()
-        print add_data
+            print "query error"
+        print "add_data",add_data
         nsupobj.addRecord(add_data)
         nsupobj.commitChanges()
     except:
         print traceback.print_exc()
         print "NSUpdate Error!"
-    return None
+    print "NSUpdate OK"
 
+#生成计算碎集所需要的数据结构
 def genResult():
     result,ips={},[]
     for record in Record.objects.all():
@@ -60,7 +62,18 @@ def genResult():
             domainip.append( list(set(ip)) )
         ips.append( domainip )
     return algorithms.ecintersection(*ips)
-
+    
+#将Result的结果按照域名合并汇总并返回
+def getResults(ip):
+    records={}
+    for result in Result.objects.filter(ip=ip):
+        k="%s.%s"%(result.record.name,result.record.domain)
+        if k not in records:
+            records[k]=[]
+        records[k].append(str(result.record.ip))
+    return records
+    
+#保存所有配置,生成所有bind需要的配置文件
 def saveAllConf(path=sysconf.namedconf):
     map(lambda x:x.delete(),IPArea.objects.all())
     nc = NamedConf()
@@ -84,12 +97,16 @@ def saveAllConf(path=sysconf.namedconf):
     nc.reload()
     
     class My(object):pass
-    for r in Record.objects.all():
-        for viewname in IPArea.objects.values('view').distinct():
-            records=Record.objects.filter(name=r.name,domain=r.domain,idc=r.idc)
+    for view in IPArea.objects.all():
+        ip=eval(view.ip)[0]
+        records=getResults(ip)
+        print "view,ip",view.view,ip
+        for k,ips in records.items():
+            print "k,ips",k,ips
             m=My()
-            m.name,m.domain=r.name,r.domain
-            m.ip=map(lambda x:str(x.ip),records)
-            m.viewname=viewname
+            name=k.split('.')
+            m.name,m.domain=name[0],'.'.join(name[1:])
+            m.ip=ips
+            m.viewname=view.view
             print m.name,m.domain,m.viewname,m.ip
             record_nsupdate(m)
