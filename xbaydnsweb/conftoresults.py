@@ -8,15 +8,14 @@ Copyright (c) 2008 xBayDNS Team. All rights reserved.
 """
 
 import os,sys
-sys.path.append('/Users/yanxu/python/xbaydns/source/trunk/xbaydns')
-sys.path.append(os.path.join('/Users/yanxu/python/xbaydns/source/trunk/xbaydnsweb', '..'))
+from xbaydns.conf import sysconf
 os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
 
 from xbaydnsweb.web.models import IDC,Result,Record
 import traceback
 from operator import itemgetter
 
-CONF_FILE='/tmp/idcview_out.txt'
+CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
