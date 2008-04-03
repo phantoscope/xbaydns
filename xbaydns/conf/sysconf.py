@@ -56,7 +56,7 @@ namedef = {'Darwin':
                 'namedconf':'/etc', 
                 'named_user':'root', 
                 'namedstart':'sudo service org.isc.named start;sleep 2', 
-                'namedstart':'sudo service org.isc.named restart;sleep 2', 
+                'namedrestart':'sudo service org.isc.named restart;sleep 2', 
                 'namedstop':'sudo service org.isc.named stop'},
            'FreeBSD':
                 {'chroot_path':'/var/named', 
