@@ -16,6 +16,7 @@ XBAYDNS_BIND_RESTART
 运行bind的用户
 XBAYDNS_BIND_USER
 所有的环境变量会
+XBAYDNS_DB_PATH
 """
 
 
@@ -47,6 +48,8 @@ namedstart = ""
 namedstop = ""
 # 这是bind的重启脚本
 namedrestart = ""
+# 这是xbaydns运算数据目录
+xbaydnsdb = "/var/xbaydns"
 
 namedef = {'Darwin':
                 {'chroot_path':'/', 
@@ -100,7 +103,7 @@ named_user  = os.getenv('XBAYDNS_BIND_USER', named_user)
 namedstart = os.getenv('XBAYDNS_BIND_START', namedstart)
 namedstop = os.getenv('XBAYDNS_BIND_STOP', namedstop)
 namedrestart = os.getenv('XBAYDNS_BIND_RESTART', namedrestart)
-
+xbaydnsdb = os.getenv('XBAYDNS_DB_PATH', namedrestart)
 
 try:
     named_uid = pwd.getpwnam(named_user)[2]
