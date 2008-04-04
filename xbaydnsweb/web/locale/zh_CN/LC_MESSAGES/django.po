@@ -21,19 +21,19 @@ msgstr ""
 
 #: web/models.py:18
 msgid "domain_verbose_name"
-msgstr "域名"
+msgstr "域"
 
 #: web/models.py:19
 msgid "domain_verbose_name_plural"
-msgstr "1.1 域名管理"
+msgstr "1.1 域管理"
 
 #: web/models.py:34
 msgid "idc_verbose_name"
-msgstr "机房"
+msgstr "机房/服务出口"
 
 #: web/models.py:35
 msgid "idc_verbose_name_plural"
-msgstr "1.2 机房管理"
+msgstr "1.2 机房/服务出口管理"
 
 #: web/models.py:52
 msgid "record_verbose_name"
@@ -53,7 +53,7 @@ msgstr "1.4 智能结果管理"
 
 #: web/models.py:11
 msgid "domain_name_verbose_name"
-msgstr "域名"
+msgstr "域"
 
 #: web/models.py:25
 msgid "idc_name_verbose_name"
@@ -69,11 +69,11 @@ msgstr "名称"
 
 #: web/models.py:41
 msgid "record_domain_verbose_name"
-msgstr "所属域名"
+msgstr "所属域"
 
 #: web/models.py:42
 msgid "record_idc_verbose_name"
-msgstr "所属机房"
+msgstr "所属机房/服务出口"
 
 #: web/models.py:43
 msgid "record_ip_verbose_name"
@@ -81,7 +81,7 @@ msgstr "解析IP"
 
 #: web/models.py:45
 msgid "record_is_defaultidc_verbose_name"
-msgstr "默认机房"
+msgstr "缺省记录"
 
 #: web/models.py:73
 msgid "record_fields_domaininfo_verbose_name"
@@ -89,7 +89,7 @@ msgstr "域名信息"
 
 #: web/models.py:74
 msgid "record_fields_idcinfo_verbose_name"
-msgstr "机房信息"
+msgstr "机房/服务出口信息"
 
 #: web/models.py:85
 msgid "result_ip_verbose_name"
@@ -101,7 +101,7 @@ msgstr "访问记录"
 
 #: web/models.py:87
 msgid "result_idc_verbose_name"
-msgstr "访问机房"
+msgstr "访问机房/服务出口"
 
 #: templates/admin/smartload.html:4
 #: templates/admin/smartload.html:11
