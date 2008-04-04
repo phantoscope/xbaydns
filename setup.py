@@ -34,6 +34,9 @@ setup(
             'xbdinit = xbaydns.tools.initconf:main',
             'xbdsync = xbaydns.tools.confsync:main',
             'xbdwherepkg = xbaydns.utils.pkg:main'
+			'xbdidc2view = xbaydns.tools.prober.idcview:main',
+			'xbdlog2list = xbaydns.tools.prober.logtolist:main',
+			'xbdgenview = xbaydnsweb.conftoresults:main',
         ]
     }
 )

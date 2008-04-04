@@ -15,7 +15,7 @@ def logtolist(s):
         data[ip]=''
     return data.keys()
 
-def main(logfile, iplist):
+def genlist(logfile, iplist):
     log = open(logfile, "r").read()
     ips = logtolist(log)
     iplistfile = open(iplist, "w")
@@ -24,8 +24,11 @@ def main(logfile, iplist):
     iplistfile.close()
     return
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 3:
         print "Usage: %s logfile outputfile"%__file__
         sys.exit(1)
-    main(sys.argv[1], sys.argv[2])
+    genlist(sys.argv[1], sys.argv[2])
+	
+if __name__ == "__main__":
+    main()
