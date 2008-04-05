@@ -7,3 +7,7 @@ Created by 黄 冬 on 2007-11-19.
 Copyright (c) 2007 XBayDNS Team. All rights reserved.
 """
 
+try:
+    __version__ = __import__('pkg_resources').get_distribution('xbaydns').version
+except ImportError:
+    pass

@@ -26,6 +26,12 @@ class IDC(models.Model):
     name = models.CharField(max_length=100,verbose_name=_('idc_name_verbose_name'),help_text='Example:西单机房')
     alias = models.CharField(max_length=100,verbose_name=_('idc_alias_verbose_name'),help_text='用于Agent的别名,例如:xd')
 
+
+    authzcode = models.CharField(max_length=100,null=True, verbose_name=_('idc_authzcode_verbose_name'),help_text='authz code')
+    pubkey = models.CharField(max_length=1024,null=True, verbose_name=_('idc_pubkey_verbose_name'),help_text='public key')
+
+
+
     class Admin:
         list_display = ('name','alias')
         #search_fields = ('',)

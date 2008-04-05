@@ -49,7 +49,7 @@ namedstop = ""
 # 这是bind的重启脚本
 namedrestart = ""
 # 这是xbaydns运算数据目录
-xbaydnsdb = "/var/xbaydns"
+xbaydnsdb = "/home/xbaydns/view"
 
 namedef = {'Darwin':
                 {'chroot_path':'/', 

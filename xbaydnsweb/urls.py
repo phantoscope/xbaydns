@@ -7,5 +7,8 @@ urlpatterns = patterns('',
     # Uncomment this for admin:
      #(r'^admin/', include('django.contrib.admin.urls')),
      (r'admin/smartload', 'xbaydnsweb.web.views.smartload'),
+     (r'agent/create/(?P<authzcode>.*)/(?P<pubkey>.*)/$', 'xbaydnsweb.web.views.create_agent'),
+#     (r'agent/create/', 'xbaydnsweb.web.views.create_agent'),
+#     (r'agent/create', 'xbaydnsweb.web.views.create_agent'),
      (r'', include('django.contrib.admin.urls')),
 )

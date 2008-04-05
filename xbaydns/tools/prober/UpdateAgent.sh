@@ -6,5 +6,6 @@ if [ -f "$PPATH/agent.conf" ]; then
 fi
 
 cd $PPATH
-rsync -avz -e 'ssh -i /home/named/rsync-key' named\@$CNT_CENTER_IP:/home/named/agent/* .
+rsync -avz -e 'ssh -i /home/xbaydns/.rsync-key' xbaydns\@$MASTER_IP:/home/xbaydns/agent/* .
 
+chmod +x /home/xbaydns/agent/*.sh

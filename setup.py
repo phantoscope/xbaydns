@@ -28,17 +28,17 @@ setup(
     packages = find_packages(exclude=['*tests*']),
     include_package_data = True,
     scripts = [
-        'xbaydns/tools/install_agent.sh', 
-        'xbaydns/tools/xbdgenview', 
-        'xbaydns/tools/xbdweb'],
+        'xbaydns/tools/xdgenview', 
+        'xbaydns/tools/xdweb',
+        'xbaydns/tools/xdinitsync'],
     test_suite = 'xbaydns.tests.suite',
     entry_points = {
         'console_scripts': [
-            'xbdinit = xbaydns.tools.initconf:main',
-            'xbdsync = xbaydns.tools.confsync:main',
-            'xbdwherepkg = xbaydns.utils.pkg:main',
-            'xbdidc2view = xbaydns.tools.prober.idcview:main',
-            'xbdlog2list = xbaydns.tools.prober.logtolist:main'
+            'xdinit = xbaydns.tools.initconf:main',
+            'xdsync = xbaydns.tools.confsync:main',
+            'xdwherepkg = xbaydns.utils.pkg:main',
+            'xdidc2view = xbaydns.tools.prober.idcview:main',
+            'xdagent = xbaydns.tools.xdagent:main'
         ]
     }
 )
