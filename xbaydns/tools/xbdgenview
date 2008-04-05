@@ -1,0 +1,6 @@
+#!/bin/sh
+
+xbaydns_path=`xbdwherepkg`/xbaydnsweb
+echo $xbaydns_path
+cd $xbaydns_path
+python conftoresults.py
