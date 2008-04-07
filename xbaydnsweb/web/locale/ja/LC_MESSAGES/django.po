@@ -63,6 +63,14 @@ msgstr "ネーム"
 msgid "idc_alias_verbose_name"
 msgstr "表示名"
 
+#: web/models.py:30
+msgid "idc_authzcode_verbose_name"
+msgstr "認証コード"
+
+#: web/models.py:31
+msgid "idc_pubkey_verbose_name"
+msgstr "公開鍵"
+
 #: web/models.py:40
 msgid "record_name_verbose_name"
 msgstr "ネーム"

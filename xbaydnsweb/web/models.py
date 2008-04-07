@@ -27,8 +27,8 @@ class IDC(models.Model):
     alias = models.CharField(max_length=100,verbose_name=_('idc_alias_verbose_name'),help_text='用于Agent的别名,例如:xd')
 
 
-    authzcode = models.CharField(max_length=100,null=True, verbose_name=_('idc_authzcode_verbose_name'),help_text='authz code')
-    pubkey = models.CharField(max_length=1024,null=True, verbose_name=_('idc_pubkey_verbose_name'),help_text='public key')
+    authzcode = models.CharField(max_length=100,blank=True, verbose_name=_('idc_authzcode_verbose_name'))
+    pubkey = models.TextField(max_length=1024,blank=True, verbose_name=_('idc_pubkey_verbose_name'))
 
 
 
