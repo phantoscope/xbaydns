@@ -104,11 +104,11 @@ class Record(models.Model):
             print "NSUpdate Error!"
         super(Record,self).delete()
     class Admin:
-        list_display = ('name','domain','idc','ip','is_defaultidc','record_type')
+        list_display = ('name','domain','idc','ip','is_defaultidc','record_type','a_record','ns_name')
         search_fields = ('name','domain','idc','ip','record_type')
         fields = (
                 (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain',)}),
-                (_('record_fields_idcinfo_verbose_name'), {'fields': ('ip','idc','is_defaultidc',)}),
+                (_('record_fields_idcinfo_verbose_name'), {'fields': ('ip','a_record','ns_name','idc','is_defaultidc',)}),
         )
         #list_filter = ('is_defaultidc', 'idc')
     class Meta:
