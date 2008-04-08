@@ -44,18 +44,18 @@ class IDC(models.Model):
     
 class RecordType(models.Model):
     """Record types"""
-    type = models.CharField(max_length=10,verbose_name=_('record_type'),help_text='')
+    record_type = models.CharField(max_length=10,verbose_name=_('record_type'),help_text='')
     
     class Admin:
-        list_display = ('type',)
+        list_display = ('record_type',)
         #search_fields = ('ip','record','idc')
     class Meta:
-        ordering = ('type',)
+        ordering = ('record_type',)
         verbose_name = _('record_type_name')
         verbose_name_plural = _('record_type_name_plural')
 
     def __unicode__(self):
-        return self.type
+        return self.record_type
     
 
 class Record(models.Model):
@@ -66,7 +66,7 @@ class Record(models.Model):
     ip = models.IPAddressField(verbose_name=_('record_ip_verbose_name'),help_text='例如:202.101.34.44')
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     
-    type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
+    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
     def save(self):
         try:
             nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
