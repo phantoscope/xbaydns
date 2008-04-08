@@ -137,7 +137,7 @@ class RecodeType(models.Model):
     type = models.CharField(max_length=10,verbose_name=_('recode_type'),help_text='')
     
     class Admin:
-        list_display = ('type')
+        list_display = ('type',)
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('type',)
