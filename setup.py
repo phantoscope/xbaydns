@@ -30,11 +30,11 @@ setup(
     scripts = [
         'xbaydns/tools/xdgenview', 
         'xbaydns/tools/xdweb',
-        'xbaydns/tools/xdinitsync'],
+        'xbaydns/tools/xdinit'],
     test_suite = 'xbaydns.tests.suite',
     entry_points = {
         'console_scripts': [
-            'xdinit = xbaydns.tools.initconf:main',
+            'xdinitbind = xbaydns.tools.initconf:main',
             'xdsync = xbaydns.tools.confsync:main',
             'xdwherepkg = xbaydns.utils.pkg:main',
             'xdidc2view = xbaydns.tools.prober.idcview:main',
