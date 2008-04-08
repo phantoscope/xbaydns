@@ -6,11 +6,6 @@ fi
 MASTERIP=$1
 BINDCHROOT=$2
 
-if [ ! -x $BINDCHROOT ]; then
-   echo "$BINDCHROOT not found!"
-   exit 1
-fi
-
 #1.prepare bind's chroot
 #-----------------------
 mkdir -p $BINDCHROOT/{etc,dev,var/{run,dump,stats,log}}
@@ -29,7 +24,7 @@ rm -rf /home/xbaydns
 userdel xbaydns
 groupdel xbaydns
 groupadd xbaydns
-useradd xbaydns -g xbaydns -s /usr/local/bin/rssh -d /home/xbaydns
+useradd xbaydns -g xbaydns -s /usr/sbin/smrsh -d /home/xbaydns
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{agent,data,.ssh,view}
 mkdir -p /home/xbaydns/view/{agent_logs,idcview}
@@ -54,10 +49,9 @@ rm -rf /tmp/crontab
 echo "set the following envionment variables in profile(eg. /etc/profile)"
 echo "you can find the setting in /home/xbaydns/xdenv" 
 echo "\
-PATH=\$PATH:$BINDCHROOT/bin:$BINDCHROOT/sbin
 XBAYDNS_CHROOT_PATH=$BINDCHROOT
-XBAYDNS_BIND_CONF=etc
-XBAYDNS_BIND_START=$BINDCHROOT/sbin/named
+XBAYDNS_BIND_CONF=/etc
+XBAYDNS_BIND_START=/usr/local/sbin/named
 XBAYDNS_BIND_USER=named
 export PATH XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
 "|tee /home/xbaydns/xdenv
