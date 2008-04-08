@@ -67,7 +67,7 @@ class Record(models.Model):
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
-    a_record = models.ForeignKey(self,verbose_name=_('record_a_record'),limit_choices_to={'record_type__record_type__exact':'A'})
+    a_record = models.ForeignKey(Record,verbose_name=_('record_a_record'),limit_choices_to={'record_type__record_type__exact':'A'})
     ns_name = models.CharField(max_length=100,verbose_name=_('record_ns_name'))
     def save(self):
         try:
