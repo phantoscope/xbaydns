@@ -70,7 +70,7 @@ def isAvlibleA(field_data,all_data):
     elif not all_data.has_key('idc'):
         raise validators.ValidationError(_('validator_required_field')+_('record_ip_verbose_name'))
 
-def isAvlibleCNAME():
+def isAvlibleCNAME(field_data,all_data):
     if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'CNAME':
         return
     if not all_data.has_key('a_record'):
@@ -78,7 +78,7 @@ def isAvlibleCNAME():
     elif not all_data.has_key('name'):
         raise validators.ValidationError(_('validator_required_field')+_('record_name_verbose_name'))
 
-def isAvlibleNS():
+def isAvlibleNS(field_data,all_data):
     if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'NS':
         return
     if not all_data.has_key('ns_name'):
