@@ -140,7 +140,7 @@ class RecodeType(models.Model):
         list_display = ('type')
         #search_fields = ('ip','record','idc')
     class Meta:
-        ordering = ('type')
+        ordering = ('type',)
         verbose_name = _('recode_type_name')
         verbose_name_plural = _('recode_type_name_plural')
 
