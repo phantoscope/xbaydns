@@ -59,7 +59,7 @@ class RecordType(models.Model):
         return self.record_type
     
 def isAvlibleA(field_data,all_data):
-    if RecordType.objects.get(all_data['record_type']) != 'A':
+    if RecordType.objects.get(all_data[u'record_type']) != 'A':
         return
     if not all_data.has_key('name'):
         raise validators.ValidationError(_('validator_required_field')+_('record_name_verbose_name'))
@@ -71,7 +71,7 @@ def isAvlibleA(field_data,all_data):
         raise validators.ValidationError(_('validator_required_field')+_('record_ip_verbose_name'))
 
 def isAvlibleCNAME():
-    if RecordType.objects.get(all_data['record_type']) != 'CNAME':
+    if RecordType.objects.get(all_data[u'record_type']) != 'CNAME':
         return
     if not all_data.has_key('a_record'):
         raise validators.ValidationError(_('validator_required_field')+_('record_a_record'))
@@ -79,7 +79,7 @@ def isAvlibleCNAME():
         raise validators.ValidationError(_('validator_required_field')+_('record_name_verbose_name'))
 
 def isAvlibleNS():
-    if RecordType.objects.get(all_data['record_type']) != 'NS':
+    if RecordType.objects.get(all_data[u'record_type']) != 'NS':
         return
     if not all_data.has_key('ns_name'):
         raise validators.ValidationError(_('validator_required_field')+_('record_ns_name'))
