@@ -41,6 +41,22 @@ class IDC(models.Model):
         verbose_name_plural = _('idc_verbose_name_plural')
     def __unicode__(self):
         return self.name
+    
+class RecordType(models.Model):
+    """Record types"""
+    type = models.CharField(max_length=10,verbose_name=_('record_type'),help_text='')
+    
+    class Admin:
+        list_display = ('type',)
+        #search_fields = ('ip','record','idc')
+    class Meta:
+        ordering = ('type',)
+        verbose_name = _('record_type_name')
+        verbose_name_plural = _('record_type_name_plural')
+
+    def __unicode__(self):
+        return self.type
+    
 
 class Record(models.Model):
     """Record Model"""
@@ -132,18 +148,3 @@ class IPArea(models.Model):
 
     def __unicode__(self):
         return self.ip
-
-class RecordType(models.Model):
-    """Record types"""
-    type = models.CharField(max_length=10,verbose_name=_('record_type'),help_text='')
-    
-    class Admin:
-        list_display = ('type',)
-        #search_fields = ('ip','record','idc')
-    class Meta:
-        ordering = ('type',)
-        verbose_name = _('record_type_name')
-        verbose_name_plural = _('record_type_name_plural')
-
-    def __unicode__(self):
-        return self.type
