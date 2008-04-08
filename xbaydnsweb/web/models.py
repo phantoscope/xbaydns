@@ -132,3 +132,17 @@ class IPArea(models.Model):
     def __unicode__(self):
         return self.ip
 
+class RecodeType(models.Model):
+    """Recode types"""
+    type = models.CharField(max_length=10,verbose_name=_('recode_type'),help_text='')
+    
+    class Admin:
+        list_display = ('type')
+        #search_fields = ('ip','record','idc')
+    class Meta:
+        ordering = ('type')
+        verbose_name = _('recode_type_name')
+        verbose_name_plural = _('recode_type_name_plural')
+
+    def __unicode__(self):
+        return self.type
