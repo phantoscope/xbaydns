@@ -1,3 +1,5 @@
+#!/bin/sh
+
 if [ $# != 2 ]; then
     echo "Usage: $0 <master_ip> <path_to_bind_log>"
     exit 1
@@ -6,11 +8,35 @@ fi
 MASTERIP=$1
 BINDLOG=$2
 
+if [ -x /usr/sbin/smrsh ];then
+    # CentOS
+    SMRSH_PATH=/usr/sbin/smrsh
+    SMRSH_CMDDIR=/etc/smrsh
+elif [ -x /usr/lib/sendmail.d/bin/smrsh ];then
+    # OpenSuSE
+    SMRSH_PATH=/usr/lib/sendmail.d/bin/smrsh
+    SMRSH_CMDDIR=/usr/lib/sendmail.d/bin
+elif [ -x /usr/libexec/smrsh ];then
+    # FreeBSD
+    SMRSH_PATH=/usr/libexec/smrsh
+    SMRSH_CMDDIR=/usr/libexec/sm.bin
+else
+    echo "Error: can't find smrsh,exiting!"
+    exit 1
+fi
+
+if ! which rsync > /dev/null 2>&1 ; then
+    echo "Error: can't find rsync,exiting!"
+    exit 1
+fi
+
 rm -rf /home/xbaydns
+rm -f $SMRSH_CMDDIR/rsync
 userdel xbaydns
 groupdel xbaydns
 groupadd xbaydns
-useradd xbaydns -g xbaydns -s /usr/local/bin/rssh -d /home/xbaydns
+useradd xbaydns -g xbaydns -s /usr/local/bin/rssh -d $SMRSH_PATH
+ln -s `which rsync` $SMRSH_CMDDIR/
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{agent,data,.ssh,view}
 mkdir -p /home/xbaydns/view/{agent_logs,idcview}
@@ -27,6 +53,6 @@ chmod 700 /home/xbaydns
 crontab -l >old_crontab 2>/dev/null
 echo "0-59/5 * * * * /home/xbaydns/agent/Log2IPlist.sh">/tmp/crontab
 crontab /tmp/crontab
-rm -rf /tmp/crontab
+rm -rf /tmp/crontab old_crontab
 
 echo "done."
