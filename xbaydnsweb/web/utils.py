@@ -20,17 +20,25 @@ from xbaydns.tools import algorithms
 log = logging.getLogger('xbaydnsweb.web.utils')
 #logging.basicConfig(level=logging.DEBUG)
 
+def genRecordList(record):
+    if record.record_type == 'A':
+        return [[str(record.name),str(record.ttl),'IN','A',str(record.record_info)],]
+    elif record.record_type == 'CNAME':
+        return [[str(record.name),str(record.ttl),'IN','CNAME',str(record.record_info)],]
+    elif record.record_type == 'NS':
+        return [[str(record.name),str(record.ttl),'IN','NS',str(record.record_info)],]
+
 def record_nsupdate(record):
     """调用NSUpdate更新record"""
     try:
         nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-        add_data=[[str(record.name),3600,'IN','A',record.ip],]
+        add_data=genRecordList(record)
         try:
             record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype='A')
             print "record_a",record_a
             if len(record_a)!=0:
-                del_data=[[str(record.name),3600,'IN','A',record_a],]
+                del_data=genRecordList(record)
                 nsupobj.removeRecord(del_data)
         except:
             print traceback.print_exc()

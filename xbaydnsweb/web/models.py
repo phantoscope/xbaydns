@@ -5,6 +5,8 @@ import traceback
 import logging.config
 from xbaydns.dnsapi import nsupdate
 from django.core import validators
+from xbaydnsweb import conftoresults
+from xbaydnsweb.web.utils import *
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
@@ -66,46 +68,23 @@ class Record(models.Model):
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
+    ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'))
+    
     def save(self):
-        try:
-            nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
-            #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-            add_data=[[str(self.name),3600,'IN','A',[str(self.record_info),]],]
-            if self.id!=None:
-                try:
-                    record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
-                    if len(record_a)!=0:
-                        old_r=Record.objects.get(id=self.id)
-                        del_data=[[old_r.name,3600,'IN','A',record_a],]
-                        nsupobj.removeRecord(del_data)
-                except:
-                    print traceback.print_exc()
-            print add_data
-            nsupobj.addRecord(add_data)
-            nsupobj.commitChanges()
-        except:
-            print traceback.print_exc()
-            print "NSUpdate Error!"
         super(Record,self).save()
+        conftoresults.main()
+        saveAllConf()
+        
     def delete(self):
-        try:
-            nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
-            record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
-            if len(record_a)!=0:
-                del_data=[[str(self.name),3600,'IN','A',record_a],]
-                #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-                nsupobj.removeRecord(del_data)
-                nsupobj.commitChanges()
-        except:
-            print traceback.print_exc()
-            print "NSUpdate Error!"
         super(Record,self).delete()
+        conftoresults.main()
+        saveAllConf()
         
     class Admin:
-        list_display = ('name','domain','idc','is_defaultidc','record_type','record_info')
+        list_display = ('name','domain','idc','is_defaultidc','record_type','record_info','ttl')
         search_fields = ('name','domain','idc','record_info','record_type')
         fields = (
-                (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain',)}),
+                (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain','ttl')}),
                 (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc','is_defaultidc',)}),
         )
         #list_filter = ('is_defaultidc', 'idc')
