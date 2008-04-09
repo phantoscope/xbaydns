@@ -30,7 +30,7 @@ def reg_agent(server, authzcode, pubkey):
     open('/tmp/agent.sh', 'w').write(install_script.replace('MASTERIP', server))
     os.chmod('/tmp/agent.sh', 0755)
     os.system('/tmp/agent.sh')
-    open('/home/xbaydns/myname', 'w').write(agent_name)
+    open('/home/xdagent/myname', 'w').write(agent_name)
 
 def reg_slave(server, slavename, pubkey):
     import urllib2
@@ -42,7 +42,7 @@ def reg_slave(server, slavename, pubkey):
     if not stream == 'done': 
         print("sorry, you can't install slave, check your master ip again")
         sys.exit(1)
-    open('/home/xdslave/slave.conf', 'w').write(install_script.replace('MASTERIP', server))
+    open('/home/xdagent/myname', 'w').write(agent_name)
 
 def main():
     """Main entry point for running the xdagent ."""
@@ -64,7 +64,7 @@ def main():
     if (len(options.server) == 0) or not (len(args) == 1):
         parser.print_help()
         sys.exit(1)
-    if (args[1] == 'agent'):
+    if (args[0] == 'agent'):
         if len(options.authzcode) == 0:
             parser.print_help()
             sys.exit(1)
@@ -74,7 +74,7 @@ def main():
         pubkey_string = open('/tmp/rsync-key.pub').read()
         print pubkey_string
         reg_agent(options.server, options.authzcode, pubkey_string)
-    elif (args[1] == 'slave'):
+    elif (args[0] == 'slave'):
         if len(options.slavename) == 0:
             parser.print_help()
             sys.exit(1)
