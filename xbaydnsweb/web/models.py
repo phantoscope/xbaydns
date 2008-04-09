@@ -70,7 +70,7 @@ class Record(models.Model):
         try:
             nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
             #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
-            add_data=[[str(self.name),3600,'IN','A',[str(self.ip),]],]
+            add_data=[[str(self.name),3600,'IN','A',[str(self.record_info),]],]
             if self.id!=None:
                 try:
                     record_a = nsupobj.queryRecord('%s.%s'%(self.name,self.domain), rdtype='A')
@@ -100,15 +100,6 @@ class Record(models.Model):
             print traceback.print_exc()
             print "NSUpdate Error!"
         super(Record,self).delete()
-        
-    def genDataStr(self):
-        r_type = RecordType.objects.get(id=self.record_type)
-        if  r_type.record_type== 'A':
-            add_data=[[str(self.name),3600,'IN','A',[str(self.ip),]],]
-        elif r_type.record_type == 'CNAME':
-            add_data=[[str(self.name),3600,'IN','CNAME',[str(self.ip),]],]
-        elif r_type.record_type == 'NS':
-            add_data=[[str(self.name),3600,'IN','NS',[str(self.ip),]],]
         
     class Admin:
         list_display = ('name','domain','idc','is_defaultidc','record_type','record_info')
