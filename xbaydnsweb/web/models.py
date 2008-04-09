@@ -6,7 +6,7 @@ import logging.config
 from xbaydns.dnsapi import nsupdate
 from django.core import validators
 from xbaydnsweb import conftoresults
-from xbaydnsweb.web.utils import saveAllConf
+
 log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
@@ -87,11 +87,13 @@ class Record(models.Model):
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'))
     
     def save(self):
+        from xbaydnsweb.web.utils import saveAllConf
         super(Record,self).save()
         conftoresults.main()
         saveAllConf()
         
     def delete(self):
+        from xbaydnsweb.web.utils import saveAllConf
         super(Record,self).delete()
         conftoresults.main()
         saveAllConf()
