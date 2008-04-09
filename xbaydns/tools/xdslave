@@ -20,9 +20,10 @@ useradd xdslave -g xdslave -s /sbin/nologin -d /home/xdslave
 mkdir -p /home/xdslave/prog
 mkdir -p /home/xdslave/named/{log,etc/{acl,view,dynamic}}
 
-ssh-keygen -t dsa -f /home/xslave/rsync-key -N ""
+ssh-keygen -t dsa -f /home/xdslave/rsync-key -N ""
 
-xdreg slave -m $MASTER -s $SLAVE_NAME
+echo "xdreg slave -m $MASTERIP -s $SLAVE_NAME"
+xdreg slave -m $MASTERIP -s $SLAVE_NAME
 if [ $? -ne 0 ]; then
 exit 1
 fi
@@ -63,7 +64,5 @@ xdinitbind slave $MASTERIP
 
 echo "\
 
-
-
 ----------------------------- Welcome to XBayDNS ---------------------------
-
+"
