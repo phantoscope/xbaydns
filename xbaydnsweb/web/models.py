@@ -6,6 +6,7 @@ import logging.config
 from xbaydns.dnsapi import nsupdate
 from django.core import validators
 from xbaydnsweb import conftoresults
+import re
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
@@ -75,6 +76,23 @@ class IPArea(models.Model):
 
     def __unicode__(self):
         return self.ip
+
+def isValiableRInfo(field_data,all_data):
+    r_type = RecordType.objects.get(id=all_data['record_type'])
+    if r_type == 'A':
+        ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
+        ipv4_re.match(str(field_data), 1)  
+    elif r_type == 'CNAME':
+        try:
+            name = field_data[:field_data.index('.')]
+            domain = field_data[field_data.index('.')+1:]
+            
+            if len(Record.objects.filter(name=name,domain__name=domain)) == 0:
+                raise validators.ValidationError("field synax error")
+        except:
+            raise validators.ValidationError("field synax error")
+    elif r_type == 'A':
+        pass
     
 class Record(models.Model):
     """Record Model"""
