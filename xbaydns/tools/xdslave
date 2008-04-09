@@ -27,8 +27,8 @@ if [ $? -ne 0 ]; then
 exit 1
 fi
 
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xdagent@$MASTERIP:/home/xdslave/prog /home/xdagent
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xdagent@$MASTERIP:/home/xdslave/slave.conf /home/xdagent/slave.conf
+rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/prog /home/xdslave
+rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/slave.conf /home/xdslave/slave.conf
 
 chown -R xdslave:xdslave /home/xdslave
 chmod 700 /home/xdslave

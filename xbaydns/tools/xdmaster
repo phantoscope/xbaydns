@@ -53,7 +53,7 @@ useradd xbaydns -g xbaydns -s $SMRSH_CMD -d /home/xbaydns
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{.ssh,prog,view,slave,agent}
 mkdir -p /home/xbaydns/view/{agent_logs,idcview}
-mkdir -p /home/xbaydns/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
+mkdir -p /home/xbaydns/slave/{keys,prog,named/{log,etc/{acl,view,dynamic}}}
 mkdir -p /home/xbaydns/agent/{prog,iplatency}
 
 touch /home/xbaydns/.ssh/authorized_keys

@@ -9,6 +9,7 @@ from django.conf import settings
 import traceback
 from xbaydnsweb.web.models import IDC
 import base64
+import os
 
 def smartload(request):
     if request.method == 'POST':
@@ -40,8 +41,8 @@ mkdir -p /home/xdagent/{prog,iplatency}
 mv /tmp/rsync-key /home/xdagent
 mv /tmp/rsync-key.pub /home/xdagent
 
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xdagent@MASTERIP:/home/xdagent/prog /home/xdagent
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xdagent@MASTERIP:/home/xdagent/agent.conf /home/xdagent
+rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/prog /home/xdagent
+rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
 chmod +x /home/xdagent/prog/*
 chown -R xdagent:xdagent /home/xdagent
 chmod 700 /home/xdagent
@@ -52,17 +53,29 @@ chmod 700 /home/xdagent
 
 def regen_allkey():
     #TODO: it's awful to refresh all key when update one key
-    for idc in IDC.objects.all():
-        if idc.pubkey.startswith('ssh-dss'):
-            open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
+    open('/home/xbaydns/.ssh/authorized_keys', 'w').write('')
+    try:
+        for idc in IDC.objects.all():
+            if idc.pubkey.startswith('ssh-dss'):
+                open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
+    except:
+        print traceback.print_exc()
+        return False
 
-    for key_file in os.listdir('/home/xbaydns/slave/keys'):
-        key_string = open('/home/xbaydns/slave/keys/%s' % key_file, 'r').read()
-        open('/home/xbaydns/.ssh/authorized_keys', 'a').write(key_string)
-
+    try:
+        for key_file in os.listdir('/home/xbaydns/slave/keys'):
+            print "key:%s" % key_file
+            key_string = open('/home/xbaydns/slave/keys/%s' % key_file, 'r').read()
+            open('/home/xbaydns/.ssh/authorized_keys', 'a').write(key_string)
+    except:
+        print traceback.print_exc()
+        return False
+    return True
 
 def create_agent(request, authzcode, pubkey):
     pubkey = pubkey.replace(',', '/').replace(';', ' ')
+    print "AUTHZCODE:%s" % authzcode
+    print "PUBKEY:%s" % pubkey
     try:
         idc = IDC.objects.get(authzcode=authzcode)
     except:
@@ -75,18 +88,15 @@ def create_agent(request, authzcode, pubkey):
     except:
         print traceback.print_exc()
         return HttpResponse('sorry')
-    open('/home/xbaydns/.ssh/authorized_keys', 'w').write('')
 
-    regen_allkey()
-    resp_stream = '%s:%s' % (idc.alias, install_agent_script)
-    return HttpResponse(resp_stream)
+    if regen_allkey():
+        resp_stream = '%s:%s' % (idc.alias, install_agent_script)
+        return HttpResponse(resp_stream)
+    else:
+        return HttpResponse('sorry')
 
 def create_slave(request, slavename, pubkey):
     pubkey = pubkey.replace(',', '/').replace(';', ' ')
-
-    #TODO: 
-
-    open('/home/xbaydns/slave/keys/%s' % slavename, 'w').write(pubkey)
 
     regen_allkey()
 

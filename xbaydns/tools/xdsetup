@@ -4,13 +4,11 @@ usage() {
     echo "Usage: $0 master <master_ip> <path_to_bind_chroot>"
     echo "       $0 slave  <master_ip> <authz_code>"
     echo "       $0 agent  <master_ip> <path_to_bind_chroot> <slave_name>"
-    echo ""
-    echo "options: <path_to_bind_chroot>  -  must set when setup master"
-    echo "         <auth_code>   -  must set when setup agent"
 }
     
 if [ $# -lt 3 ]; then
     usage
+    exit 1
 else
     TYPE=$1
     MASTERIP=$2
@@ -19,16 +17,17 @@ else
         xdmaster $MASTERIP $BIND_CHROOT
     elif [ $TYPE = "agent" ]; then
         AUTHZCODE=$3 
-        xdreg agent -s $MASTERIP -a $AUTHZCODE
+        xdreg agent -m $MASTERIP -a $AUTHZCODE
     elif [ $TYPE = "slave" ]; then
         if [ $# -lt 4 ]; then
             usage
-            exit 0
+            exit 1
         fi
         BIND_CHROOT=$3
         SLAVE_NAME=$4
         xdslave $MASTERIP $BIND_CHROOT $SLAVE_NAME
     else
         usage
+        exit 1
     fi
 fi
