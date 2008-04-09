@@ -58,45 +58,14 @@ class RecordType(models.Model):
     def __unicode__(self):
         return self.record_type
     
-def isAvlibleA(field_data,all_data):
-    if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'A':
-        return
-    if not all_data.has_key('name') or all_data['name'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_name'))
-    elif not all_data.has_key('domain') or all_data['domain'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_domain'))
-    elif not all_data.has_key('ip') or all_data['ip'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_ip'))
-    elif not all_data.has_key('idc') or all_data['idc'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_idc'))
-
-def isAvlibleCNAME(field_data,all_data):
-    if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'CNAME':
-        return
-    if not all_data.has_key('a_record') or all_data['a_record'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_a_record'))
-    elif not all_data.has_key('name') or all_data['name'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_name'))
-
-def isAvlibleNS(field_data,all_data):
-    if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'NS':
-        return
-    if not all_data.has_key('ns_name') or all_data['ns_name'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_ns_name'))
-    elif not all_data.has_key('name') or all_data['name'] == '':
-        raise validators.ValidationError(_('validator_required_field_record_name'))
-    
 class Record(models.Model):
     """Record Model"""
-    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www',blank=True,validator_list=[isAvlibleA,isAvlibleNS,isAvlibleCNAME])
-    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'),blank=True,validator_list=[isAvlibleA])
-    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True,validator_list=[isAvlibleA])
-    ip = models.IPAddressField(verbose_name=_('record_ip_verbose_name'),help_text='例如:202.101.34.44',blank=True,validator_list=[isAvlibleA])
-    is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
-    
+    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
+    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'),blank=True)
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True)
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
-    a_record = models.ForeignKey("self",verbose_name=_('record_a_record'),limit_choices_to={'record_type__record_type__exact':'A'},blank=True,validator_list=[isAvlibleCNAME])
-    ns_name = models.CharField(max_length=100,verbose_name=_('record_ns_name'),blank=True,validator_list=[isAvlibleNS])
+    record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
+    is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     def save(self):
         try:
             nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
@@ -142,11 +111,11 @@ class Record(models.Model):
             add_data=[[str(self.name),3600,'IN','NS',[str(self.ip),]],]
         
     class Admin:
-        list_display = ('name','domain','idc','ip','is_defaultidc','record_type','a_record','ns_name')
-        search_fields = ('name','domain','idc','ip','record_type')
+        list_display = ('name','domain','idc','is_defaultidc','record_type','record_info')
+        search_fields = ('name','domain','idc','record_info','record_type')
         fields = (
                 (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain',)}),
-                (_('record_fields_idcinfo_verbose_name'), {'fields': ('ip','a_record','ns_name','idc','is_defaultidc',)}),
+                (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc','is_defaultidc',)}),
         )
         #list_filter = ('is_defaultidc', 'idc')
     class Meta:
