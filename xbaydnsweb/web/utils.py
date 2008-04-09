@@ -79,7 +79,7 @@ def getResults(ip):
         k="%s.%s"%(result.record.name,result.record.domain)
         if k not in records:
             records[k]=[]
-        records[k].append(str(result.record.ip))
+        records[k].append(str(result.record.record_info))
     return records
 
 def updateDomain():
@@ -102,7 +102,7 @@ def updateDomain():
     for r in Record.objects.filter(is_defaultidc=True):
         m=My()
         m.name,m.domain=r.name,r.domain
-        m.ip=[str(r.ip),]
+        m.ip=[str(r.record_info),]
         m.viewname="view_default"
         print m.name,m.domain,m.viewname,m.ip
         record_nsupdate(m)
