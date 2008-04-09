@@ -6,10 +6,10 @@ conftoresults.py
 Created by QingFeng on 2008-03-26.
 Copyright (c) 2008 xBayDNS Team. All rights reserved.
 """
+import os,sys
 import traceback
 from operator import itemgetter
 
-CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
@@ -20,11 +20,11 @@ def findFastSpeed(agents,times):
     return values_sort
 
 def main():
-    import os,sys
     from xbaydns.conf import sysconf
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
-
     from xbaydnsweb.web.models import IDC,Result,Record
+    
+    CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
+    
     map(lambda x:x.delete(),Result.objects.all())
     for i,r in enumerate(open(CONF_FILE)):
         if i==0:
@@ -60,5 +60,6 @@ def main():
     #    Result.objects.create(ip='any',record=record,idc=record.idc)
 
 if __name__ == '__main__':
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
     main()
 
