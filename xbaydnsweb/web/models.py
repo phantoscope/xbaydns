@@ -88,15 +88,15 @@ def isAvlibleNS(field_data,all_data):
     
 class Record(models.Model):
     """Record Model"""
-    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www',validator_list=[isAvlibleA,isAvlibleNS,isAvlibleCNAME])
-    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'),validator_list=[isAvlibleA])
-    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),validator_list=[isAvlibleA])
-    ip = models.IPAddressField(verbose_name=_('record_ip_verbose_name'),help_text='例如:202.101.34.44',validator_list=[isAvlibleA])
+    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www',blank=True,validator_list=[isAvlibleA,isAvlibleNS,isAvlibleCNAME])
+    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'),blank=True,validator_list=[isAvlibleA])
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True,validator_list=[isAvlibleA])
+    ip = models.IPAddressField(verbose_name=_('record_ip_verbose_name'),help_text='例如:202.101.34.44',blank=True,validator_list=[isAvlibleA])
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
-    a_record = models.ForeignKey("self",verbose_name=_('record_a_record'),limit_choices_to={'record_type__record_type__exact':'A'},validator_list=[isAvlibleCNAME])
-    ns_name = models.CharField(max_length=100,verbose_name=_('record_ns_name'),validator_list=[isAvlibleNS])
+    a_record = models.ForeignKey("self",verbose_name=_('record_a_record'),limit_choices_to={'record_type__record_type__exact':'A'},blank=True,validator_list=[isAvlibleCNAME])
+    ns_name = models.CharField(max_length=100,verbose_name=_('record_ns_name'),blank=True,validator_list=[isAvlibleNS])
     def save(self):
         try:
             nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%str(self.domain),view="view_%s"%self.idc.alias)
