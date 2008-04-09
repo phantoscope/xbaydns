@@ -29,27 +29,39 @@ def smartload(request):
             result[k][rs.idc.name].append(rs.ip)
     return render_to_response('admin/smartload.html',locals())
 
-install_script = """
-userdel xbaydns
-groupdel xbaydns
-rm -rf /home/xbaydns
-groupadd xbaydns
-useradd xbaydns -g xbaydns -s /bin/nologin -d /home/xbaydns
-mkdir -p /home/xbaydns
-mkdir -p /home/xbaydns/{agent,data}
-mv /tmp/rsync-key /home/xbaydns/.rsync-key
+#TODO:awful
+install_agent_script = """
+rm -rf /home/xdagent
+userdel xdagent
+groupdel xdagent
+groupadd xdagent
+useradd xdagent -g xdagent -s /sbin/nologin -d /home/xdagent
+mkdir -p /home/xdagent/{prog,iplatency}
+mv /tmp/rsync-key /home/xdagent
+mv /tmp/rsync-key.pub /home/xdagent
 
-rsync -avz -e 'ssh -i /home/xbaydns/.rsync-key' xbaydns@10.210.128.24:/home/xbaydns/agent /home/xbaydns
-chmod +x /home/xbaydns/agent/*.sh
-chown -R xbaydns:xbaydns /home/xbaydns
-chmod 700 /home/xbaydns
+rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xdagent@MASTERIP:/home/xdagent/prog /home/xdagent
+rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xdagent@MASTERIP:/home/xdagent/agent.conf /home/xdagent
+chmod +x /home/xdagent/prog/*
+chown -R xdagent:xdagent /home/xdagent
+chmod 700 /home/xdagent
 
-/home/xbaydns/agent/InstallCrontab.sh
+/home/xdagent/prog/InstallCrontab.sh
 """
 
+
+def regen_allkey():
+    #TODO: it's awful to refresh all key when update one key
+    for idc in IDC.objects.all():
+        if idc.pubkey.startswith('ssh-dss'):
+            open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
+
+    for key_file in os.listdir('/home/xbaydns/slave/keys'):
+        key_string = open('/home/xbaydns/slave/keys/%s' % key_file, 'r').read()
+        open('/home/xbaydns/.ssh/authorized_keys', 'a').write(key_string)
+
+
 def create_agent(request, authzcode, pubkey):
-    # querey agent model by  authz_code
-    
     pubkey = pubkey.replace(',', '/').replace(';', ' ')
     try:
         idc = IDC.objects.get(authzcode=authzcode)
@@ -58,17 +70,24 @@ def create_agent(request, authzcode, pubkey):
         return HttpResponse('sorry')
 
     idc.pubkey = pubkey
-    resp_stream = '%s:%s' % (idc.alias, install_script)
     try:
         idc.save()
     except:
         print traceback.print_exc()
         return HttpResponse('sorry')
-    #TODO: re-generate the ssh key
     open('/home/xbaydns/.ssh/authorized_keys', 'w').write('')
-    for idc in IDC.objects.all():
-        print idc.pubkey
-        if idc.pubkey.startswith('ssh-dss'):
-            open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
+
+    regen_allkey()
+    resp_stream = '%s:%s' % (idc.alias, install_agent_script)
     return HttpResponse(resp_stream)
 
+def create_slave(request, slavename, pubkey):
+    pubkey = pubkey.replace(',', '/').replace(';', ' ')
+
+    #TODO: 
+
+    open('/home/xbaydns/slave/keys/%s' % slavename, 'w').write(pubkey)
+
+    regen_allkey()
+
+    return HttpResponse('done.')

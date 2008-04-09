@@ -11,7 +11,7 @@ if [ ! -f crontab ]; then
 	exit 0
 fi
 
-crontab -u xdagent -l > old_crontab
+crontab -u xdslave -l > old_crontab
 if ! diff crontab old_crontab > /dev/null 2>&1 ; then
-	crontab -u xdagent crontab
+	crontab -u xdslave crontab
 fi

@@ -10,5 +10,5 @@ if [ -f "$PPATH/agent.conf" ]; then
 fi
 
 cd $PPATH
-python iplatency.py ../data/iplist ../data/${AGENT_NAME}-`date "+%Y-%m-%d"`
+python iplatency.py ../iplist ../iplatency/${AGENT_NAME}-`date "+%Y-%m-%d"`
 

@@ -84,7 +84,7 @@ def named_root_file():
         tmpl_file.close()
         return named_root
 
-def namedconf_file(include_files):
+def namedconf_file(include_files, bind_type, allow_ip):
     """通过namedconf.tmpl生成最终的named.conf文件。include_file为一个dic，每项的值为一个要include的文件路径"""
     if os.path.isfile(TMPL_DEFAULTZONE) == False:
         return False
@@ -92,7 +92,13 @@ def namedconf_file(include_files):
         tmpl_file = open(TMPL_NAMEDCONF, "r")
         namedconf_tmpl = Template(tmpl_file.read())
         tmpl_file.close()
-        namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf)
+#        namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf)
+        if bind_type == 'master':
+            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP='127.0.0.1')
+        elif bind_type == 'slave':
+            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP=allow_ip)
+        else:
+            return False
         namedconf += "\n"
         for filename in include_files.itervalues():
             namedconf += 'include "%s";\n'%filename
@@ -124,7 +130,7 @@ def create_destdir():
     os.chown("%s/%s/slave"%(tmpdir, sysconf.namedconf), sysconf.named_uid, 0)
     return tmpdir
 
-def create_conf(tmpdir):
+def create_conf(tmpdir, bind_type, allow_ip):
     """在tmpdir目录中创建配置文件"""
     print ("gen acl file")
     acl = acl_file(sysconf.default_acl)
@@ -157,7 +163,7 @@ def create_conf(tmpdir):
         os.chmod("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),0600)
         os.chown("%s/%s/rndc.key"%(tmpdir, sysconf.namedconf),sysconf.named_uid,0)
         print ("create named.conf file and init file")
-        namedconf = namedconf_file(sysconf.filename_map)
+        namedconf = namedconf_file(sysconf.filename_map, bind_type, allow_ip)
         tmpfile = open("%s/%s/named.conf"%(tmpdir, sysconf.namedconf), "w")
         tmpfile.write(namedconf)
         tmpfile.close()
@@ -176,7 +182,7 @@ def install_conf(tmpdir, chrootdir):
         return False
     
 def usage():
-    print "usage: %s [-bc]"%__file__
+    print "usage: %s <master|slave [masterip]> [-bc]"%__file__
     
 def main():
     # check root
@@ -184,8 +190,25 @@ def main():
         print "You need be root to run this program."
         return errno.EPERM
     # parse options
+
+    if len(sys.argv) < 2:
+        usage()
+        return errno.EINVAL
+
+    allow_ip = ''
+    if sys.argv[1] == 'master' :
+        options = sys.argv[2:]
+    elif sys.argv[1] == 'slave' and len(sys.argv) >= 3:
+        allow_ip = sys.argv[2]
+        options = sys.argv[3:]
+    else:
+        usage()
+        return errno.EINVAL
+
+    bind_type = sys.argv[1]
+
     try:
-        opts = getopt.getopt(sys.argv[1:], "b:c:")
+        opts = getopt.getopt(options, "b:c:")
     except getopt.GetoptError:
         usage()
         return errno.EINVAL
@@ -220,7 +243,7 @@ def main():
     shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"slave"),ignore_errors=True)
     shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"dynamic"),ignore_errors=True)
     shutil.rmtree(os.path.join(sysconf.chroot_path,sysconf.namedconf,"view"),ignore_errors=True)
-    if create_conf(tmpdir) == False or install_conf(tmpdir, chrootdir) == False:
+    if create_conf(tmpdir, bind_type, allow_ip) == False or install_conf(tmpdir, chrootdir) == False:
         print "Create configuration files failed."
         return -1
     else:

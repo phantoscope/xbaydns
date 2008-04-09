@@ -30,7 +30,9 @@ setup(
     scripts = [
         'xbaydns/tools/xdgenview', 
         'xbaydns/tools/xdweb',
-        'xbaydns/tools/xdinit'],
+        'xbaydns/tools/xdsetup',
+        'xbaydns/tools/xdmaster',
+        'xbaydns/tools/xdslave'],
     test_suite = 'xbaydns.tests.suite',
     entry_points = {
         'console_scripts': [
@@ -38,7 +40,7 @@ setup(
             'xdsync = xbaydns.tools.confsync:main',
             'xdwherepkg = xbaydns.utils.pkg:main',
             'xdidc2view = xbaydns.tools.prober.idcview:main',
-            'xdagent = xbaydns.tools.xdagent:main'
+            'xdreg = xbaydns.tools.xdreg:main'
         ]
     }
 )

@@ -74,7 +74,7 @@ def ecintersection_matrix(*devides):
 if __name__=='__main__':
     # test
     import ipdevide_gen
-    testdev = ipdevide_gen.ipdevide_gen(4, 3)#4个IP3组
+    testdev = ipdevide_gen.ipdevide_gen(16, 3)#4个IP3组
     print testdev
     for dev in testdev:
         print "dev: %s"%str(dev)

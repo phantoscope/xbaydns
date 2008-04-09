@@ -1,5 +1,4 @@
-0-59/5 * * * * /home/xbaydns/agent/UpdateAgent.sh
-0-59/5 * * * * /home/xbaydns/agent/UploadLog.sh
-0-59/5 * * * * /home/xbaydns/agent/UpdateIPList.sh
-0-59/5 * * * * /home/xbaydns/agent/ProbeIPlist.sh
-0-59/5 * * * * /home/xbaydns/agent/UploadProbeResults.sh
+0-59/5 * * * * /home/xdagent/prog/UpdateAgent.sh
+0-59/5 * * * * /home/xdagent/prog/UpdateIPList.sh
+0-59/5 * * * * /home/xdagent/prog/ProbeIPlist.sh
+0-59/5 * * * * /home/xdagent/prog/UploadProbeResults.sh
