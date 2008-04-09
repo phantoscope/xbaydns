@@ -5,8 +5,6 @@ import traceback
 import logging.config
 from xbaydns.dnsapi import nsupdate
 from django.core import validators
-from xbaydnsweb import conftoresults
-from xbaydnsweb.web.utils import *
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
@@ -61,6 +59,9 @@ class RecordType(models.Model):
         return self.record_type
     
 class Record(models.Model):
+    from xbaydnsweb import conftoresults
+    from xbaydnsweb.web.utils import *
+
     """Record Model"""
     name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
     domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
