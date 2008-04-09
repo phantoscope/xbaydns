@@ -6,7 +6,7 @@ import logging.config
 from xbaydns.dnsapi import nsupdate
 from django.core import validators
 from xbaydnsweb import conftoresults
-from xbaydnsweb.web.utils import *
+from xbaydnsweb.web.utils import saveAllConf
 log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
