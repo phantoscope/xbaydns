@@ -96,8 +96,17 @@ def create_agent(request, authzcode, pubkey):
         return HttpResponse('sorry')
 
 def create_slave(request, slavename, pubkey):
+    print "SLAVENAME:%s" % slavename
     pubkey = pubkey.replace(',', '/').replace(';', ' ')
+
+    print "SLAVENAME:%s" % slavename
+    print "PUBKEY:%s" % pubkey
+    try:
+        open('/home/xbaydns/slave/keys/%s' % slavename, 'w').write(pubkey + '\n')
+    except:
+        print traceback.print_exc()
+        return HttpResponse('sorry')
 
     regen_allkey()
 
-    return HttpResponse('done.')
+    return HttpResponse('done')
