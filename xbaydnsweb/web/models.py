@@ -132,18 +132,6 @@ class Record(models.Model):
             print "NSUpdate Error!"
         super(Record,self).delete()
         
-    def isValidToA(self, field_data, all_data):
-        print field_data
-        print all_data
-        return True
-    
-    def isValidToCNAME(self, field_data, all_data):
-        if not field_data.endswith("@example.com"):
-            raise validators.ValidationError("You can only send messages to example.com e-mail addresses.")
-    def isValidToNS(self, field_data, all_data):
-        if not field_data.endswith("@example.com"):
-            raise validators.ValidationError("You can only send messages to example.com e-mail addresses.")
-            
     def genDataStr(self):
         r_type = RecordType.objects.get(id=self.record_type)
         if  r_type.record_type== 'A':
