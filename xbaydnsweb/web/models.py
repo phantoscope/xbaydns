@@ -61,29 +61,29 @@ class RecordType(models.Model):
 def isAvlibleA(field_data,all_data):
     if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'A':
         return
-    if not all_data.has_key('name'):
+    if not all_data.has_key('name') or all_data['name'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_name_verbose_name'))
-    elif not all_data.has_key('domain'):
+    elif not all_data.has_key('domain') or all_data['domain'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_domain_verbose_name'))
-    elif not all_data.has_key('ip'):
+    elif not all_data.has_key('ip') or all_data['ip'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_idc_verbose_name'))
-    elif not all_data.has_key('idc'):
+    elif not all_data.has_key('idc') or all_data['idc'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_ip_verbose_name'))
 
 def isAvlibleCNAME(field_data,all_data):
     if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'CNAME':
         return
-    if not all_data.has_key('a_record'):
+    if not all_data.has_key('a_record') or all_data['a_record'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_a_record'))
-    elif not all_data.has_key('name'):
+    elif not all_data.has_key('name') or all_data['name'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_name_verbose_name'))
 
 def isAvlibleNS(field_data,all_data):
     if RecordType.objects.get(id=all_data[u'record_type']).record_type != 'NS':
         return
-    if not all_data.has_key('ns_name'):
+    if not all_data.has_key('ns_name') or all_data['ns_name'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_ns_name'))
-    elif not all_data.has_key('name'):
+    elif not all_data.has_key('name') or all_data['name'] == '':
         raise validators.ValidationError(_('validator_required_field')+_('record_name_verbose_name'))
     
 class Record(models.Model):
