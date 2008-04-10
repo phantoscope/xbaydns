@@ -102,10 +102,17 @@ def namedconf_file(include_files, bind_type, allow_ip):
         tmpl_file = open(TMPL_NAMEDCONF, "r")
         namedconf_tmpl = Template(tmpl_file.read())
         tmpl_file.close()
+        chroot_path = os.path.realpath(sysconf.chroot_path)
         if bind_type == 'master':
-            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP='127.0.0.1', LOG_SETTING_FOR_SLAVE="")
+            namedconf = namedconf_tmpl.substitute(\
+                CONF_DIR=os.path.join('/', sysconf.namedconf),
+                ALLOW_IP='127.0.0.1', 
+                LOG_SETTING_FOR_SLAVE="")
         elif bind_type == 'slave':
-            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP=allow_ip, LOG_SETTING_FOR_SLAVE=log_setting_for_slave)
+            namedconf = namedconf_tmpl.substitute(\
+                CONF_DIR=os.pah.join('/', sysconf.namedconf),
+                ALLOW_IP=allow_ip, 
+                LOG_SETTING_FOR_SLAVE=log_setting_for_slave)
         else:
             return False
         namedconf += "\n"
