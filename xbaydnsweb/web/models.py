@@ -98,7 +98,7 @@ class Record(models.Model):
     """Record Model"""
     name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
     domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
-    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True)
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
