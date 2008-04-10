@@ -34,9 +34,7 @@ def smartload(request):
 install_agent_script = """
 rm -rf /home/xdagent
 userdel xdagent
-groupdel xdagent
-groupadd xdagent
-useradd xdagent -g xdagent -s /sbin/nologin -d /home/xdagent
+useradd xdagent -g named -s /sbin/nologin -d /home/xdagent
 mkdir -p /home/xdagent/{.ssh,prog,iplatency}
 mv /tmp/rsync-key /home/xdagent
 mv /tmp/rsync-key.pub /home/xdagent
@@ -45,7 +43,7 @@ touch /home/xdagent/.ssh/known_hosts
 rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/prog /home/xdagent
 rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
 chmod +x /home/xdagent/prog/*
-chown -R xdagent:xdagent /home/xdagent
+chown -R xdagent:named /home/xdagent
 chmod 700 /home/xdagent
 
 /home/xdagent/prog/InstallCrontab.sh
