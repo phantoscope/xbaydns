@@ -39,10 +39,8 @@ chmod 700 /home/xdslave
 #2.prepare bind's chroot
 #-----------------------
 mkdir -p $BINDCHROOT/{etc/{acl,view,dynamic},dev,var/{run,dump,stats,log}}
-chown -R named:named $BINDCHROOT/var/{run,dump,stats}
 touch $BINDCHROOT/var/log/named.log
 touch $BINDCHROOT/var/log/query.log
-chown -R named:named $BINDCHROOT/var/log
 
 rm $BINDCHROOT/dev/{random,zero,null}
 mknod $BINDCHROOT/dev/random c 1 8
@@ -65,7 +63,9 @@ source /home/xdslave/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind slave $MASTERIP
 
+rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
+chown -R named:named $BINDCHROOT
 chmod 770 $BINDCHROOT
 echo "\
 
