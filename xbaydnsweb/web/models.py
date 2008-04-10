@@ -130,8 +130,10 @@ class Record(models.Model):
             for result in results:
                 self.viewname = result.view
                 record_nsupdate(self)
+            if self.rtstr=='NS':
+                record_delete(self)
         except:
-            self.delete()        
+            self.delete()
         
     def delete(self):
         from xbaydnsweb.web.utils import *
@@ -146,6 +148,8 @@ class Record(models.Model):
             record_delete(self)
         try:
             conftoresults.main()
+            if len(Record.objects.filter(record_type))==1:
+                return 
         except:
             pass
         super(Record,self).delete()
