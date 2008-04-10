@@ -127,7 +127,6 @@ key "%s" {
     add domain(domain) 增加一个DNS域。
     '''
     def addDomain(self,domain=[]):
-        from xbaydnsweb.web.models import Record
         cmds='include "defaultzone.conf";'
         for view in self.views.keys():
             for d in domain:
@@ -212,6 +211,7 @@ key "%s" {
     '''
     @pathIsExists       
     def __saveDomains(self,path=sysconf.namedconf):
+        from xbaydnsweb.web.models import Record
         for view,domains in self.domains.items():
             for domain,value in domains.items():
                 if domain=='defaultzone':continue
