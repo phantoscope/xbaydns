@@ -61,6 +61,7 @@ touch /home/xbaydns/.ssh/authorized_keys
 cp -r `xdwherepkg`/xbaydns/tools/prober/* /home/xbaydns/agent/prog
 chmod +x /home/xbaydns/agent/prog/*
 echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/agent/agent.conf
+echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/master.conf
 
 
 cp -r `xdwherepkg`/xbaydns/tools/slave/* /home/xbaydns/slave/prog

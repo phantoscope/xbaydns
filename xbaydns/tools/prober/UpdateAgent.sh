@@ -1,8 +1,8 @@
 #!/bin/sh
 
 PPATH=`dirname $0`
-if [ -f "$PPATH/agent.conf" ]; then
-	. $PPATH/agent.conf
+if [ -f "$PPATH/../agent.conf" ]; then
+	. $PPATH/../agent.conf
 fi
 
 cd $PPATH

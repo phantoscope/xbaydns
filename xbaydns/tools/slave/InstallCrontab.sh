@@ -1,11 +1,11 @@
 #!/bin/sh
 
 PPATH=`dirname $0`
-if [ -f "$PPATH/slave.conf" ]; then
-	. $PPATH/slave.conf
+if [ -f "$PPATH/../slave.conf" ]; then
+	. $PPATH/../slave.conf
 fi
 
-cd $PPATH
+cd $PPAT/..
 
 if [ ! -f crontab ]; then
 	exit 0
