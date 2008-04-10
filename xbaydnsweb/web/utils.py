@@ -36,7 +36,7 @@ def record_nsupdate(record):
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
         add_data=genRecordList(record)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type)
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.recordtype)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)
@@ -112,7 +112,7 @@ def updateDomain():
             name=k.split('.')
             m.name,m.domain=name[0],'.'.join(name[1:])
             m.ip=info[0]
-            m.record_type=info[1]
+            m.recordtype=info[1]
             m.viewname=view.view
             print m.name,m.domain,m.viewname,m.ip
             record_nsupdate(m)

@@ -128,7 +128,7 @@ class Record(models.Model):
         try:
             for result in results:
                 self.viewname = result.view
-                self.record_type = self.record_type.record_type
+                self.recordtype = self.record_type.record_type
                 record_nsupdate(self)
         except:
             self.delete()        
