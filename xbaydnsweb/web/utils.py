@@ -96,7 +96,7 @@ def getResults(ip):
         k="%s.%s"%(result.record.name,result.record.domain)
         if k not in records:
             records[k]=[]
-        records[k].append([str(result.record.record_info),str(result.record.record_type.record_type),str(result.record.ttl)])
+        records[k].extend([str(result.record.record_info),str(result.record.record_type.record_type),str(result.record.ttl)])
     return records
 
 def updateDomain():
@@ -113,8 +113,7 @@ def updateDomain():
             m.name,m.domain=name[0],'.'.join(name[1:])
             m.record_info=info[0]
             m.rtstr=info[1]
-            if len(info) == 3:
-                m.ttl = info[2]
+            m.ttl = info[2]
             m.viewname=view.view
             print m.name,m.domain,m.viewname,m.record_info
             record_nsupdate(m)

@@ -151,6 +151,7 @@ class Record(models.Model):
                     m=My()
                     m = self.domain__name.join('.')
                     m.domain=self.domain
+                    m.ttl = 3600
                     m.record_info=sysconf.default_ns
                     m.rcstr=self.record_type.record_type
                     m.viewname=result.view
