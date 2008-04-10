@@ -122,7 +122,15 @@ class Record(models.Model):
             conftoresults.main()
         except:
             pass
-        results = Result.objects.filter(record=self)
+        if len(IPArea.objects.all()) ==0:
+            self.is_defaultidc == True
+            results = []
+        else:
+            results = Result.objects.filter(record=self)
+            domain_results = Result.objects.filter(record__domain=self.domain)
+            if len(domain_results) == 0:
+                results =Result.objects.all()
+                self.is_defaultidc == True
         try:
             if self.is_defaultidc == True:
                 self.viewname="view_default"
