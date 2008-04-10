@@ -24,13 +24,16 @@ def reg_agent(server, authzcode, pubkey):
         print("sorry, you can't install agent, check your authz code again")
         sys.exit(1)
     agent_name = stream[0 : index]
-    install_script = stream[index + 1 : len(stream)]
+    index2 = stream[index + 1 : len(stream)].find(':')
+    master_pubkey = stream[index + 1: index2 - 1]
+    install_script = stream[index2 + 1 : len(stream)]
 
     os.system('touch /tmp/agent.sh')
     open('/tmp/agent.sh', 'w').write(install_script.replace('MASTERIP', server))
     os.chmod('/tmp/agent.sh', 0755)
     os.system('/tmp/agent.sh')
     open('/home/xdagent/myname', 'w').write(agent_name)
+    open('/home/xdagent/.ssh/known_hosts', 'w').write(master_pubkey)
 
 def reg_slave(server, slavename, pubkey):
     import urllib2
@@ -40,10 +43,14 @@ def reg_slave(server, slavename, pubkey):
     stream = sock.read()
     sock.close()
  
-    if not stream == 'done': 
+    if stream == 'sorry': 
         print("sorry, you can't install slave, check your master ip again")
         sys.exit(1)
+
+    index = stream.find(':')
+    master_pubkey = stream[index + 1: len(stream)]
     open('/home/xdslave/myname', 'w').write(slavename)
+    open('/home/xdslave/.ssh/known_hosts', 'w').write(master_pubkey)
 
 def main():
     """Main entry point for running the xdagent ."""

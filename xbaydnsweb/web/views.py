@@ -37,9 +37,10 @@ userdel xdagent
 groupdel xdagent
 groupadd xdagent
 useradd xdagent -g xdagent -s /sbin/nologin -d /home/xdagent
-mkdir -p /home/xdagent/{prog,iplatency}
+mkdir -p /home/xdagent/{.ssh,prog,iplatency}
 mv /tmp/rsync-key /home/xdagent
 mv /tmp/rsync-key.pub /home/xdagent
+touch /home/xdagent/.ssh/known_hosts
 
 rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/prog /home/xdagent
 rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
@@ -89,8 +90,14 @@ def create_agent(request, authzcode, pubkey):
         print traceback.print_exc()
         return HttpResponse('sorry')
 
+    try:
+        master_pubkey=open('/etc/ssh/ssh_host_rsa_key.pub', 'r').read()
+    except:
+        print traceback.print_exc()
+        return HttpResponse('sorry')
+
     if regen_allkey():
-        resp_stream = '%s:%s' % (idc.alias, install_agent_script)
+        resp_stream = '%s:%s:%s' % (idc.alias, master_pubkey, install_agent_script)
         return HttpResponse(resp_stream)
     else:
         return HttpResponse('sorry')
@@ -107,6 +114,13 @@ def create_slave(request, slavename, pubkey):
         print traceback.print_exc()
         return HttpResponse('sorry')
 
-    regen_allkey()
+    try:
+        master_pubkey=open('/etc/ssh/ssh_host_rsa_key.pub', 'r').read()
+    except:
+        print traceback.print_exc()
+        return HttpResponse('sorry')
 
-    return HttpResponse('done')
+    regen_allkey()
+    return HttpResponse('done:%s' % master_pubkey)
+
+

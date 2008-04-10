@@ -17,9 +17,10 @@ userdel xdslave
 groupdel xdslave
 groupadd xdslave
 useradd xdslave -g xdslave -s /sbin/nologin -d /home/xdslave
-mkdir -p /home/xdslave/prog
+mkdir -p /home/xdslave/{.ssh,prog}
 mkdir -p /home/xdslave/named/{log,etc/{acl,view,dynamic}}
 
+touch /home/xdslave/.ssh/known_hosts
 ssh-keygen -t dsa -f /home/xdslave/rsync-key -N ""
 
 echo "xdreg slave -m $MASTERIP -s $SLAVE_NAME"
