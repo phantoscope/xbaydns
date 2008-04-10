@@ -103,6 +103,7 @@ chmod +x /home/xbaydns/xdenv
 source /home/xbaydns/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind master
+rm /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 echo "\
 

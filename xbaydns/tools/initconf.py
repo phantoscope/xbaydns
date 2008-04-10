@@ -110,7 +110,7 @@ def namedconf_file(include_files, bind_type, allow_ip):
                 LOG_SETTING_FOR_SLAVE="")
         elif bind_type == 'slave':
             namedconf = namedconf_tmpl.substitute(\
-                CONF_DIR=os.pah.join('/', sysconf.namedconf),
+                CONF_DIR=os.path.join('/', sysconf.namedconf),
                 ALLOW_IP=allow_ip, 
                 LOG_SETTING_FOR_SLAVE=log_setting_for_slave)
         else:
