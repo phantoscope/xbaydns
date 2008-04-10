@@ -221,7 +221,7 @@ key "%s" {
                 if len(nsinfo)>0:
                     nsinfo='\n'.join( map(lambda x:' IN NS '.join([x.name,x.record_info]),nsinfo) )
                 else:
-                    nsinfo='    IN NS %s.'sysconf.default_ns
+                    nsinfo='    IN NS %s.'%sysconf.default_ns
                 zonedata='''
 $ORIGIN .
 $TTL 360 ;10 minute
