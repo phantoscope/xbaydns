@@ -118,15 +118,15 @@ class Record(models.Model):
         from xbaydnsweb.web.utils import *
         super(Record,self).save()
         self.rtstr = self.record_type.record_type
-        if self.is_defaultidc == True:
-            self.viewname="view_default"
-            record_nsupdate(self)
         try:
             conftoresults.main()
         except:
             pass
         results = Result.objects.filter(record=self)
         try:
+            if self.is_defaultidc == True:
+                self.viewname="view_default"
+                record_nsupdate(self)
             for result in results:
                 self.viewname = result.view
                 record_nsupdate(self)
@@ -139,18 +139,16 @@ class Record(models.Model):
         if self.is_defaultidc == True:
                 self.viewname="view_default"
                 record_delete(self)
-        super(Record,self).delete()
+        
+        results = Result.objects.filter(record=self)
+        for result in results:
+            self.viewname = result.view
+            record_delete(self)
         try:
             conftoresults.main()
         except:
             pass
-        results = Result.objects.filter(record=self)
-        try:
-            for result in results:
-                self.viewname = result.view
-                record_delete(self)
-        except:
-            self.delete()
+        super(Record,self).delete()
         
     class Admin:
         list_display = ('name','domain','idc','is_defaultidc','record_type','record_info','ttl')
