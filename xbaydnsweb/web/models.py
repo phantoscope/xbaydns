@@ -137,7 +137,6 @@ class Record(models.Model):
         
     def delete(self):
         from xbaydnsweb.web.utils import *
-        print Record.objects.filter(record_type__record_type='NS')
         if len(Record.objects.filter(record_type__record_type='NS'))==1:
             return 
         self.rtstr = self.record_type.record_type
