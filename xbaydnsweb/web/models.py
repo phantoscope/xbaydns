@@ -13,7 +13,15 @@ log = logging.getLogger('xbaydnsweb.web.models')
 class Domain(models.Model):
     """Domain Model"""
     name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:sina.com.cn')
-
+    
+    def save(self):
+        from xbaydnsweb.web.utils import *
+        saveAllConf()
+    
+    def delete(self):
+        from xbaydnsweb.web.utils import *
+        saveAllConf()
+        
     class Admin:
         list_display = ('name',)
         #search_fields = ('name',)
@@ -106,26 +114,25 @@ class Record(models.Model):
     
     def save(self):
         from xbaydnsweb.web.utils import *
-        r_type = self.record_type.record_type
+        if self.is_defaultidc == True:
+            self.viewname="view_default"
+            record_nsupdate(self)
         super(Record,self).save()
         try:
             conftoresults.main()
         except:
             pass
-        if r_type=='A' and len(Record.objects.filter(name=self.name,domain=self.domain)) == 1:
-            saveAllConf()
-        else:
-            results = Result.objects.filter(record=self)
-            for result in results:
-                self.viewname = result.view
-                self.record_type = self.record_type.record_type
-                record_nsupdate(self)
-            if self.is_defaultidc == True:
-                self.viewname="view_default"
-                record_nsupdate(self)
+        results = Result.objects.filter(record=self)
+        for result in results:
+            self.viewname = result.view
+            self.record_type = self.record_type.record_type
+            record_nsupdate(self)        
         
     def delete(self):
         from xbaydnsweb.web.utils import *
+        if self.is_defaultidc == True:
+                self.viewname="view_default"
+                record_delete(self)
         super(Record,self).delete()
         try:
             conftoresults.main()
@@ -136,9 +143,6 @@ class Record(models.Model):
             self.viewname = result.view
             self.record_type = self.record_type.record_type
             record_delete(self)
-        if self.is_defaultidc == True:
-                self.viewname="view_default"
-                record_delete(self)
         
     class Admin:
         list_display = ('name','domain','idc','is_defaultidc','record_type','record_info','ttl')
