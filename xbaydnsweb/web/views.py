@@ -21,7 +21,10 @@ def smartload(request):
             msg = _("Smart View Msg Error")
     result={}
     for record in Record.objects.all():
-        k="%s.%s"%(record.name,record.domain)
+        if record.name[-1] == '.':
+            k = str(record.name)
+        else:
+            k="%s.%s"%(record.name,record.domain)
         if k not in result:
             result[k]={}
         for rs in Result.objects.filter(record=record):
