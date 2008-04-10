@@ -22,11 +22,11 @@ log = logging.getLogger('xbaydnsweb.web.utils')
 
 def genRecordList(record):
     if record.record_type == 'A':
-        return [[str(record.name),str(record.ttl),'IN','A',str(record.record_info)],]
+        return [[str(record.name),record.ttl,'IN','A',[str(record.record_info),]],]
     elif record.record_type == 'CNAME':
-        return [[str(record.name),str(record.ttl),'IN','CNAME',str(record.record_info)],]
+        return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
     elif record.record_type == 'NS':
-        return [[str(record.name),str(record.ttl),'IN','NS',str(record.record_info)],]
+        return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
 
 
 def record_nsupdate(record):
@@ -36,7 +36,7 @@ def record_nsupdate(record):
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
         add_data=genRecordList(record)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.recordtype)
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)

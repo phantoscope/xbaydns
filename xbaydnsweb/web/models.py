@@ -116,10 +116,11 @@ class Record(models.Model):
     
     def save(self):
         from xbaydnsweb.web.utils import *
+        super(Record,self).save()
+        self.record_type = self.record_type.record_type
         if self.is_defaultidc == True:
             self.viewname="view_default"
             record_nsupdate(self)
-        super(Record,self).save()
         try:
             conftoresults.main()
         except:
@@ -128,7 +129,6 @@ class Record(models.Model):
         try:
             for result in results:
                 self.viewname = result.view
-                self.recordtype = self.record_type.record_type
                 record_nsupdate(self)
         except:
             self.delete()        
