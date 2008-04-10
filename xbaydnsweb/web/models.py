@@ -148,7 +148,7 @@ class Record(models.Model):
             record_delete(self)
         try:
             conftoresults.main()
-            if len(Record.objects.filter(record_type))==1:
+            if len(Record.objects.filter(record_type__record_type='NS'))==1:
                 return 
         except:
             pass
