@@ -10,7 +10,6 @@ import logging.config
 import base64
 import os,tempfile,datetime
 from xbaydns.conf import sysconf
-from xbaydnsweb.web.models import Record
 
 log = logging.getLogger('xbaydns.tools.namedconf')
 
@@ -128,7 +127,8 @@ key "%s" {
     add domain(domain) 增加一个DNS域。
     '''
     def addDomain(self,domain=[]):
-    	cmds='include "defaultzone.conf";'
+        from xbaydnsweb.web.models import Record
+        cmds='include "defaultzone.conf";'
         for view in self.views.keys():
             for d in domain:
                 fname=self.getDomainFileName(d,view)
