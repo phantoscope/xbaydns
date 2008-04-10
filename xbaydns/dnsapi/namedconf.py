@@ -10,7 +10,7 @@ import logging.config
 import base64
 import os,tempfile,datetime
 from xbaydns.conf import sysconf
-#from xbaydnsweb.web.models import Record
+from xbaydnsweb.web.models import Record
 
 log = logging.getLogger('xbaydns.tools.namedconf')
 
@@ -217,7 +217,11 @@ key "%s" {
                 if domain=='defaultzone':continue
                 f=open(os.path.join(path,"%s"
                         %self.getDomainFileName(domain,view)),"w")
-                #nsinfo=Record.objects.filter(record_type__record_type='NS')
+                nsinfo=Record.objects.filter(record_type__record_type='NS')
+                if len(nsinfo)>0:
+                    nsinfo='\n'.join( map(lambda x:' IN NS '.join([x.name,x.record_info]),nsinfo) )
+                else:
+                    nsinfo=sysconf.default_ns
                 zonedata='''
 $ORIGIN .
 $TTL 360 ;10 minute
@@ -229,9 +233,9 @@ $TTL 360 ;10 minute
 	    3600	; minimum (1 hour)
 	    )
 
-	IN NS %(ns)s.
+%(ns)s.
 '''%{'domain':domain,'time':self.getSerial(),
-                     'ns':sysconf.default_ns,'soa':sysconf.default_soa,
+                     'ns':nsinfo,'soa':sysconf.default_soa,
                      'admin':sysconf.default_admin}
                 f.write(zonedata)
                 f.close()
