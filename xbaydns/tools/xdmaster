@@ -68,15 +68,13 @@ cp -r `xdwherepkg`/xbaydns/tools/slave/* /home/xbaydns/slave/prog
 chmod +x /home/xbaydns/slave/prog/*
 echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/slave/slave.conf
 
-cp -r `xdwherepkg`/xbaydns/tools/master/Log2IPlist.sh /home/xbaydns/prog
-cp -r `xdwherepkg`/xbaydns/tools/master/genslaveconf.sh /home/xbaydns/prog
+cp -r `xdwherepkg`/xbaydns/tools/master/* /home/xbaydns/prog
+chmod +x /home/xbaydns/prog/*
 chown -R xbaydns:xbaydns /home/xbaydns
 chmod 700 /home/xbaydns
 
 crontab -u xbaydns -l >/home/xbaydns/old_crontab 2>/dev/null
-echo "0-59/5 * * * * /home/xbaydns/prog/Log2IPlist.sh">/tmp/crontab
-echo "0-59/5 * * * * /home/xbaydns/prog/genslaveconf.sh">/tmp/crontab
-crontab -u xbaydns /tmp/crontab
+crontab -u xbaydns /home/xbaydns/prog/crontab
 rm -rf /tmp/crontab
 
 #2.prepare bind's chroot
@@ -105,7 +103,7 @@ chmod +x /home/xbaydns/xdenv
 source /home/xbaydns/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind master
-
+ln -s $BINDCHROOT/etc/rndc.key /etc/
 echo "\
 
 
