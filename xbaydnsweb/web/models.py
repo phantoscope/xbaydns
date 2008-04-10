@@ -123,10 +123,13 @@ class Record(models.Model):
         except:
             pass
         results = Result.objects.filter(record=self)
-        for result in results:
-            self.viewname = result.view
-            self.record_type = self.record_type.record_type
-            record_nsupdate(self)        
+        try:
+            for result in results:
+                self.viewname = result.view
+                self.record_type = self.record_type.record_type
+                record_nsupdate(self)
+        except:
+            self.delete()        
         
     def delete(self):
         from xbaydnsweb.web.utils import *
@@ -139,10 +142,13 @@ class Record(models.Model):
         except:
             pass
         results = Result.objects.filter(record=self)
-        for result in results:
-            self.viewname = result.view
-            self.record_type = self.record_type.record_type
-            record_delete(self)
+        try:
+            for result in results:
+                self.viewname = result.view
+                self.record_type = self.record_type.record_type
+                record_delete(self)
+        except:
+            self.delete()
         
     class Admin:
         list_display = ('name','domain','idc','is_defaultidc','record_type','record_info','ttl')
