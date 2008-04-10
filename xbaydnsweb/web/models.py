@@ -117,7 +117,7 @@ class Record(models.Model):
     def save(self):
         from xbaydnsweb.web.utils import *
         super(Record,self).save()
-        self.record_type = self.record_type.record_type
+        self.rtstr = self.record_type.record_type
         if self.is_defaultidc == True:
             self.viewname="view_default"
             record_nsupdate(self)
@@ -135,6 +135,7 @@ class Record(models.Model):
         
     def delete(self):
         from xbaydnsweb.web.utils import *
+        self.rtstr = self.record_type.record_type
         if self.is_defaultidc == True:
                 self.viewname="view_default"
                 record_delete(self)
@@ -147,7 +148,6 @@ class Record(models.Model):
         try:
             for result in results:
                 self.viewname = result.view
-                self.record_type = self.record_type.record_type
                 record_delete(self)
         except:
             self.delete()

@@ -21,11 +21,11 @@ log = logging.getLogger('xbaydnsweb.web.utils')
 #logging.basicConfig(level=logging.DEBUG)
 
 def genRecordList(record):
-    if record.record_type == 'A':
+    if record.rtstr == 'A':
         return [[str(record.name),record.ttl,'IN','A',[str(record.record_info),]],]
-    elif record.record_type == 'CNAME':
+    elif record.rtstr == 'CNAME':
         return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
-    elif record.record_type == 'NS':
+    elif record.rtstr == 'NS':
         return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
 
 
@@ -36,7 +36,7 @@ def record_nsupdate(record):
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
         add_data=genRecordList(record)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type)
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.rtstr)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)
@@ -56,7 +56,7 @@ def record_delete(record):
     try:
         nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type)
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.rtstr)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)
