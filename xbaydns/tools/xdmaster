@@ -52,7 +52,7 @@ useradd xbaydns -g xbaydns -s $SMRSH_CMD -d /home/xbaydns
 
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{.ssh,prog,view,slave,agent}
-mkdir -p /home/xbaydns/view/{agent_logs,idcview}
+mkdir -p /home/xbaydns/view/{iplatency,idcview}
 mkdir -p /home/xbaydns/slave/{keys,prog,named/{log,etc/{acl,view,dynamic}}}
 mkdir -p /home/xbaydns/agent/{prog,iplatency}
 
@@ -103,6 +103,7 @@ chmod +x /home/xbaydns/xdenv
 source /home/xbaydns/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind master
+chown -R named:named $BINDCHROOT
 rm /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 echo "\

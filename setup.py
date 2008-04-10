@@ -39,7 +39,7 @@ setup(
             'xdinitbind = xbaydns.tools.initconf:main',
             'xdsync = xbaydns.tools.confsync:main',
             'xdwherepkg = xbaydns.utils.pkg:main',
-            'xdidc2view = xbaydns.tools.prober.idcview:main',
+            'xdidc2view = xbaydns.tools.master.idcview:main',
             'xdreg = xbaydns.tools.xdreg:main'
         ]
     }

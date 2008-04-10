@@ -19,3 +19,4 @@ do
  sort $file > dummy && mv dummy $file
 done
 
+xdidc2view
