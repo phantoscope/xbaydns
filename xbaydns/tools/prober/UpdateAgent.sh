@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
+
 PPATH=`dirname $0`
 if [ -f "$PPATH/../agent.conf" ]; then
 	. $PPATH/../agent.conf

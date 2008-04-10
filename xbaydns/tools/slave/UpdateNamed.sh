@@ -1,5 +1,6 @@
 #!/bin/sh
 
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 PPATH=`dirname $0`
 if [ -f "$PPATH/../slave.conf" ]; then
 	. $PPATH/../slave.conf

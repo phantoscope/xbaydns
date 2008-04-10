@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PATH=$PATH:/sbin:/usr/sbin:/usr/local/bin
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 
 PPATH=`dirname $0`
 #HOST_IP=`ifconfig | grep inet | head -n1 | sed -e 's/:/ /' | awk '{print $3}'`

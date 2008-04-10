@@ -1,5 +1,6 @@
 #!/bin/sh
 
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 source /home/xbaydns/xdenv
 env|grep XBAY
 export MASTER_PATH=$XBAYDNS_CHROOT_PATH/etc
