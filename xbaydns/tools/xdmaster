@@ -48,6 +48,7 @@ rm -rf /home/xbaydns
 userdel xbaydns
 useradd xbaydns -g named -s $SMRSH_CMD -d /home/xbaydns
 
+rm -rf  /home/xbaydns
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{.ssh,prog,view,slave,agent}
 mkdir -p /home/xbaydns/view/{iplatency,idcview}

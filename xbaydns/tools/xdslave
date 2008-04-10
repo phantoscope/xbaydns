@@ -15,6 +15,7 @@ SLAVE_NAME=$3
 rm -rf /home/xdslave
 userdel xdslave
 useradd xdslave -g named -s /sbin/nologin -d /home/xdslave
+rm -rf /home/xdslave
 mkdir -p /home/xdslave/{.ssh,prog}
 mkdir -p /home/xdslave/named/{log,etc/{acl,view,dynamic}}
 
