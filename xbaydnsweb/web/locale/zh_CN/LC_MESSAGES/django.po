@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: xbaydns v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-12-10 19:54+0800\n"
-"PO-Revision-Date: 2008-04-10 13:23+0800\n"
+"PO-Revision-Date: 2008-04-10 19:49+0800\n"
 "Last-Translator: nemo <nemo_fc@sina.com>\n"
 "Language-Team: Simplified Chinese <paradise.qingfeng@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -114,6 +114,10 @@ msgstr "访问机房/服务出口"
 #: web/models.py:87
 msgid "record_type"
 msgstr "记录类型"
+
+#: web/models.py:87
+msgid "duplicate_record_error"
+msgstr "不能定义重复记录"
 
 #: web/models.py:87
 msgid "record_type_name"

@@ -103,6 +103,11 @@ def isValiableRInfo(field_data,all_data):
             raise validators.ValidationError("field synax error")
     elif r_type == 'A':
         pass
+
+def isDuplicateRecord(field_data,all_data):
+    if len(Record.obejcts.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
+                          record_type__id=str(all_data['record_type']),record_info=str(all_data['record_info']))) >0:
+        raise validators.ValidationError(_("duplicate_record"))
     
 class Record(models.Model):
     """Record Model"""
@@ -138,8 +143,6 @@ class Record(models.Model):
             for result in results:
                 self.viewname = result.view
                 record_nsupdate(self)
-            if self.rtstr=='NS':
-                record_delete(self)
         except:
             self.delete()
         
