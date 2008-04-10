@@ -71,7 +71,7 @@ echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/slave/slave.conf
 cp -r `xdwherepkg`/xbaydns/tools/master/* /home/xbaydns/prog
 chmod +x /home/xbaydns/prog/*
 chown -R xbaydns:xbaydns /home/xbaydns
-chmod 700 /home/xbaydns
+chmod -R 700 /home/xbaydns
 
 crontab -u xbaydns -l >/home/xbaydns/old_crontab 2>/dev/null
 crontab -u xbaydns /home/xbaydns/prog/crontab

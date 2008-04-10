@@ -32,7 +32,7 @@ rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/s
 rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/slave.conf /home/xdslave/slave.conf
 
 chown -R xdslave:xdslave /home/xdslave
-chmod 700 /home/xdslave
+chmod -R 700 /home/xdslave
 
 /home/xdslave/prog/InstallCrontab.sh
 
@@ -66,7 +66,7 @@ xdinitbind slave $MASTERIP
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 chown -R named:named $BINDCHROOT
-chmod 770 $BINDCHROOT
+chmod -R 770 $BINDCHROOT
 echo "\
 
 ----------------------------- Welcome to XBayDNS ---------------------------
