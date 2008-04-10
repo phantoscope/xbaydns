@@ -142,10 +142,11 @@ def genNamedConf(path):
     nc.addAcl('acl_default',['any',])
     nc.addView('view_default',['any',])
     #追加所有的Domain
-    domain_matchs = map(lambda x:'%s'%x.domain,Record.objects.all())
+    #domain_matchs = map(lambda x:'%s'%x.domain,Record.objects.all())
+    domain_matchs = map(lambda x:'%s'%x.name,Domain.objects.all())
     nc.addDomain(domain_matchs)
     nc.save(path)
-    nc.reload()    
+    nc.reload()
         
 #保存所有配置,生成所有bind需要的配置文件
 def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
