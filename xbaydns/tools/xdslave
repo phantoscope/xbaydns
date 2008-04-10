@@ -38,15 +38,18 @@ chmod 700 /home/xdslave
 
 #2.prepare bind's chroot
 #-----------------------
-mkdir -p $BINDCHROOT/{etc,dev,var/{run,dump,stats,log}}
+mkdir -p $BINDCHROOT/{etc/{acl,view,dynamic},dev,var/{run,dump,stats,log}}
 chown -R named:named $BINDCHROOT/var/{run,dump,stats}
 touch $BINDCHROOT/var/log/named.log
-chown -R named:named $BINDCHROOT/var/log/named.log
+touch $BINDCHROOT/var/log/query.log
+chown -R named:named $BINDCHROOT/var/log
 
 rm $BINDCHROOT/dev/{random,zero,null}
 mknod $BINDCHROOT/dev/random c 1 8
 mknod $BINDCHROOT/dev/zero c 1 5
 mknod $BINDCHROOT/dev/null c 1 3
+ln -s $BINDCHROOT/etc/rndc.key /etc/
+
 
 #3.set envionment variables
 #==========================
@@ -63,6 +66,7 @@ source /home/xdslave/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind slave $MASTERIP
 
+chmod 770 $BINDCHROOT
 echo "\
 
 ----------------------------- Welcome to XBayDNS ---------------------------
