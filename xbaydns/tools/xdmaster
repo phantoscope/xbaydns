@@ -70,8 +70,6 @@ echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/slave/slave.conf
 
 cp -r `xdwherepkg`/xbaydns/tools/master/* /home/xbaydns/prog
 chmod +x /home/xbaydns/prog/*
-chown -R xbaydns:xbaydns /home/xbaydns
-chmod -R 700 /home/xbaydns
 
 crontab -u xbaydns -l >/home/xbaydns/old_crontab 2>/dev/null
 crontab -u xbaydns /home/xbaydns/prog/crontab
@@ -104,6 +102,8 @@ source /home/xbaydns/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind master
 chown -R named:named $BINDCHROOT
+chown -R xbaydns:xbaydns /home/xbaydns
+chmod -R 700 /home/xbaydns
 rm /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 echo "\
