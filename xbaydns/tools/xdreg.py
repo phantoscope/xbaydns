@@ -33,7 +33,7 @@ def reg_agent(server, authzcode, pubkey):
     os.chmod('/tmp/agent.sh', 0755)
     os.system('/tmp/agent.sh')
     open('/home/xdagent/myname', 'w').write(agent_name)
-    open('/home/xdagent/.ssh/known_hosts', 'w').write(master_pubkey)
+    open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + master_pubkey)
 
 def reg_slave(server, slavename, pubkey):
     import urllib2
@@ -50,7 +50,7 @@ def reg_slave(server, slavename, pubkey):
     index = stream.find(':')
     master_pubkey = stream[index + 1: len(stream)]
     open('/home/xdslave/myname', 'w').write(slavename)
-    open('/home/xdslave/.ssh/known_hosts', 'w').write(master_pubkey)
+    open('/home/xdslave/.ssh/known_hosts', 'w').write(server + ' ' + master_pubkey)
 
 def main():
     """Main entry point for running the xdagent ."""
