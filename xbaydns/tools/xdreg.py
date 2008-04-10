@@ -24,8 +24,8 @@ def reg_agent(server, authzcode, pubkey):
         print("sorry, you can't install agent, check your authz code again")
         sys.exit(1)
     agent_name = stream[0 : index]
-    index2 = stream[index + 1 : len(stream)].find(':')
-    master_pubkey = stream[index + 1: index2 - 1]
+    index2 = stream.find(':', index + 1 )
+    master_pubkey = stream[index + 1: index2]
     install_script = stream[index2 + 1 : len(stream)]
 
     os.system('touch /tmp/agent.sh')
@@ -33,7 +33,7 @@ def reg_agent(server, authzcode, pubkey):
     os.chmod('/tmp/agent.sh', 0755)
     os.system('/tmp/agent.sh')
     open('/home/xdagent/myname', 'w').write(agent_name)
-    open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + master_pubkey)
+    open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + master_pubkey )
 
 def reg_slave(server, slavename, pubkey):
     import urllib2

@@ -116,7 +116,7 @@ def main():
         return 1
     try:
         iplst = open(input, "r")
-        latency_file = open(output, "a")
+        latency_file = open(output, "w")
     except IOError, e:
         print e.strerror
         return 1
