@@ -112,7 +112,7 @@ class Record(models.Model):
             conftoresults.main()
         except:
             pass
-        if r_type=='A' and len(Record.objects.filter(name=self.name,domain=self.domain)) == 0:
+        if r_type=='A' and len(Record.objects.filter(name=self.name,domain=self.domain)) == 1:
             saveAllConf()
         else:
             results = Result.objects.filter(record=self)
