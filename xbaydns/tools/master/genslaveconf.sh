@@ -2,6 +2,9 @@
 
 export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 source /home/xbaydns/xdenv
+#TODO
+source /home/xbaydns/master.conf
+
 env|grep XBAY
 export MASTER_PATH=$XBAYDNS_CHROOT_PATH/etc
 export SLAVE_PATH=/home/xbaydns/slave/named/etc
@@ -10,5 +13,5 @@ mkdir -p $SLAVE_PATH
 cp -rf $MASTER_PATH/acl $SLAVE_PATH
 cp -rf $MASTER_PATH/view $SLAVE_PATH
 cp -rf $MASTER_PATH/dynamic $SLAVE_PATH
-find $SLAVE_PATH/view/* | xargs -Iaa sed -i.master s/"type master;"/"type slave;"/g aa
+find $SLAVE_PATH/view/* | xargs -Iaa sed -i.master s/"type master;"/"type slave;\n        master{ $MASTER_IP; };"/g aa
 rm $SLAVE_PATH/view/*.master
