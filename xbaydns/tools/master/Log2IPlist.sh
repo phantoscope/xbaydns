@@ -7,8 +7,8 @@ fi
 
 cd $PPATH
 
-if cat ../data/*.log > ../data/dummy ; then
-	python logtolist.py ../data/dummy ../data/iplist
-	rm -f ../data/dummy
+if cat ../slave/named/log/*.log > ../slave/named/log/dummy ; then
+	python logtolist.py ../slave/named/log/dummy ../iplist
+	rm -f ../slave/named/log/dummy
 fi
 

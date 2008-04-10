@@ -60,6 +60,7 @@ export PATH XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIN
 
 chmod +x /home/xdslave/xdenv
 source /home/xdslave/xdenv
+id named || useradd named -s /sbin/nologin
 xdinitbind slave $MASTERIP
 
 echo "\

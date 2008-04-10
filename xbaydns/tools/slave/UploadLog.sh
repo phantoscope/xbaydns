@@ -11,4 +11,4 @@ if [ -f "$PPATH/agent.conf" ]; then
 fi
 
 cd $PPATH
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' $XBAYDNS_CHROOT_PATH/var/log/named.log xbaydns\@$MASTER_IP:/home/xbaydns/slave/log/${SLAVE_NAME}-named.log
+rsync -avz -e 'ssh -i /home/xdslave/rsync-key' $XBAYDNS_CHROOT_PATH/var/log/query.log xbaydns\@$MASTER_IP:/home/xbaydns/slave/log/${SLAVE_NAME}-query.log

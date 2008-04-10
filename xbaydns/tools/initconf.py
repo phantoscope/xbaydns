@@ -31,7 +31,17 @@ TMPL_DEF_DIR = "%s/default"%TMPL_DIR
 TMPL_PLAT_DIR = "%s/%s/%s"%(TMPL_DIR, sysconf.system, sysconf.release)
 log.debug("template diris:%s"%TMPL_DIR)
 ERR_BACKUP = 1000
+log_setting_for_slave = """
+        category queries {
+                _query_log;
+        };
 
+        channel _query_log {
+                file "/var/log/query.log" versions 3 size 10m;
+                severity info;
+                print-time yes;
+        };
+"""
 def getProperTmpl(tmpl_file):
     '''
     得到合适的模板，如果在系统模板目录中有对应的模板则使用，如果没有则返回默认的模板。
@@ -92,11 +102,10 @@ def namedconf_file(include_files, bind_type, allow_ip):
         tmpl_file = open(TMPL_NAMEDCONF, "r")
         namedconf_tmpl = Template(tmpl_file.read())
         tmpl_file.close()
-#        namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf)
         if bind_type == 'master':
-            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP='127.0.0.1')
+            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP='127.0.0.1', LOG_SETTING_FOR_SLAVE="")
         elif bind_type == 'slave':
-            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP=allow_ip)
+            namedconf = namedconf_tmpl.substitute(CONF_DIR=sysconf.namedconf, ALLOW_IP=allow_ip, LOG_SETTING_FOR_SLAVE=log_setting_for_slave)
         else:
             return False
         namedconf += "\n"
