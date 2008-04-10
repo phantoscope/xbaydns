@@ -105,16 +105,34 @@ class Record(models.Model):
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'))
     
     def save(self):
-        from xbaydnsweb.web.utils import saveAllConf
+        from xbaydnsweb.web.utils import *
+        r_type = RecordType.objects.get(id=all_data['record_type'])
         super(Record,self).save()
         conftoresults.main()
-        saveAllConf()
+        if r_type=='A' and len(Record.objects.filter(name=self.name,domain=self.domain)) == 0:
+            saveAllConf()
+        else:
+            results = Result.objects.filter(record=self)
+            for result in results:
+                self.viewname = result.view
+                self.record_type = self.record_type.record_type
+                record_nsupdate(self)
+            if self.is_defaultidc == True:
+                self.viewname="view_default"
+                record_nsupdate(self)
         
     def delete(self):
-        from xbaydnsweb.web.utils import saveAllConf
+        from xbaydnsweb.web.utils import *
         super(Record,self).delete()
         conftoresults.main()
-        saveAllConf()
+        results = Result.objects.filter(record=self)
+        for result in results:
+            self.viewname = result.view
+            self.record_type = self.record_type.record_type
+            record_delete(self)
+        if self.is_defaultidc == True:
+                self.viewname="view_default"
+                record_delete(self)
         
     class Admin:
         list_display = ('name','domain','idc','is_defaultidc','record_type','record_info','ttl')

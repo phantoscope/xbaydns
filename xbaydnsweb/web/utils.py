@@ -35,7 +35,7 @@ def record_nsupdate(record):
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
         add_data=genRecordList(record)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype='A')
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)
@@ -50,6 +50,22 @@ def record_nsupdate(record):
         print traceback.print_exc()
         print "NSUpdate Error!"
     print "NSUpdate OK"
+    
+def record_delete(record):
+    try:
+        nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
+        try:
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type)
+            print "record_a",record_a
+            if len(record_a)!=0:
+                del_data=genRecordList(record)
+                nsupobj.removeRecord(del_data)
+        except:
+            print traceback.print_exc()
+            print "query error"
+        nsupobj.commitChanges()
+    except:
+        print traceback.print_exc()
 
 def genResult():
     """生成计算碎集所需要的数据结构"""
@@ -79,7 +95,7 @@ def getResults(ip):
         k="%s.%s"%(result.record.name,result.record.domain)
         if k not in records:
             records[k]=[]
-        records[k].append(str(result.record.record_info))
+        records[k].append([str(result.record.record_info),str(result.record.record_type.record_type)])
     return records
 
 def updateDomain():
@@ -89,12 +105,13 @@ def updateDomain():
         ip=eval(view.ip)[0]
         records=getResults(ip)
         print "view,ip",view.view,ip
-        for k,ips in records.items():
-            print "k,ips",k,ips
+        for k,info in records.items():
+            print "k,ips",k,info
             m=My()
             name=k.split('.')
             m.name,m.domain=name[0],'.'.join(name[1:])
-            m.ip=ips
+            m.ip=info[0]
+            m.record_type=info[1]
             m.viewname=view.view
             print m.name,m.domain,m.viewname,m.ip
             record_nsupdate(m)
