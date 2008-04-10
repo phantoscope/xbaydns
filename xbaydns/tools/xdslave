@@ -31,8 +31,8 @@ fi
 rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/prog /home/xdslave
 rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/slave.conf /home/xdslave/slave.conf
 
-
-/home/xdslave/prog/InstallCrontab.sh
+crontab -u xdslave -l >/home/xdslave/old_crontab 2>/dev/null
+crontab -u xdslave /home/xdslave/prog/crontab
 
 #2.prepare bind's chroot
 #-----------------------

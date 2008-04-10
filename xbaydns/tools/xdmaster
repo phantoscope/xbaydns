@@ -72,7 +72,6 @@ chmod +x /home/xbaydns/prog/*
 
 crontab -u xbaydns -l >/home/xbaydns/old_crontab 2>/dev/null
 crontab -u xbaydns /home/xbaydns/prog/crontab
-rm -rf /tmp/crontab
 
 #2.prepare bind's chroot
 #-----------------------
