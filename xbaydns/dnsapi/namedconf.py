@@ -10,6 +10,7 @@ import logging.config
 import base64
 import os,tempfile,datetime
 from xbaydns.conf import sysconf
+#from xbaydnsweb.web.models import Record
 
 log = logging.getLogger('xbaydns.tools.namedconf')
 
@@ -216,6 +217,7 @@ key "%s" {
                 if domain=='defaultzone':continue
                 f=open(os.path.join(path,"%s"
                         %self.getDomainFileName(domain,view)),"w")
+                #nsinfo=Record.objects.filter(record_type__record_type='NS')
                 zonedata='''
 $ORIGIN .
 $TTL 360 ;10 minute
@@ -233,7 +235,7 @@ $TTL 360 ;10 minute
                      'admin':sysconf.default_admin}
                 f.write(zonedata)
                 f.close()
-        dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,dynamic)
+        dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
         os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
 
     '''
