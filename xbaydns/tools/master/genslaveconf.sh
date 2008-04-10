@@ -13,5 +13,5 @@ mkdir -p $SLAVE_PATH
 cp -rf $MASTER_PATH/acl $SLAVE_PATH
 cp -rf $MASTER_PATH/view $SLAVE_PATH
 cp -rf $MASTER_PATH/dynamic $SLAVE_PATH
-find $SLAVE_PATH/view/* | xargs -Iaa sed -i.master s/"type master;"/"type slave;\n        master{ $MASTER_IP; };"/g aa
+find $SLAVE_PATH/view/* | xargs -Iaa sed -i.master s/"type master;"/"type slave;\n        masters{ $MASTER_IP; };"/g aa
 rm $SLAVE_PATH/view/*.master
