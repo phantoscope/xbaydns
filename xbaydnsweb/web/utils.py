@@ -112,8 +112,9 @@ def updateDomain():
             name=k.split('.')
             m.name,m.domain=name[0],'.'.join(name[1:])
             m.record_info=info[0]
-            m.ttl = info[2]
             m.rtstr=info[1]
+            if len(info) == 3:
+                m.ttl = info[2]
             m.viewname=view.view
             print m.name,m.domain,m.viewname,m.record_info
             record_nsupdate(m)
