@@ -16,10 +16,12 @@ class Domain(models.Model):
     
     def save(self):
         from xbaydnsweb.web.utils import *
+        super(Domain,self).save()
         saveAllConf()
     
     def delete(self):
         from xbaydnsweb.web.utils import *
+        super(Domain,self).delete()
         saveAllConf()
         
     class Admin:
