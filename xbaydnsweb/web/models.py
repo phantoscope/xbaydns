@@ -105,7 +105,7 @@ def isValiableRInfo(field_data,all_data):
         pass
 
 def isDuplicateRecord(field_data,all_data):
-    if len(Record.obejcts.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
+    if len(Record.objects.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
                           record_type__id=str(all_data['record_type']),record_info=str(all_data['record_info']))) >0:
         raise validators.ValidationError(_("duplicate_record"))
     
@@ -121,6 +121,7 @@ class Record(models.Model):
     
     def save(self):
         from xbaydnsweb.web.utils import *
+        from xbaydns.conf import sysconf
         super(Record,self).save()
         self.rtstr = self.record_type.record_type
         try:
@@ -143,6 +144,18 @@ class Record(models.Model):
             for result in results:
                 self.viewname = result.view
                 record_nsupdate(self)
+                if len(Record.object.filter(record_type__record_type='NS',\
+                                            domain=self.domain))== 1:
+                    results = Result.objects.filter(record=self)
+                    sysconf.default_ns
+                    m=My()
+                    m = self.domain__name.join('.')
+                    m.domain=self.domain
+                    m.record_info=sysconf.default_ns
+                    m.rcstr=self.record_type.record_type
+                    m.viewname=result.view
+                    record_delete(m)
+                
         except:
             self.delete()
         

@@ -111,8 +111,8 @@ def updateDomain():
             m=My()
             name=k.split('.')
             m.name,m.domain=name[0],'.'.join(name[1:])
-            m.ip=info[0]
-            m.recordtype=info[1]
+            m.record_info=info[0]
+            m.rtstr=info[1]
             m.viewname=view.view
             print m.name,m.domain,m.viewname,m.ip
             record_nsupdate(m)
@@ -120,9 +120,10 @@ def updateDomain():
     for r in Record.objects.filter(is_defaultidc=True):
         m=My()
         m.name,m.domain=r.name,r.domain
-        m.ip=[str(r.record_info),]
+        m.record_info=[str(r.record_info),]
+        m.rcstr = r.record_type.record_type
         m.viewname="view_default"
-        print m.name,m.domain,m.viewname,m.ip
+        print m.name,m.domain,m.viewname,m.record_info
         record_nsupdate(m)
 
 def genNamedConf(path):
