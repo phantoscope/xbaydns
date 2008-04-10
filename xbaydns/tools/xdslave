@@ -14,9 +14,7 @@ SLAVE_NAME=$3
 #===========================
 rm -rf /home/xdslave
 userdel xdslave
-groupdel xdslave
-groupadd xdslave
-useradd xdslave -g xdslave -s /sbin/nologin -d /home/xdslave
+useradd xdslave -g named -s /sbin/nologin -d /home/xdslave
 mkdir -p /home/xdslave/{.ssh,prog}
 mkdir -p /home/xdslave/named/{log,etc/{acl,view,dynamic}}
 
@@ -66,7 +64,7 @@ rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 chown -R named:named $BINDCHROOT
 chmod -R 770 $BINDCHROOT
-chown -R xdslave:xdslave /home/xdslave
+chown -R xdslave:named /home/xdslave
 chmod -R 700 /home/xdslave
 echo "\
 

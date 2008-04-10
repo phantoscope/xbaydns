@@ -46,9 +46,7 @@ ln -s `which rsync` $SMRSH_ALLOWCMD_DIR/
 #-----------------------------------
 rm -rf /home/xbaydns
 userdel xbaydns
-groupdel xbaydns
-groupadd xbaydns
-useradd xbaydns -g xbaydns -s $SMRSH_CMD -d /home/xbaydns
+useradd xbaydns -g named -s $SMRSH_CMD -d /home/xbaydns
 
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{.ssh,prog,view,slave,agent}
@@ -102,7 +100,7 @@ source /home/xbaydns/xdenv
 id named || useradd named -s /sbin/nologin
 xdinitbind master
 chown -R named:named $BINDCHROOT
-chown -R xbaydns:xbaydns /home/xbaydns
+chown -R xbaydns:named /home/xbaydns
 chmod -R 700 /home/xbaydns
 rm /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
