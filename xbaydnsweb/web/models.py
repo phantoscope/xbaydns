@@ -108,7 +108,10 @@ class Record(models.Model):
         from xbaydnsweb.web.utils import *
         r_type = RecordType.objects.get(id=all_data['record_type'])
         super(Record,self).save()
-        conftoresults.main()
+        try:
+            conftoresults.main()
+        except:
+            pass
         if r_type=='A' and len(Record.objects.filter(name=self.name,domain=self.domain)) == 0:
             saveAllConf()
         else:
@@ -124,7 +127,10 @@ class Record(models.Model):
     def delete(self):
         from xbaydnsweb.web.utils import *
         super(Record,self).delete()
-        conftoresults.main()
+        try:
+            conftoresults.main()
+        except:
+            pass
         results = Result.objects.filter(record=self)
         for result in results:
             self.viewname = result.view
