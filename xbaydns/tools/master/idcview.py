@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
+
 """
 idcview.py
 
@@ -48,7 +49,7 @@ def convfiles(files):
 
 def main():
     if len(sys.argv) == 1:
-        logdir = os.path.join(sysconf.xbaydnsdb, 'view/iplatency')
+        logdir = os.path.join(sysconf.xbaydnsdb, 'iplatency')
         if os.path.isdir(logdir) == False:
             print "No such a directory %s"%logdir
             sys.exit(1)
@@ -62,7 +63,7 @@ def main():
         print "No logs in the directory %s"%sysconf.xbaydnsdb
         sys.exit(1)
     
-    outputdir = os.path.join(sysconf.xbaydnsdb, 'view/idcview')
+    outputdir = os.path.join(sysconf.xbaydnsdb, 'idcview')
     if os.path.isdir(outputdir) == False:
         try:
             os.mkdir(outputdir)
