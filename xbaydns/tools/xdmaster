@@ -109,7 +109,7 @@ echo "\
 
 
 ----------------------------- Welcome to XBayDNS ---------------------------
-What's the next?
+The next thing you may do:
 1. Start named server and make sure named running normally
    #/usr/local/sbin/named -t $XBAYDNS_CHROOT_PATH -u named
    #tail -f /var/log/messages

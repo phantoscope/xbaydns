@@ -42,11 +42,12 @@ touch /home/xdagent/.ssh/known_hosts
 
 rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/prog /home/xdagent
 rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
+crontab -u xdslave -l >/home/xdagent/old_crontab 2>/dev/null
+crontab -u xdslave /home/xdagent/prog/crontab
+
 chmod +x /home/xdagent/prog/*
 chown -R xdagent:named /home/xdagent
 chmod 700 /home/xdagent
-
-/home/xdagent/prog/InstallCrontab.sh
 """
 
 
