@@ -132,7 +132,10 @@ class Record(models.Model):
             self.is_defaultidc = True
             results = []
         else:
-            results = Result.objects.filter(record=self)
+            res_results = Result.objects.filter(record=self)
+            results = []
+            for res_result in res_results:
+                results.extend(IPArea.objects.filter(ip=res_result.ip))
             domain_results = Result.objects.filter(record__domain=self.domain)
             if len(domain_results) == 0:
                 results =Result.objects.all()
@@ -169,7 +172,9 @@ class Record(models.Model):
                 self.viewname="view_default"
                 record_delete(self)
         
-        results = Result.objects.filter(record=self)
+        res_results = Result.objects.filter(record=self)
+        for res_result in res_results:
+                results.extend(IPArea.objects.filter(ip=res_result.ip))
         for result in results:
             self.viewname = result.view
             record_delete(self)
