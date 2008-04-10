@@ -106,7 +106,7 @@ class Record(models.Model):
     
     def save(self):
         from xbaydnsweb.web.utils import *
-        r_type = RecordType.objects.get(id=all_data['record_type'])
+        r_type = self.record_type.record_type
         super(Record,self).save()
         try:
             conftoresults.main()
