@@ -137,6 +137,9 @@ class Record(models.Model):
         
     def delete(self):
         from xbaydnsweb.web.utils import *
+        print Record.objects.filter(record_type__record_type='NS')
+        if len(Record.objects.filter(record_type__record_type='NS'))==1:
+            return 
         self.rtstr = self.record_type.record_type
         if self.is_defaultidc == True:
                 self.viewname="view_default"
@@ -148,8 +151,6 @@ class Record(models.Model):
             record_delete(self)
         try:
             conftoresults.main()
-            if len(Record.objects.filter(record_type__record_type='NS'))==1:
-                return 
         except:
             pass
         super(Record,self).delete()
