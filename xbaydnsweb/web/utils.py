@@ -28,6 +28,7 @@ def genRecordList(record):
     elif record.record_type == 'NS':
         return [[str(record.name),str(record.ttl),'IN','NS',str(record.record_info)],]
 
+
 def record_nsupdate(record):
     """调用NSUpdate更新record"""
     try:
@@ -147,7 +148,7 @@ def genNamedConf(path):
     nc.reload()    
         
 #保存所有配置,生成所有bind需要的配置文件
-def saveAllConf(path=sysconf.namedconf):
+def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
     map(lambda x:x.delete(),IPArea.objects.all())
     genNamedConf(path)
     updateDomain()
