@@ -4,5 +4,4 @@ xbaydns_path=`xdwherepkg`/xbaydnsweb
 echo $xbaydns_path
 cd $xbaydns_path
 source /home/xbaydns/xdenv
-env|grep XBAY
 python2.5 manage.py runserver 0.0.0.0:80

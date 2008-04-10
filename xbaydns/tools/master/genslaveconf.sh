@@ -1,8 +1,9 @@
 #!/bin/sh
 
-#/home/xbaydns/slave/named
-export MASTER_PATH=/home/xbaydns/named
-export SLAVE_PATH=/home/xbaydns/named
+source /home/xbaydns/xdenv
+env|grep XBAY
+export MASTER_PATH=$XBAYDNS_CHROOT_PATH/etc
+export SLAVE_PATH=/home/xbaydns/slave/named/etc
 echo "SLAVE_PATH",$SLAVE_PATH
 mkdir -p $SLAVE_PATH
 cp -rf $MASTER_PATH/acl $SLAVE_PATH

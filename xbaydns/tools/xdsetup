@@ -2,8 +2,8 @@
 
 usage() {
     echo "Usage: $0 master <master_ip> <path_to_bind_chroot>"
-    echo "       $0 slave  <master_ip> <authz_code>"
-    echo "       $0 agent  <master_ip> <path_to_bind_chroot> <slave_name>"
+    echo "       $0 agent  <master_ip> <authz_code>"
+    echo "       $0 slave  <master_ip> <path_to_bind_chroot> <slave_name>"
 }
     
 if [ $# -lt 3 ]; then
