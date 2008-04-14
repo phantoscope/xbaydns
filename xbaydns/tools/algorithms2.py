@@ -15,11 +15,11 @@ def quicksort(dict,keys):
             pass
     return result[0]
 
-def covListToStr(list):
+def getRoute(selection):
     result = ''
     for i in list:
-        result = result + i[0]
-    return result
+        result = result + ','+i[0]
+    return result[1:]
 
 def ipgen():
     return "%d.%d.%d.%d"%(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -39,13 +39,14 @@ class PerformanceMatrix:
     def partitions(self):
         for service,servers in self.services.items():
             for ip,speeds in self.matrix.items():
-                self.ips.setdefault(ip,'')
+                self.ips.setdefault(ip,[])
                 result = quicksort(speeds,servers)
-                self.ips[ip] = (result,service)
+                self.ips[ip].append((result,service))
         partitions = {}
         for ip, selection in self.ips.items():
-            partitions.setdefault(covListToStr(selection),[])
-            partitions[covListToStr(selection)].append(ip)
+            route = getRoute(selection)
+            partitions.setdefault(route,[])
+            partitions[route].append(ip)
         return partitions
                 
 if __name__=='__main__':

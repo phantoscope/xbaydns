@@ -35,13 +35,14 @@ def findFastSpeed(agents,times):
 def main():
     from xbaydns.conf import sysconf
     from xbaydnsweb.web.models import IDC,Result,Record,IPArea
-    from xbaydns.tools.algorithms2 import *
+    from xbaydns.tools.algorithms2 import quicksort,covListToStr,PerformanceMatrix
     
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     
     map(lambda x:x.delete(),Result.objects.all())
     map(lambda x:x.delete(),IPArea.objects.all())
     services = getServiceRegions()
+    print "services: ",str(services)
     pmatrix = PerformanceMatrix(services)
     for i,r in enumerate(open(CONF_FILE)):
         if i==0:
@@ -50,7 +51,6 @@ def main():
             continue
         r=r.split(',')
         ip,times=r[0],r[1:]
-        print ip
         speeds_dict ={}
         for agent,time in zip(agents,times):
             speeds_dict.update({agent:time})
