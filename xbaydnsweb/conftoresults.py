@@ -17,11 +17,12 @@ def getServiceRegions():
     cursor = connection.cursor()
     cursor.execute(sql)
     for r in cursor.fetchall():
-        key = r[0].join(r[1])
+        key = '%s.%s'%(r[0],r[1])
         if key in service_reg:
             service_reg[key].append(r[2])
         else:
-            service_reg.setdefault(r[0].join(r[1]),[r[2]])
+            service_reg.setdefault(key,[r[2]])
+    return service_reg
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
