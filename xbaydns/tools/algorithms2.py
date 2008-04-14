@@ -44,8 +44,6 @@ class PerformanceMatrix:
                 self.ips[ip] = (result,service)
         partitions = {}
         for ip, selection in self.ips.items():
-            print selection
-            print covListToStr(selection)
             partitions.setdefault(covListToStr(selection),[])
             partitions[covListToStr(selection)].append(ip)
         return partitions
