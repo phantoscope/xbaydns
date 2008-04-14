@@ -6,10 +6,10 @@ import time, sets
 from types import *
 
 def quicksort(dict,keys):
-    result = (keys[0],dict[keys[0]])
+    result = (keys[0],float(dict[keys[0]].strip()))
     for k,v in dict.items():
         if k in keys: 
-            if result[1] > dict[k]:
+            if result[1] > float(dict[k].strip()):
                 result = (k,dict[k])
         else:
             pass
