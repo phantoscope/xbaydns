@@ -19,7 +19,7 @@ def getServiceRegions():
     for r in cursor.fetchall():
         key = r[0].join(r[1])
         if key in service_reg:
-            service_reg[k].append(r[2])
+            service_reg[key].append(r[2])
         else:
             service_reg.setdefault(r[0].join(r[1]),r[2])
 
