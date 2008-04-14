@@ -87,12 +87,13 @@ class RecordType(models.Model):
     
 class IPArea(models.Model):
     """IP Area Management"""
-    ip = models.CharField(max_length=100,verbose_name='',help_text='')
+    ip = models.TextField(verbose_name='',help_text='')
     view = models.CharField(max_length=100)
     acl = models.CharField(max_length=100)
+    service_route = models.TextField(verbose_name='service_route',help_text='')
     
     class Admin:
-        list_display = ('ip','view','acl')
+        list_display = ('ip','view','acl','service_route')
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('view','acl')
@@ -217,7 +218,7 @@ class Record(models.Model):
 class Result(models.Model):
     """Result Model"""
     ip = models.IPAddressField(verbose_name=_('result_ip_verbose_name'),help_text='例如:202.101.34.44')
-    record = models.ForeignKey(Record,verbose_name=_('result_record_verbose_name'))
+    record = models.CharField(verbose_name=_('result_record_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('result_idc_verbose_name'))
 
     class Admin:
