@@ -18,11 +18,10 @@ def getServiceRegions():
     cursor.execute(sql)
     for r in cursor.fetchall():
         key = r[0].join(r[1])
-        service_reg.setdefault(key,[])
         if key in service_reg:
             service_reg[key].append(r[2])
         else:
-            service_reg.setdefault(r[0].join(r[1]),r[2])
+            service_reg.setdefault(r[0].join(r[1]),[r[2]])
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
@@ -55,6 +54,8 @@ def main():
             speeds_dict.update({agent:time})
         pmatrix.ip(ip,speeds_dict)
     iparea =pmatrix.partitions()
+    print iparea
+    print pmatrix.ips
     for k,v in pmatrix.ips.items():
         Result.objects.create(ip=k,record=v[1],idc=IDC.objects.filter(alias=v[0]))
     for k,v in iparea.items():
