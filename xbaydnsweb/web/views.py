@@ -27,7 +27,7 @@ def smartload(request):
             k="%s.%s"%(record.name,record.domain)
         if k not in result:
             result[k]={}
-        for rs in Result.objects.filter(record=record):
+        for rs in Result.objects.filter(record=k,idc=record.idc):
             if rs.idc.name not in result[k]:
                 result[k][rs.idc.name]=[]
             result[k][rs.idc.name].append(rs.ip)
