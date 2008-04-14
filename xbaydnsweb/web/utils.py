@@ -21,11 +21,12 @@ log = logging.getLogger('xbaydnsweb.web.utils')
 #logging.basicConfig(level=logging.DEBUG)
 
 def genRecordList(record):
-    if record.rtstr == 'A':
+    rtstr = record.record_type.record_type
+    if rtstr == 'A':
         return [[str(record.name),record.ttl,'IN','A',[str(record.record_info),]],]
-    elif record.rtstr == 'CNAME':
+    elif rtstr == 'CNAME':
         return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
-    elif record.rtstr == 'NS':
+    elif rtstr == 'NS':
         return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
 
 
@@ -36,7 +37,7 @@ def record_nsupdate(record):
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
         add_data=genRecordList(record)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.rtstr)
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type.record_type)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)
@@ -56,7 +57,7 @@ def record_delete(record):
     try:
         nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
         try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.rtstr)
+            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type.record_type)
             print "record_a",record_a
             if len(record_a)!=0:
                 del_data=genRecordList(record)
@@ -68,79 +69,43 @@ def record_delete(record):
     except:
         print traceback.print_exc()
 
-def genResult():
-    """生成计算碎集所需要的数据结构"""
-    result,ips={},[]
-    for record in Record.objects.all():
-        for r in Result.objects.filter(record=record):
-            k='%s.%s'%(record.name,record.domain)
-            if k not in result:
-                result[k]={}
-            idc=str(record.idc)
-            if idc not in result[k]:
-                result[k][idc]=[]
-            result[k][idc].append(str(r.ip))
-    for domain,idcs in result.items():
-        print domain
-        domainip=[]
-        for idc,ip in idcs.items():
-            print idc,ip
-            domainip.append( list(set(ip)) )
-        ips.append( domainip )
-    return algorithms.ecintersection(*ips)
-    
-def getResults(ip):
+def getRecords(iparea):
     """将Result的结果按照域名合并汇总并返回"""
-    records={}
-    for result in Result.objects.filter(ip=ip):
-        k="%s.%s"%(result.record.name,result.record.domain)
-        if k not in records:
-            records[k]=[]
-        records[k].extend([str(result.record.record_info),str(result.record.record_type.record_type),str(result.record.ttl)])
+    records=[]
+    for domain_name,idc_alias in list(iparea.service_route):
+        records.append(Record.objects.filter(name=domain_name,idc__alias=idc_alias))
     return records
 
 def updateDomain():
     """发出nsupdate请求,更新所有record和更新默认机房的记录"""
-    class My(object):pass
-    for view in IPArea.objects.all():
-        ip=eval(view.ip)[0]
-        records=getResults(ip)
-        print "view,ip",view.view,ip
-        for k,info in records.items():
-            print "k,ips",k,info
-            m=My()
-            name=k.split('.')
-            m.name,m.domain=name[0],'.'.join(name[1:])
-            m.record_info=info[0]
-            m.rtstr=info[1]
-            m.ttl = info[2]
-            m.viewname=view.view
-            print m.name,m.domain,m.viewname,m.record_info
-            record_nsupdate(m)
+    for iparea in IPArea.objects.all():
+        records=getRecords(view)
+        for record in records:
+            print "record ",record
+            record.viewname=view.view
+            print record.name,record.domain,record.viewname
+            record_nsupdate(record)
     """更新默认机房的记录"""
-    for r in Record.objects.filter(is_defaultidc=True):
-        m=My()
-        m.name,m.domain=r.name,r.domain
-        m.record_info=[str(r.record_info),]
-        m.rtstr = r.record_type.record_type
-        m.ttl = r.ttl
-        m.viewname="view_default"
-        print m.name,m.domain,m.viewname,m.record_info
-        record_nsupdate(m)
+    for record in Record.objects.filter(is_defaultidc=True):
+        record.viewname="view_default"
+        print record.name,record.domain,record.viewname
+        record_nsupdate(record)
 
 def genNamedConf(path):
     """生成所有named配置文件"""
     nc = NamedConf()
-    result=genResult()
+    ipareas = IPArea.objects.all()
     if result!=1:
-        for i,ips in enumerate(result):
+        for i,iparea in enumerate(ipareas):
             aclname='acl_acl%s'%i
             print "aclname",aclname
-            nc.addAcl(aclname,list(ips))
+            ipareas.acl = aclname
+            nc.addAcl(aclname,list(ipare.ip))
             #每个View对应一种ACL
             viewname='view_view%s'%i
             nc.addView(viewname,[aclname,])
-            IPArea.objects.create(ip=str(list(ips)),acl=aclname,view=viewname)
+            ipareas.view = viewname
+            ipareas.save()
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
     nc.addView('view_default',['any',])
@@ -153,7 +118,6 @@ def genNamedConf(path):
         
 #保存所有配置,生成所有bind需要的配置文件
 def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
-    map(lambda x:x.delete(),IPArea.objects.all())
     genNamedConf(path)
     updateDomain()
    
@@ -188,4 +152,3 @@ def update_allow_transfer(slaveip, path=os.path.join(sysconf.chroot_path,sysconf
     nc = NamedConf()
     nc.reload()
     return True
-     
