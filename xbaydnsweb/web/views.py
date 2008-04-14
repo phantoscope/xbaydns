@@ -9,6 +9,7 @@ from django.conf import settings
 import traceback
 from xbaydnsweb.web.models import IDC, Node
 import os
+import datetime
 
 def smartload(request):
     if request.method == 'POST':
@@ -87,7 +88,7 @@ def create_agent(request, authzcode, pubkey):
     idc.pubkey = pubkey
 
     try:
-        idc.save()
+        idc.regsave()
         master_pubkey=open('/etc/ssh/ssh_host_rsa_key.pub', 'r').read()
     except:
         print traceback.print_exc()
@@ -124,7 +125,7 @@ def create_slave(request, authzcode, pubkey):
     node.pubkey = pubkey
 
     try:
-        node.save()
+        node.regsave()
         master_pubkey=open('/etc/ssh/ssh_host_rsa_key.pub', 'r').read()
     except:
         print traceback.print_exc()

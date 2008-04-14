@@ -7,6 +7,9 @@ from xbaydns.dnsapi import nsupdate
 from django.core import validators
 from xbaydnsweb import conftoresults
 import re
+import hashlib
+import time
+from datetime import datetime
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
@@ -40,16 +43,33 @@ class IDC(models.Model):
     alias = models.CharField(max_length=100,verbose_name=_('idc_alias_verbose_name'),help_text='用于Agent的别名,例如:xd')
 
 
-    authzcode = models.CharField(max_length=1024, verbose_name=_('idc_authzcode_verbose_name'))
+    authzcode = models.CharField(max_length=1024, blank=True,verbose_name=_('idc_authzcode_verbose_name'))
     pubkey = models.TextField(max_length=1024,blank=True, verbose_name=_('idc_pubkey_verbose_name'))
+    regtime = models.DateTimeField(blank=True, null=True, verbose_name=_('idc_regtime_verbose_name'))
 
     class Admin:
-        list_display = ('name','alias')
+        list_display = ('name','alias', 'authzcode', 'regtime')
         #search_fields = ('',)
+        fields = (
+               (_('idc_verbose_name'), {'fields': ('name','alias')}),
+        )
+
     class Meta:
         ordering = ('name',)
         verbose_name = _('idc_verbose_name')
         verbose_name_plural = _('idc_verbose_name_plural')
+
+    def save(self):
+        from xbaydnsweb.web.utils import *
+        tohash = "%s%f" % (self.alias, time.time())
+        self.authzcode = hashlib.sha1(tohash).hexdigest()
+        self.pubkey = ''
+        super(IDC,self).save()
+
+    def regsave(self):
+        self.regtime = datetime.now()
+        super(IDC,self).save()
+
     def __unicode__(self):
         return self.name
 
@@ -58,12 +78,17 @@ class Node(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('node_name_verbose_name'))
     codename = models.CharField(max_length=100, verbose_name=_('node_codename_verbose_name'))
     ip = models.CharField(max_length=100, verbose_name=_('node_ip_verbose_name'))
-    type = models.CharField(max_length=32, verbose_name=_('node_type_verbose_name'))
-    authzcode = models.CharField(max_length=1024, verbose_name=_('node_authzcode_verbose_name'))
+    type = models.CharField(max_length=32, blank=True,verbose_name=_('node_type_verbose_name'))
+    authzcode = models.CharField(max_length=1024, blank=True,verbose_name=_('node_authzcode_verbose_name'))
     pubkey = models.TextField(max_length=1024,blank=True, verbose_name=_('node_pubkey_verbose_name'))
+    regtime = models.DateTimeField(blank=True, null=True, verbose_name=_('node_regtime_verbose_name'))
 
     class Admin:
-        list_display = ('name','codename')
+        list_display = ('name','codename', 'authzcode', 'regtime')
+        fields = (
+               (_('node_verbose_name'), {'fields': ('name','codename','ip')}),
+        )
+
     class Meta:
         ordering = ('name',)
         verbose_name = _('node_verbose_name')
@@ -71,8 +96,16 @@ class Node(models.Model):
 
     def save(self):
         from xbaydnsweb.web.utils import *
+        self.type = 'slave'
+        tohash = "%s%f" % (self.codename , time.time())
+        self.authzcode = hashlib.sha1(tohash).hexdigest()
+        self.pubkey = ''
         super(Node,self).save()
         update_allow_transfer(self.ip)
+
+    def regsave(self):
+        self.regtime = datetime.now()
+        super(Node,self).save()
 
     def __unicode__(self):
         return self.name
