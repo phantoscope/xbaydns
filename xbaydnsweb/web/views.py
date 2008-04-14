@@ -7,8 +7,7 @@ from xbaydnsweb.web.templatetags.webtags import resultToHtml
 from xbaydnsweb.web.utils import saveAllConf
 from django.conf import settings
 import traceback
-from xbaydnsweb.web.models import IDC
-import base64
+from xbaydnsweb.web.models import IDC, Node
 import os
 
 def smartload(request):

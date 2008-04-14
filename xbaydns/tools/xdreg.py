@@ -20,8 +20,8 @@ def reg_agent(server, authzcode, pubkey):
     sock.close()
 
     resp = eval(stream)
-    if resp['retcode'] == 'FAIL'
-        print("Sorry, %s', resp['retmsg'])
+    if resp['retcode'] == 'FAIL':
+        print('Sorry, %s', resp['retmsg'])
         sys.exit(1)
 
     open('/tmp/agent.sh', 'w').write(resp['script'].replace('MASTERIP', server))
@@ -39,8 +39,8 @@ def reg_slave(server, authzcode, pubkey):
     sock.close()
 
     resp = eval(stream)
-    if resp['retcode'] == 'FAIL'
-        print("Sorry, %s', resp['retmsg'])
+    if resp['retcode'] == 'FAIL':
+        print('Sorry, %s', resp['retmsg'])
         sys.exit(1)
  
     open('/home/xdslave/myname', 'w').write(resp['yourname'])
