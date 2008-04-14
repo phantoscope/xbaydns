@@ -57,7 +57,8 @@ def main():
         pmatrix.ip(ip,speeds_dict)
     iparea =pmatrix.partitions()
     for k,v in pmatrix.ips.items():
-        Result.objects.create(ip=k,record=v[1],idc=IDC.objects.filter(alias=v[0])[0])
+        for d,i in v:
+            Result.objects.create(ip=k,record=i,idc=IDC.objects.filter(alias=d)[0])
     for k,v in iparea.items():
         service_route=[]
         for service,idc in zip(services,k.split(',')):
