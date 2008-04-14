@@ -10,6 +10,17 @@ import os,sys
 import traceback
 from operator import itemgetter
 
+def getServiceRegions():
+    from django.db import connection
+    service_reg={}
+    sql='''SELECT web_record.name,web_domain.name,web_idc.alias FROM web_record,web_domain,web_idc WHERE web_domain.id=web_record.domain_id AND web_idc.id=web_record.idc_id GROUP BY web_record.name,web_domain.name,web_idc.alias'''
+    cursor.execute(sql)
+    for r in cursor.fetchall():
+        key = r[0].join(r[1])
+        if key in service_reg:
+            service_reg[k].append(r[2])
+        else:
+            service_reg.setdefault(r[0].join(r[1]),r[2])
 
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
@@ -21,11 +32,14 @@ def findFastSpeed(agents,times):
 
 def main():
     from xbaydns.conf import sysconf
-    from xbaydnsweb.web.models import IDC,Result,Record
+    from xbaydnsweb.web.models import IDC,Result,Record,IPArea
+    from xbaydns.tools.algorithms2 import *
     
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     
     map(lambda x:x.delete(),Result.objects.all())
+    services = getServiceRegions()
+    pmatrix = PerformanceMatrix(services)
     for i,r in enumerate(open(CONF_FILE)):
         if i==0:
             agents=r.split(',')
@@ -34,30 +48,18 @@ def main():
         r=r.split(',')
         ip,times=r[0],r[1:]
         print ip
-        flag={}
-        for idc,fasttime in findFastSpeed(agents,times):
-            if fasttime==-1.00:continue
-            records=Record.objects.filter(idc__alias=idc)
-            print records
-            for j,record in enumerate(records):
-                print record
-                flagkey='%s.%s'%(record.name,record.domain)
-                print "flagkey",flagkey,flag.get(flagkey,False),j
-                if flagkey in flag:
-                    if j!=0:
-                        #if record.name!=records[j-1].name or record.domain!=records[j-1].domain:
-                        if flag.get(flagkey,'')!=records[j-1].idc:
-                            print "True:True"
-                            continue
-                    elif j==0:
-                        if flagkey in flag:
-                            print "True:True"
-                            continue
-                print "GOGO"
-                Result.objects.create(ip=ip,record=record,idc=record.idc)
-                flag[flagkey]=record.idc
-    #for record in Record.objects.filter(is_defaultidc=True):
-    #    Result.objects.create(ip='any',record=record,idc=record.idc)
+        speeds_dict ={}
+        for agent,time in zip(agents,times):
+            speeds_dict.update({agent:time})
+        pmatrix.ip(ip,speeds_dict)
+    iparea =pmatrix.partitions()
+    for k,v in pmatrix.ips.items():
+        Result.objects.create(ip=k,record=v[1],idc=IDC.objects.filter(alias=v[0]))
+    for k,v in iparea.items():
+        service_route=[]
+        for service,idc in zip(services,k.split(',')):
+            service_route.append((service,idc))
+        IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=service_route)
 
 if __name__ == '__main__':
     os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'

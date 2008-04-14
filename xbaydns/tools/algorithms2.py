@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-algorithms.py
 
-Created by Razor <bg1tpt AT gmail.com> on 2008-03-22.
-Copyright (c) 2008 xBayDNS Team. All rights reserved.
-
-"""
 from __future__ import generators
 import time, sets
 from types import *
@@ -19,7 +13,7 @@ def quicksort(dict,keys):
                 result = (k,dict[k])
         else:
             pass
-    return result
+    return result[0]
 
 def covListToStr(list):
     result = ''
@@ -34,19 +28,19 @@ class PerformanceMatrix:
     def __init__(self,services):
         self.services = services
         self.matrix = {}
+        self.ips ={}
         
     def ip(self,ip,speeds):
         self.matrix.setdefault(ip,speeds)
     
     def partitions(self):
-        ips = {}
         for service,servers in self.services.items():
             for ip,speeds in self.matrix.items():
-                ips.setdefault(ip,[])
+                self.ips.setdefault(ip,[])
                 result = quicksort(speeds,servers)
-                ips[ip].append(result)
+                self.ips[ip].append((result,service))
         partitions = {}
-        for ip, selection in ips.items():
+        for ip, selection in self.ips.items():
             print selection
             print covListToStr(selection)
             partitions.setdefault(covListToStr(selection),[])
@@ -57,13 +51,14 @@ if __name__=='__main__':
     import random
     services = {'www' :['D1', 'D2'], 'ftp' :['D2', 'D3'], 'mtv' : ['D1','D3']}
     pmatrix = PerformanceMatrix(services)
-    for i in range(1,10000):
+    for i in range(1,10):
         pmatrix.ip(ipgen(),speeds = {'D1':random.randint(1,10),'D2':random.randint(1,10),'D3':random.randint(1,10)})
     #pmatrix.ip('10.210.12.1',speeds = {'D1':1,'D2':2,'D3':3})
     #pmatrix.ip('10.210.12.2',speeds = {'D1':3,'D2':2,'D3':1})
     #pmatrix.ip('10.210.12.3',speeds = {'D1':2,'D2':3,'D3':1})
     #pmatrix.ip('10.210.12.4',speeds = {'D1':1,'D2':2,'D3':3})
     start = time.time()
-    pmatrix.partitions()
+    print pmatrix.partitions()
     end = time.time()
     print "cost time: %f"%(end-start)
+    print pmatrix.ips
