@@ -58,22 +58,22 @@ msgstr "1.2 机房/服务出口管理"
 #: models.py:58
 #, fuzzy
 msgid "node_name_verbose_name"
-msgstr "名称"
+msgstr "辅DNS名称"
 
 #: models.py:59
 #, fuzzy
 msgid "node_codename_verbose_name"
-msgstr "名称"
+msgstr "辅DNS代码"
 
 #: models.py:60
 #, fuzzy
 msgid "node_ip_verbose_name"
-msgstr "解析IP"
+msgstr "IP地址"
 
 #: models.py:61
 #, fuzzy
 msgid "node_type_verbose_name"
-msgstr "解析IP"
+msgstr "结点类型"
 
 #: models.py:62
 #, fuzzy
@@ -88,12 +88,12 @@ msgstr "公钥"
 #: models.py:69
 #, fuzzy
 msgid "node_verbose_name"
-msgstr "机房/服务出口"
+msgstr "辅DNS"
 
 #: models.py:70
 #, fuzzy
 msgid "node_verbose_name_plural"
-msgstr "1.2 机房/服务出口管理"
+msgstr "1.4 辅DNS管理"
 
 #: models.py:82
 msgid "record_type"
@@ -170,7 +170,7 @@ msgstr "智能结果"
 
 #: models.py:236
 msgid "result_verbose_name_plural"
-msgstr "1.4 智能结果管理"
+msgstr "1.5 智能结果管理"
 
 #: views.py:15
 msgid "Smart View Msg Complete"
