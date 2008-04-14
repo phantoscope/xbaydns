@@ -37,7 +37,7 @@ msgstr "名称"
 
 #: models.py:43
 msgid "idc_alias_verbose_name"
-msgstr "别名"
+msgstr "代码"
 
 #: models.py:46
 msgid "idc_authzcode_verbose_name"
@@ -48,9 +48,8 @@ msgid "idc_pubkey_verbose_name"
 msgstr "公钥"
 
 #: models.py:48
-#, fuzzy
 msgid "idc_regtime_verbose_name"
-msgstr "名称"
+msgstr "注册时间"
 
 #: models.py:54 models.py:59
 msgid "idc_verbose_name"
@@ -62,11 +61,11 @@ msgstr "1.2 机房/服务出口管理"
 
 #: models.py:78
 msgid "node_name_verbose_name"
-msgstr "辅DNS名称"
+msgstr "名称"
 
 #: models.py:79
 msgid "node_codename_verbose_name"
-msgstr "辅DNS代码"
+msgstr "代码"
 
 #: models.py:80
 msgid "node_ip_verbose_name"
@@ -85,9 +84,8 @@ msgid "node_pubkey_verbose_name"
 msgstr "公钥"
 
 #: models.py:84
-#, fuzzy
 msgid "node_regtime_verbose_name"
-msgstr "辅DNS名称"
+msgstr "注册时间"
 
 #: models.py:89 models.py:94
 msgid "node_verbose_name"
@@ -110,7 +108,6 @@ msgid "record_type_name_plural"
 msgstr "记录类型"
 
 #: models.py:166
-#, fuzzy
 msgid "duplicate_record"
 msgstr "不能定义重复记录"
 
