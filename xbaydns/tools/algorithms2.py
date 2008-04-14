@@ -26,7 +26,10 @@ def ipgen():
 
 class PerformanceMatrix:
     def __init__(self,services):
-        self.services = services
+        if services == None:
+            self.services = {}
+        else:
+            self.services = services
         self.matrix = {}
         self.ips ={}
         
