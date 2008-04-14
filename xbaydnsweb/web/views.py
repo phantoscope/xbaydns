@@ -60,7 +60,7 @@ def regen_allkey():
         for idc in IDC.objects.all():
             if idc.pubkey.startswith('ssh-dss'):
                 open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
-        for idc in Node.objects.filter(type = 'slave'):
+        for node in Node.objects.filter(type = 'slave'):
             if node.pubkey.startswith('ssh-dss'):
                 open('/home/xbaydns/.ssh/authorized_keys', 'a').write(node.pubkey + '\n')
     except:
