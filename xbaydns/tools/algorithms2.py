@@ -10,7 +10,7 @@ def quicksort(dict,keys):
     for k,v in dict.items():
         if k in keys: 
             if result[1] > float(dict[k].strip()):
-                result = (k,dict[k])
+                result = (k,float(dict[k].strip()))
         else:
             pass
     return result[0]
@@ -53,12 +53,13 @@ if __name__=='__main__':
     import random
     services = {'www' :['D1', 'D2'], 'ftp' :['D2', 'D3'], 'mtv' : ['D1','D3']}
     pmatrix = PerformanceMatrix(services)
-    for i in range(1,10):
-        pmatrix.ip(ipgen(),speeds = {'D1':random.randint(1,10),'D2':random.randint(1,10),'D3':random.randint(1,10)})
-    #pmatrix.ip('10.210.12.1',speeds = {'D1':1,'D2':2,'D3':3})
-    #pmatrix.ip('10.210.12.2',speeds = {'D1':3,'D2':2,'D3':1})
-    #pmatrix.ip('10.210.12.3',speeds = {'D1':2,'D2':3,'D3':1})
-    #pmatrix.ip('10.210.12.4',speeds = {'D1':1,'D2':2,'D3':3})
+    #for i in range(1,10):
+    #    pmatrix.ip(ipgen(),speeds = {'D1':random.randint(1,10),'D2':random.randint(1,10),'D3':random.randint(1,10)})
+    pmatrix.ip('10.210.12.1',speeds = {'D1':'1','D2':'2','D3':'3'})
+    pmatrix.ip('10.210.12.2',speeds = {'D1':'3','D2':'2','D3':'1'})
+    pmatrix.ip('10.210.12.3',speeds = {'D1':'2','D2':'3','D3':'1'})
+    pmatrix.ip('10.210.12.4',speeds = {'D1':'1','D2':'2','D3':'3'})
+    print pmatrix.matrix
     start = time.time()
     print pmatrix.partitions()
     end = time.time()
