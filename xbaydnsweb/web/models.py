@@ -57,6 +57,7 @@ class Node(models.Model):
     """ Node Model """
     name = models.CharField(max_length=100, verbose_name=_('node_name_verbose_name'))
     codename = models.CharField(max_length=100, verbose_name=_('node_codename_verbose_name'))
+    ip = models.CharField(max_length=100, verbose_name=_('node_ip_verbose_name'))
     type = models.CharField(max_length=32, verbose_name=_('node_type_verbose_name'))
     authzcode = models.CharField(max_length=1024, verbose_name=_('node_authzcode_verbose_name'))
     pubkey = models.TextField(max_length=1024,blank=True, verbose_name=_('node_pubkey_verbose_name'))
@@ -67,6 +68,12 @@ class Node(models.Model):
         ordering = ('name',)
         verbose_name = _('node_verbose_name')
         verbose_name_plural = _('node_verbose_name_plural')
+
+    def save(self):
+        from xbaydnsweb.web.utils import *
+        super(Node,self).save()
+        update_allow_transfer(self.ip)
+
     def __unicode__(self):
         return self.name
     

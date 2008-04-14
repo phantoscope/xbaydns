@@ -5,7 +5,7 @@ options {
     statistics-file "/var/stats/named.stats";
 
     recursion no;
-    allow-transfer { any; };
+    allow-transfer { none; };
     allow-update { ${ALLOW_IP}; };
 };
 

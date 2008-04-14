@@ -52,7 +52,7 @@ rm -rf  /home/xbaydns
 mkdir -p /home/xbaydns
 mkdir -p /home/xbaydns/{.ssh,prog,view,slave,agent}
 mkdir -p /home/xbaydns/view/{iplatency,idcview}
-mkdir -p /home/xbaydns/slave/{keys,prog,named/{log,etc/{acl,view,dynamic}}}
+mkdir -p /home/xbaydns/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
 mkdir -p /home/xbaydns/agent/{prog,iplatency}
 
 touch /home/xbaydns/.ssh/authorized_keys
@@ -116,4 +116,5 @@ The next thing you may do:
 2. Start XBayDNS Master Web server
    #xdweb
 3. Browse http://$MASTERIP username/password for administrator: admin/admin
+   DON'T FORGET TO CHANGE YOUR PASSWORD!
 "

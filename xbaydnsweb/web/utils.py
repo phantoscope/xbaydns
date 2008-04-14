@@ -156,4 +156,36 @@ def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
     map(lambda x:x.delete(),IPArea.objects.all())
     genNamedConf(path)
     updateDomain()
+   
+def update_allow_transfer(slaveip, path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
+
+    named_conf_path = os.path.join(path, "named.conf")
+    named_conf_string = open(named_conf_path, 'r').read()
     
+    p = re.compile('allow-transfer\s*{ (?P<allows> [^}]* ) }', re.VERBOSE)
+    l = p.findall(named_conf_string)
+    if len(l) == 0:
+        return False
+ 
+    allows=[]
+    for ip in l[0].split(';'):
+        cip = ip.strip()
+        if len(cip) == 0 or cip == 'none':
+            pass
+        else:
+            allows.append(cip)
+
+    if ip in allows:
+        return True
+
+    allows.append(slaveip)
+    allows.append('')
+    allow_list = 'allow-transfer{ %s }' % '; '.join(allows)
+
+    s = p.sub(allow_list, named_conf_string)
+    open(named_conf_path, 'w').write(s)
+
+    nc = NamedConf()
+    nc.reload()
+    return True
+     
