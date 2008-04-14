@@ -39,9 +39,9 @@ class PerformanceMatrix:
     def partitions(self):
         for service,servers in self.services.items():
             for ip,speeds in self.matrix.items():
-                self.ips.setdefault(ip,[])
+                self.ips.setdefault(ip,'')
                 result = quicksort(speeds,servers)
-                self.ips[ip].append((result,service))
+                self.ips[ip] = (result,service)
         partitions = {}
         for ip, selection in self.ips.items():
             print selection

@@ -58,7 +58,7 @@ def main():
     print iparea
     print pmatrix.ips
     for k,v in pmatrix.ips.items():
-        Result.objects.create(ip=k,record=v[1],idc=IDC.objects.filter(alias=v[0]))
+        Result.objects.create(ip=k,record=v[1],idc=IDC.objects.filter(alias=v[0])[0])
     for k,v in iparea.items():
         service_route=[]
         for service,idc in zip(services,k.split(',')):
