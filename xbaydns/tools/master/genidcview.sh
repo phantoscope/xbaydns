@@ -10,6 +10,7 @@ fi
 cd $PPATH/../agent/iplatency
 
 for file in *
+if [ "$file" = "*" ]; then exit 0; fi;
 do
  agentname=`echo $file | sed -e 's/-.*//'`
  cat $file >> $PPATH/../view/iplatency/$agentname
