@@ -17,7 +17,7 @@ def quicksort(dict,keys):
 
 def getRoute(selection):
     result = ''
-    for i in list:
+    for i in selection:
         result = result + ','+i[0]
     return result[1:]
 
