@@ -61,68 +61,84 @@ def regen_allkey():
         for idc in IDC.objects.all():
             if idc.pubkey.startswith('ssh-dss'):
                 open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
+        for idc in Node.objects.filter(type = 'slave'):
+            if node.pubkey.startswith('ssh-dss'):
+                open('/home/xbaydns/.ssh/authorized_keys', 'a').write(node.pubkey + '\n')
     except:
         print traceback.print_exc()
         return False
 
-    try:
-        for key_file in os.listdir('/home/xbaydns/slave/keys'):
-            print "key:%s" % key_file
-            key_string = open('/home/xbaydns/slave/keys/%s' % key_file, 'r').read()
-            open('/home/xbaydns/.ssh/authorized_keys', 'a').write(key_string)
-    except:
-        print traceback.print_exc()
-        return False
     return True
 
 def create_agent(request, authzcode, pubkey):
     pubkey = pubkey.replace(',', '/').replace(';', ' ')
     print "AUTHZCODE:%s" % authzcode
     print "PUBKEY:%s" % pubkey
+
+    resp = {}
+
     try:
         idc = IDC.objects.get(authzcode=authzcode)
     except:
         print traceback.print_exc()
-        return HttpResponse('sorry')
+        resp['retcode'] = 'FAIL'
+        resp['retmsg'] = "Can't validate your authzcode"
+        return HttpResponse(repr(resp))
 
     idc.pubkey = pubkey
+
     try:
         idc.save()
-    except:
-        print traceback.print_exc()
-        return HttpResponse('sorry')
-
-    try:
         master_pubkey=open('/etc/ssh/ssh_host_rsa_key.pub', 'r').read()
     except:
         print traceback.print_exc()
-        return HttpResponse('sorry')
+        resp['retcode'] = 'FAIL'
+        resp['retmsg'] = "Internal server error"
+        return HttpResponse(repr(resp))
+
 
     if regen_allkey():
-        resp_stream = '%s:%s:%s' % (idc.alias, master_pubkey, install_agent_script)
-        return HttpResponse(resp_stream)
+        resp['retcode'] = 'SUCC'
+        resp['yourname'] = idc.alias
+        resp['master_pubkey'] = master_pubkey
+        resp['script'] = install_agent_script
     else:
-        return HttpResponse('sorry')
+        resp['retcode'] = 'FAIL'
+        resp['retmsg'] = "Internal server error"
+    return HttpResponse(repr(resp))
 
-def create_slave(request, slavename, pubkey):
-    print "SLAVENAME:%s" % slavename
+def create_slave(request, authzcode, pubkey):
     pubkey = pubkey.replace(',', '/').replace(';', ' ')
-
-    print "SLAVENAME:%s" % slavename
+    print "AUTHZCODE:%s" % authzcode
     print "PUBKEY:%s" % pubkey
+
+    resp = {}
+
     try:
-        open('/home/xbaydns/slave/keys/%s' % slavename, 'w').write(pubkey + '\n')
+        node = Node.objects.get(authzcode=authzcode)
     except:
         print traceback.print_exc()
-        return HttpResponse('sorry')
+        resp['retcode'] = 'FAIL'
+        resp['retmsg'] = "Can't validate your authzcode"
+        return HttpResponse(repr(resp))
+
+    node.pubkey = pubkey
 
     try:
+        node.save()
         master_pubkey=open('/etc/ssh/ssh_host_rsa_key.pub', 'r').read()
     except:
         print traceback.print_exc()
-        return HttpResponse('sorry')
+        resp['retcode'] = 'FAIL'
+        resp['retmsg'] = "Internal server error"
+        return HttpResponse(repr(resp))
 
-    regen_allkey()
-    return HttpResponse('done:%s' % master_pubkey)
+    if regen_allkey():
+        resp['retcode'] = 'SUCC'
+        resp['yourname'] = node.codename
+        resp['master_pubkey'] = master_pubkey
+    else:
+        resp['retcode'] = 'FAIL'
+        resp['retmsg'] = "Internal server error"
 
-
+    return HttpResponse(repr(resp))

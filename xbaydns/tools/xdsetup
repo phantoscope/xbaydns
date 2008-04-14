@@ -3,7 +3,7 @@
 usage() {
     echo "Usage: $0 master <master_ip> <path_to_bind_chroot>"
     echo "       $0 agent  <master_ip> <authz_code>"
-    echo "       $0 slave  <master_ip> <path_to_bind_chroot> <slave_name>"
+    echo "       $0 slave  <master_ip> <authz_code> <path_to_bind_chroot>"
 }
     
 if [ $# -lt 3 ]; then
@@ -23,9 +23,9 @@ else
             usage
             exit 1
         fi
-        BIND_CHROOT=$3
-        SLAVE_NAME=$4
-        xdslave $MASTERIP $BIND_CHROOT $SLAVE_NAME
+        AUTHZCODE=$3
+        BIND_CHROOT=$4
+        xdslave $MASTERIP $AUTHZCODE $BIND_CHROOT
     else
         usage
         exit 1

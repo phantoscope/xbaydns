@@ -1,13 +1,13 @@
 #!/bin/sh
 
 if [ $# != 3 ]; then
-    echo "Usage: $0 <master_ip> <path_to_bind_chroot> <slave_name>"
+    echo "Usage: $0 <master_ip> <authzcode> <path_to_bind_chroot>"
     exit 1
 fi
 
 MASTERIP=$1
-BINDCHROOT=$2
-SLAVE_NAME=$3
+AUTHZCODE=$2
+BINDCHROOT=$3
 
 
 #1.init sync&cron enviroment 
@@ -22,8 +22,8 @@ mkdir -p /home/xdslave/named/{log,etc/{acl,view,dynamic}}
 touch /home/xdslave/.ssh/known_hosts
 ssh-keygen -t dsa -f /home/xdslave/rsync-key -N ""
 
-echo "xdreg slave -m $MASTERIP -s $SLAVE_NAME"
-xdreg slave -m $MASTERIP -s $SLAVE_NAME
+echo "xdreg slave -m $MASTERIP -a $AUTHZCODE"
+xdreg slave -m $MASTERIP -a $AUTHZCODE
 if [ $? -ne 0 ]; then
 exit 1
 fi

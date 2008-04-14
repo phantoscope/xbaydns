@@ -19,38 +19,32 @@ def reg_agent(server, authzcode, pubkey):
     stream = sock.read()
     sock.close()
 
-    index = stream.find(':')
-    if index < 0 or stream == 'sorry':
-        print("sorry, you can't install agent, check your authz code again")
+    resp = eval(stream)
+    if resp['retcode'] == 'FAIL'
+        print("Sorry, %s', resp['retmsg'])
         sys.exit(1)
-    agent_name = stream[0 : index]
-    index2 = stream.find(':', index + 1 )
-    master_pubkey = stream[index + 1: index2]
-    install_script = stream[index2 + 1 : len(stream)]
 
-    os.system('touch /tmp/agent.sh')
-    open('/tmp/agent.sh', 'w').write(install_script.replace('MASTERIP', server))
+    open('/tmp/agent.sh', 'w').write(resp['script'].replace('MASTERIP', server))
     os.chmod('/tmp/agent.sh', 0755)
     os.system('/tmp/agent.sh')
-    open('/home/xdagent/myname', 'w').write(agent_name)
-    open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + master_pubkey )
+    open('/home/xdagent/myname', 'w').write(resp['yourname'])
+    open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + resp['master_pubkey'])
 
-def reg_slave(server, slavename, pubkey):
+def reg_slave(server, authzcode, pubkey):
     import urllib2
-    url = "http://%s/slave/create/%s/%s/" % (server, slavename, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
+    url = "http://%s/slave/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
     print "URL:%s" % url
     sock = urllib2.urlopen(url)
     stream = sock.read()
     sock.close()
- 
-    if stream == 'sorry': 
-        print("sorry, you can't install slave, check your master ip again")
-        sys.exit(1)
 
-    index = stream.find(':')
-    master_pubkey = stream[index + 1: len(stream)]
-    open('/home/xdslave/myname', 'w').write(slavename)
-    open('/home/xdslave/.ssh/known_hosts', 'w').write(server + ' ' + master_pubkey)
+    resp = eval(stream)
+    if resp['retcode'] == 'FAIL'
+        print("Sorry, %s', resp['retmsg'])
+        sys.exit(1)
+ 
+    open('/home/xdslave/myname', 'w').write(resp['yourname'])
+    open('/home/xdslave/.ssh/known_hosts', 'w').write(server + ' ' + resp['master_pubkey'])
 
 def main():
     """Main entry point for running the xdagent ."""
@@ -64,8 +58,6 @@ def main():
                       default='', help='xbaydns master ip')
     parser.add_option('-a', '--authzcode', dest='authzcode',
                       default='', help='authzcode for authentication')
-    parser.add_option('-s', '--slavename', dest='slavename',
-                      default='', help='slave name')
 
     options, args = parser.parse_args()
 
@@ -83,11 +75,11 @@ def main():
         print pubkey_string
         return reg_agent(options.server, options.authzcode, pubkey_string)
     elif (args[0] == 'slave'):
-        if len(options.slavename) == 0:
+        if len(options.authzcode) == 0:
             parser.print_help()
             sys.exit(1)
         pubkey_string = open('/home/xdslave/rsync-key.pub').read()
-        return reg_slave(options.server, options.slavename, pubkey_string)
+        return reg_slave(options.server, options.authzcode, pubkey_string)
     else:
         parser.print_help()
         sys.exit(1)
