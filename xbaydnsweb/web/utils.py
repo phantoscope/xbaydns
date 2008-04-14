@@ -95,17 +95,16 @@ def genNamedConf(path):
     """生成所有named配置文件"""
     nc = NamedConf()
     ipareas = IPArea.objects.all()
-    if result!=1:
-        for i,iparea in enumerate(ipareas):
-            aclname='acl_acl%s'%i
-            print "aclname",aclname
-            ipareas.acl = aclname
-            nc.addAcl(aclname,list(ipare.ip))
-            #每个View对应一种ACL
-            viewname='view_view%s'%i
-            nc.addView(viewname,[aclname,])
-            ipareas.view = viewname
-            ipareas.save()
+    for i,iparea in enumerate(ipareas):
+        aclname='acl_acl%s'%i
+        print "aclname",aclname
+        ipareas.acl = aclname
+        nc.addAcl(aclname,list(ipare.ip))
+        #每个View对应一种ACL
+        viewname='view_view%s'%i
+        nc.addView(viewname,[aclname,])
+        ipareas.view = viewname
+        ipareas.save()
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
     nc.addView('view_default',['any',])
