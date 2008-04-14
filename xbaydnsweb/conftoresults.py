@@ -40,6 +40,7 @@ def main():
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     
     map(lambda x:x.delete(),Result.objects.all())
+    map(lambda x:x.delete(),IPArea.objects.all())
     services = getServiceRegions()
     pmatrix = PerformanceMatrix(services)
     for i,r in enumerate(open(CONF_FILE)):
@@ -55,8 +56,6 @@ def main():
             speeds_dict.update({agent:time})
         pmatrix.ip(ip,speeds_dict)
     iparea =pmatrix.partitions()
-    print iparea
-    print pmatrix.ips
     for k,v in pmatrix.ips.items():
         Result.objects.create(ip=k,record=v[1],idc=IDC.objects.filter(alias=v[0])[0])
     for k,v in iparea.items():
