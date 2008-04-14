@@ -62,7 +62,7 @@ def main():
         service_route=[]
         for service,idc in zip(services,k.split(',')):
             service_route.append((service,idc))
-        IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=service_route)
+        IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
 
 if __name__ == '__main__':
     os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
