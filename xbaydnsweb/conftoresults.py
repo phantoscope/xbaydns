@@ -14,6 +14,7 @@ def getServiceRegions():
     from django.db import connection
     service_reg={}
     sql='''SELECT web_record.name,web_domain.name,web_idc.alias FROM web_record,web_domain,web_idc WHERE web_domain.id=web_record.domain_id AND web_idc.id=web_record.idc_id GROUP BY web_record.name,web_domain.name,web_idc.alias'''
+    cursor = connection.cursor()
     cursor.execute(sql)
     for r in cursor.fetchall():
         key = r[0].join(r[1])
