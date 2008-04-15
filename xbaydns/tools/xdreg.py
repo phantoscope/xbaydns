@@ -21,7 +21,7 @@ def reg_agent(server, authzcode, pubkey):
 
     resp = eval(stream)
     if resp['retcode'] == 'FAIL':
-        print('Sorry, %s', resp['retmsg'])
+        print('Sorry, %s' % resp['retmsg'])
         sys.exit(1)
 
     open('/home/xdagent/myname', 'w').write(resp['yourname'])
@@ -38,7 +38,7 @@ def reg_slave(server, authzcode, pubkey):
 
     resp = eval(stream)
     if resp['retcode'] == 'FAIL':
-        print('Sorry, %s', resp['retmsg'])
+        print('Sorry, %s' % resp['retmsg'])
         sys.exit(1)
  
     open('/home/xdslave/myname', 'w').write(resp['yourname'])

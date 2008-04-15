@@ -23,7 +23,7 @@ touch /home/xdslave/.ssh/known_hosts
 ssh-keygen -t dsa -f /home/xdslave/rsync-key -N ""
 
 #2. register to Master 
-================================
+#================================
 echo "xdreg slave -m $MASTERIP -a $AUTHZCODE"
 xdreg slave -m $MASTERIP -a $AUTHZCODE
 if [ $? -ne 0 ]; then
