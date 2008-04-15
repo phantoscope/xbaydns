@@ -74,7 +74,7 @@ def getRecords(iparea):
     records=[]
     for domain_name,idc_alias in list(eval(iparea.service_route)):
         
-        records.append(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias))
+        records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias))
     return records
 
 def updateDomain():
