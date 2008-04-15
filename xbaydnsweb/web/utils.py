@@ -98,13 +98,13 @@ def genNamedConf(path):
     for i,iparea in enumerate(ipareas):
         aclname='acl_acl%s'%i
         print "aclname",aclname
-        ipareas.acl = aclname
-        nc.addAcl(aclname,list(ipare.ip))
+        iparea.acl = aclname
+        nc.addAcl(aclname,list(iparea.ip))
         #每个View对应一种ACL
         viewname='view_view%s'%i
         nc.addView(viewname,[aclname,])
-        ipareas.view = viewname
-        ipareas.save()
+        iparea.view = viewname
+        iparea.save()
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
     nc.addView('view_default',['any',])
