@@ -1,0 +1,63 @@
+#!/bin/sh
+
+if [ $# != 2 ]; then
+    echo "Usage: $0 <master_ip> <authzcode> "
+    exit 1
+fi
+
+MASTERIP=$1
+AUTHZCODE=$2
+
+#1. init user(xdagent) enviroment 
+#===============================
+rm -rf /home/xdagent
+userdel xdagent
+useradd xdagent -g named -s /sbin/nologin -d /home/xdagent
+mkdir -p /home/xdagent/{.ssh,prog,iplatency}
+touch /home/xdagent/.ssh/known_hosts
+ssh-keygen -t dsa -f /home/xdagent/rsync-key -N ""
+
+
+#2. register to Master 
+#================================
+echo "xdreg agent -m $MASTERIP -a $AUTHZCODE"
+xdreg agent -m $MASTERIP -a $AUTHZCODE
+if [ $? -ne 0 ]; then
+exit 1
+fi
+
+
+#3. sync program and configuration
+#=============================== 
+mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bak
+cp /home/xdagent/.ssh/known_hosts ~/.ssh/known_hosts
+rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/agent/prog /home/xdagent
+rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
+mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
+
+
+#4. setup up cron
+#==================================
+crontab -u xdagent -l >/home/xdagent/old_crontab 2>/dev/null
+crontab -u xdagent /home/xdagent/prog/crontab
+
+
+chmod +x /home/xdagent/prog/*
+chown -R xdagent:named /home/xdagent
+chmod 700 /home/xdagent
+
+
+
+#5. message
+#=============================
+MYNAME=`cat /home/xdagent/myname`
+echo "\
+
+
+
+XBayDNS(enabled agent) installed successfully!
+MASTER    :$MASTERIP
+AGENT CODE:$MYNAME
+HOME      :/home/xdagent
+
+"

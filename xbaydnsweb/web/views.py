@@ -33,27 +33,6 @@ def smartload(request):
             result[k][rs.idc.name].append(rs.ip)
     return render_to_response('admin/smartload.html',locals())
 
-#TODO:awful
-install_agent_script = """
-rm -rf /home/xdagent
-userdel xdagent
-useradd xdagent -g named -s /sbin/nologin -d /home/xdagent
-mkdir -p /home/xdagent/{.ssh,prog,iplatency}
-mv /tmp/rsync-key /home/xdagent
-mv /tmp/rsync-key.pub /home/xdagent
-touch /home/xdagent/.ssh/known_hosts
-
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/prog /home/xdagent
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
-crontab -u xdagent -l >/home/xdagent/old_crontab 2>/dev/null
-crontab -u xdagent /home/xdagent/prog/crontab
-
-chmod +x /home/xdagent/prog/*
-chown -R xdagent:named /home/xdagent
-chmod 700 /home/xdagent
-"""
-
-
 def regen_allkey():
     #TODO: it's awful to refresh all key when update one key
     open('/home/xbaydns/.ssh/authorized_keys', 'w').write('')
@@ -101,7 +80,6 @@ def create_agent(request, authzcode, pubkey):
         resp['retcode'] = 'SUCC'
         resp['yourname'] = idc.alias
         resp['master_pubkey'] = master_pubkey
-        resp['script'] = install_agent_script
     else:
         resp['retcode'] = 'FAIL'
         resp['retmsg'] = "Internal server error"

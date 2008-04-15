@@ -6,19 +6,6 @@ usage() {
     echo "       $0 slave  <master_ip> <authz_code> <path_to_bind_chroot>"
 }
 
-agent_succ(){
-echo "\
-
-
-MYNAME=`cat /home/agent/myname`
-XBayDNS(enabled agent) installed successfully!
-MASTER    :$MASTERIP
-AGENT CODE:$MYNAME
-HOME      :/home/agent
-
-"
-}
-
     
 if [ $# -lt 3 ]; then
     usage
@@ -31,10 +18,7 @@ else
         xdmaster $MASTERIP $BIND_CHROOT
     elif [ $TYPE = "agent" ]; then
         AUTHZCODE=$3 
-        xdreg agent -m $MASTERIP -a $AUTHZCODE
-#        if [ $? = 0 ]; then
-#            agent_succ
-#        fi
+        xdagent $MASTERIP $AUTHZCODE
     elif [ $TYPE = "slave" ]; then
         if [ $# -lt 4 ]; then
             usage

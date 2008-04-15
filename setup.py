@@ -32,6 +32,7 @@ setup(
         'xbaydns/tools/xdweb',
         'xbaydns/tools/xdsetup',
         'xbaydns/tools/xdmaster',
+        'xbaydns/tools/xdagent',
         'xbaydns/tools/xdslave'],
     test_suite = 'xbaydns.tests.suite',
     entry_points = {

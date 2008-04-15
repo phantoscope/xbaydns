@@ -24,19 +24,9 @@ def reg_agent(server, authzcode, pubkey):
         print('Sorry, %s', resp['retmsg'])
         sys.exit(1)
 
-    open('/tmp/agent.sh', 'w').write(resp['script'].replace('MASTERIP', server))
-    os.chmod('/tmp/agent.sh', 0755)
-    os.system('/tmp/agent.sh')
     open('/home/xdagent/myname', 'w').write(resp['yourname'])
     open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + resp['master_pubkey'])
 
-    print """
-XBayDNS(enabled agent) installed successfully!
-MASTER    :%s
-AGENT CODE:%s
-HOME      :/home/xdagent
-
-""" % (server, resp['yourname'])
 
 def reg_slave(server, authzcode, pubkey):
     import urllib2
@@ -77,10 +67,7 @@ def main():
             parser.print_help()
             sys.exit(1)
 
-        os.system('rm -rf /tmp/rsync-key*')
-        os.system('ssh-keygen -t dsa -f /tmp/rsync-key -N ""')
-        pubkey_string = open('/tmp/rsync-key.pub').read()
-        print pubkey_string
+        pubkey_string = open('/home/xdagent/rsync-key.pub').read()
         return reg_agent(options.server, options.authzcode, pubkey_string)
     elif (args[0] == 'slave'):
         if len(options.authzcode) == 0:
