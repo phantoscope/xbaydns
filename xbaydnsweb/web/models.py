@@ -15,8 +15,10 @@ log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
     """Domain Model"""
-    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:sina.com.cn')
-    
+    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
+    default_ns = models.CharField(max_length=100,verbose_name=_('domain_default_ns_verbose_name'))
+    maintainer = models.CharField(max_length=100,verbose_name=_('domain_maintainer_verbose_name'),help_text='Example:admin@example.com.cn')
+    ttl = models.IntegerField(verbose_name=_('domain_ttl_verbose_name'))
     def save(self):
         from xbaydnsweb.web.utils import *
         super(Domain,self).save()
@@ -168,10 +170,10 @@ def isDuplicateRecord(field_data,all_data):
 class Record(models.Model):
     """Record Model"""
     name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www',validator_list=[isDuplicateRecord])
-    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'),edit_inline=models.STACKED, num_in_admin=1)
-    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),core=True)
+    domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
-    record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'),core=True)
+    record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'))
 
@@ -180,7 +182,7 @@ class Record(models.Model):
         from xbaydns.conf import sysconf
         super(Record,self).save()
         try:
-            if self.idc.alias not in getDetectedIDC():
+            if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
                     record_nsupdate(self)
@@ -207,7 +209,7 @@ class Record(models.Model):
 
     def delete(self):
         from xbaydnsweb.web.utils import *
-        if len(Record.objects.filter(record_type__record_type='NS'))==1:
+        if len(Record.objects.filter(record_type__record_type='NS',domain=self.domain))==1:
             return 
         if self.is_defaultidc == True:
                 self.viewname="view_default"
@@ -220,7 +222,11 @@ class Record(models.Model):
                 for iparea in IPArea.objects.all():
                     if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
-                        record_nsupdate(self)
+                        record_delete(self)
+        else:
+            for iparea in IPArea.objects.all():
+                self.viewname = iparea.view
+                record_delete(self)
         super(Record,self).delete()
         
     class Admin:

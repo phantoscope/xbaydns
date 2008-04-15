@@ -13,7 +13,9 @@ from operator import itemgetter
 def getServiceRegions():
     from django.db import connection
     service_reg={}
-    sql='''SELECT web_record.name,web_domain.name,web_idc.alias FROM web_record,web_domain,web_idc WHERE web_domain.id=web_record.domain_id AND web_idc.id=web_record.idc_id GROUP BY web_record.name,web_domain.name,web_idc.alias'''
+    sql='''SELECT web_record.name,web_domain.name,web_idc.alias FROM web_recordtype,web_record,web_domain,web_idc WHERE 
+    web_domain.id=web_record.domain_id AND web_idc.id=web_record.idc_id AND web_recordtype.id =web_record.record_type_id AND web_recordtype.record_type ='A' 
+    GROUP BY web_record.name,web_domain.name,web_idc.alias'''
     cursor = connection.cursor()
     cursor.execute(sql)
     for r in cursor.fetchall():
