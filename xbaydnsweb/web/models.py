@@ -243,13 +243,13 @@ class Record(models.Model):
                         self.viewname = iparea.view
                         record_delete(self)
                 self.viewname="view_default"
-                record_nsupdate(self)
+                record_delete(self)
         else:
             for iparea in IPArea.objects.all():
                 self.viewname = iparea.view
                 record_delete(self)
             self.viewname="view_default"
-            record_nsupdate(self)
+            record_delete(self)
         super(Record,self).delete()
         
     class Admin:
