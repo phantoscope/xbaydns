@@ -194,7 +194,7 @@ class Record(models.Model):
                         saveAllConf()
                     else:
                         for iparea in IPArea.objects.all():
-                            if ("%s.%s"%(self.name,self.domain),self.idc.alias) in iparea.service_route:
+                            if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                                 self.viewname = iparea.view
                                 record_nsupdate(record) 
            
@@ -202,7 +202,7 @@ class Record(models.Model):
                 self.viewname="view_default"
                 record_nsupdate(self)
         except:
-            self.delete()
+            super(Record,self).delete()
 
     def delete(self):
         from xbaydnsweb.web.utils import *
@@ -217,7 +217,7 @@ class Record(models.Model):
                 saveAllConf()
             else:
                 for iparea in IPArea.objects.all():
-                    if ("%s.%s"%(self.name,self.domain),self.idc.alias) in iparea.service_route:
+                    if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
                         record_nsupdate(record)
         super(Record,self).delete()
