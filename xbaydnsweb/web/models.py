@@ -234,6 +234,7 @@ class Record(models.Model):
                 record_delete(self)
         if len(Result.objects.filter(idc__alias=self.idc.alias)) != 0:
             if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
+                super(Record,self).delete()
                 conftoresults.main()
                 saveAllConf()
             else:
@@ -241,10 +242,14 @@ class Record(models.Model):
                     if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
                         record_delete(self)
+                self.viewname="view_default"
+                record_nsupdate(self)
         else:
             for iparea in IPArea.objects.all():
                 self.viewname = iparea.view
                 record_delete(self)
+            self.viewname="view_default"
+            record_nsupdate(self)
         super(Record,self).delete()
         
     class Admin:
