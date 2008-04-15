@@ -124,9 +124,11 @@ def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
 def getDetectedIDC():
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     try:
-        r = open(CONF_FILE).readline()
+        f =open(CONF_FILE)
+        r = f.readline()
         agents=r.split(',')
         agents=map(lambda x:x.strip(),agents)
+        f.close()
     except:
         agents = []
     return agents
