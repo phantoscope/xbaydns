@@ -183,7 +183,7 @@ class Record(models.Model):
             if self.idc.alias not in getDetectedIDC():
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
-                    record_nsupdate(record)
+                    record_nsupdate(self)
             else:
                 if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
                     conftoresults.main()
@@ -196,7 +196,7 @@ class Record(models.Model):
                         for iparea in IPArea.objects.all():
                             if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                                 self.viewname = iparea.view
-                                record_nsupdate(record) 
+                                record_nsupdate(self) 
            
             if self.is_defaultidc == True:
                 self.viewname="view_default"
@@ -219,7 +219,7 @@ class Record(models.Model):
                 for iparea in IPArea.objects.all():
                     if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
-                        record_nsupdate(record)
+                        record_nsupdate(self)
         super(Record,self).delete()
         
     class Admin:
