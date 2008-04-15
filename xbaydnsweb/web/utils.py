@@ -99,7 +99,7 @@ def genNamedConf(path):
         aclname='acl_acl%s'%i
         print "aclname",aclname
         iparea.acl = aclname
-        nc.addAcl(aclname,list(iparea.ip))
+        nc.addAcl(aclname,list(eval(iparea.ip)))
         #每个View对应一种ACL
         viewname='view_view%s'%i
         nc.addView(viewname,[aclname,])
