@@ -203,6 +203,7 @@ class Record(models.Model):
                 record_nsupdate(self)
         except:
             super(Record,self).delete()
+            print traceback.print_exc()
 
     def delete(self):
         from xbaydnsweb.web.utils import *

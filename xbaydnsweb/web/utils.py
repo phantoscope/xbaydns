@@ -126,6 +126,7 @@ def getDetectedIDC():
     r = open(CONF_FILE).readline()
     agents=r.split(',')
     agents=map(lambda x:x.strip(),agents)
+    return agents
 
 def update_allow_transfer(slaveip, path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
 
