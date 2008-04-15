@@ -198,6 +198,8 @@ class Record(models.Model):
                 record_nsupdate(self)
             else:
                 if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
+                    self.viewname="view_default"
+                    record_nsupdate(self)
                     conftoresults.main()
                     saveAllConf()
                 else:
@@ -240,7 +242,7 @@ class Record(models.Model):
         super(Record,self).delete()
         
     class Admin:
-        list_display = ('name','domain','idc','is_defaultidc','record_type','record_info','ttl')
+        list_display = ('name','domain','record_type','record_info','ttl','idc','is_defaultidc')
         search_fields = ('name','domain','idc','record_info','record_type')
         fields = (
                 (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain','ttl')}),
