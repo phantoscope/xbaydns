@@ -79,10 +79,10 @@ def getRecords(iparea):
 def updateDomain():
     """发出nsupdate请求,更新所有record和更新默认机房的记录"""
     for iparea in IPArea.objects.all():
-        records=getRecords(view)
+        records=getRecords(iparea)
         for record in records:
             print "record ",record
-            record.viewname=view.view
+            record.viewname=iparea.view
             print record.name,record.domain,record.viewname
             record_nsupdate(record)
     """更新默认机房的记录"""
