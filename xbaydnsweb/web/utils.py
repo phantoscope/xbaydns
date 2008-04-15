@@ -65,7 +65,10 @@ def record_delete(record):
         except:
             print traceback.print_exc()
             print "query error"
+        del_data=genRecordList(record)
+        nsupobj.removeRecord(del_data)
         nsupobj.commitChanges()
+        print "NSUpdate OK"
     except:
         print traceback.print_exc()
 
