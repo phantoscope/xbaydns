@@ -1,34 +1,36 @@
 # encoding: utf-8
 from django.utils.translation import gettext_lazy as _
 from django.db import models
+from django.core import validators
+from xbaydns.dnsapi import nsupdate
+from xbaydnsweb import conftoresults
+from datetime import datetime
 import traceback
 import logging.config
-from xbaydns.dnsapi import nsupdate
-from django.core import validators
-from xbaydnsweb import conftoresults
-import re
-import hashlib
-import time
-from datetime import datetime
+import re,hashlib,time
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
     """Domain Model"""
-    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
-    default_ns = models.CharField(max_length=100,verbose_name=_('domain_default_ns_verbose_name'))
-    maintainer = models.CharField(max_length=100,verbose_name=_('domain_maintainer_verbose_name'),help_text='Example:admin@example.com.cn')
-    ttl = models.IntegerField(verbose_name=_('domain_ttl_verbose_name'))
+    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:sina.com.cn')
+    default_ns = models.CharField(max_length=100,verbose_name='默认NS',help_text='ns1.sina.com.cn')
+    idc = models.ForeignKey('IDC',verbose_name=_('record_idc_verbose_name'))
+    record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
+    mainter = models.CharField(max_length=100,verbose_name='',help_text='')
+    ttl = models.IntegerField(max_length=100,verbose_name='TTL',help_text='3600')
+
     def save(self):
         from xbaydnsweb.web.utils import *
         super(Domain,self).save()
+        rt=RecordType.objects.get(record_type='NS')
+        Record.objects.create(name=self.default_ns,domain=self,record_type=rt,
+                            record_info=self.record_info,ttl=self.ttl,idc=self.idc)
         saveAllConf()
-    
     def delete(self):
         from xbaydnsweb.web.utils import *
         super(Domain,self).delete()
         saveAllConf()
-        
     class Admin:
         list_display = ('name',)
         #search_fields = ('name',)

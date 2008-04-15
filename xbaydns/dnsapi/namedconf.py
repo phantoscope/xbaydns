@@ -211,20 +211,24 @@ key "%s" {
     '''
     @pathIsExists       
     def __saveDomains(self,path=sysconf.namedconf):
-        from xbaydnsweb.web.models import Record
+        from xbaydnsweb.web.models import Domain
         for view,domains in self.domains.items():
             for domain,value in domains.items():
                 if domain=='defaultzone':continue
                 f=open(os.path.join(path,"%s"
                         %self.getDomainFileName(domain,view)),"w")
-                nsinfo=Record.objects.filter(record_type__record_type='NS')
+                nsadmin=sysconf.default_admin
+                nsttl='360'
+                nsinfo=Domain.objects.filter(name=domain)
                 if len(nsinfo)>0:
-                    nsinfo='\n'.join( map(lambda x:' IN NS '.join([x.name,x.record_info]),nsinfo) )
+                    allnsinfo='\n'.join( map(lambda x:' IN NS '.join([x.default_ns,x.record_info]),nsinfo) )
+                    nsadmin=str(nsinfo[0].mainter)
+                    nsttl=str(nsinfo[0].ttl)
                 else:
                     nsinfo='    IN NS %s'%sysconf.default_ns
                 zonedata='''
 $ORIGIN .
-$TTL 360 ;10 minute
+$TTL %(ttl)s ;10 minute
 %(domain)s IN SOA %(soa)s. %(admin)s. (
 	    %(time)s	; serial
 	    60		; refresh (1 minute)
@@ -233,10 +237,10 @@ $TTL 360 ;10 minute
 	    3600	; minimum (1 hour)
 	    )
 
-%(ns)s.
+%(ns)s
 '''%{'domain':domain,'time':self.getSerial(),
-                     'ns':nsinfo,'soa':sysconf.default_soa,
-                     'admin':sysconf.default_admin}
+                     'ns':allnsinfo,'soa':sysconf.default_soa,
+                     'admin':nsadmin,'ttl':nsttl}
                 f.write(zonedata)
                 f.close()
         dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
