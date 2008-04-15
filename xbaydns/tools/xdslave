@@ -74,7 +74,19 @@ chown -R named:named $BINDCHROOT
 chmod -R 770 $BINDCHROOT
 chown -R xdslave:named /home/xdslave
 chmod -R 700 /home/xdslave
+MYNAME=`cat /home/xdslave/myname`
 echo "\
 
------------------------------ Welcome to XBayDNS ---------------------------
+
+
+XBayDNS(enabled slave) installed successfully!
+MASTER    :$MASTERIP
+SLAVE CODE:$MYNAME
+HOME      :/home/xdslave
+
+The next thing you may do:
+.  Start named server and make sure named running normally
+   #/usr/local/sbin/named -t $XBAYDNS_CHROOT_PATH -u named
+   #tail -f /var/log/messages
+
 "

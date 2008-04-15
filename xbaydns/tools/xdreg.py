@@ -30,6 +30,14 @@ def reg_agent(server, authzcode, pubkey):
     open('/home/xdagent/myname', 'w').write(resp['yourname'])
     open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + resp['master_pubkey'])
 
+    print """
+XBayDNS(enabled agent) installed successfully!
+MASTER    :%s
+AGENT CODE:%s
+HOME      :/home/xdagent
+
+""" % (server, resp['yourname'])
+
 def reg_slave(server, authzcode, pubkey):
     import urllib2
     url = "http://%s/slave/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
