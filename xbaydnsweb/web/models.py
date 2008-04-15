@@ -174,70 +174,52 @@ class Record(models.Model):
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'))
-    
+
     def save(self):
         from xbaydnsweb.web.utils import *
         from xbaydns.conf import sysconf
         super(Record,self).save()
-        self.rtstr = self.record_type.record_type
         try:
-            conftoresults.main()
-        except:
-            pass
-        if len(IPArea.objects.all()) ==0:
-            self.is_defaultidc = True
-            results = []
-        else:
-            res_results = Result.objects.filter(record=self)
-            results = []
-            for res_result in res_results:
-                results.extend(IPArea.objects.filter(ip=res_result.ip))
-            domain_results = Result.objects.filter(record__domain=self.domain)
-            if len(domain_results) == 0:
-                results =Result.objects.all()
-                self.is_defaultidc = True
-        try:
+            if self.idc.alias not in getDetectedIDC():
+                for iparea in IPArea.objects.all():
+                    self.viewname = iparea.view
+                    record_nsupdate(record)
+            else:
+                if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
+                    conftoresults.main()
+                    saveAllConf()
+                else:
+                    if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==0:
+                        conftoresults.main()
+                        saveAllConf()
+                    else:
+                        for iparea in IPArea.objects.all():
+                            if ("%s.%s"%(self.name,self.domain),self.idc.alias) in iparea.service_route:
+                                self.viewname = iparea.view
+                                record_nsupdate(record) 
+           
             if self.is_defaultidc == True:
                 self.viewname="view_default"
                 record_nsupdate(self)
-            for result in results:
-                self.viewname = result.view
-                record_nsupdate(self)
-                if len(Record.object.filter(record_type__record_type='NS',\
-                                            domain=self.domain))== 1:
-                    results = Result.objects.filter(record=self)
-                    sysconf.default_ns
-                    m=My()
-                    m = self.domain__name.join('.')
-                    m.domain=self.domain
-                    m.ttl = 3600
-                    m.record_info=sysconf.default_ns
-                    m.rcstr=self.record_type.record_type
-                    m.viewname=result.view
-                    record_delete(m)
-                
         except:
             self.delete()
-        
+
     def delete(self):
         from xbaydnsweb.web.utils import *
         if len(Record.objects.filter(record_type__record_type='NS'))==1:
             return 
-        self.rtstr = self.record_type.record_type
         if self.is_defaultidc == True:
                 self.viewname="view_default"
                 record_delete(self)
-        
-        res_results = Result.objects.filter(record=self)
-        for res_result in res_results:
-                results.extend(IPArea.objects.filter(ip=res_result.ip))
-        for result in results:
-            self.viewname = result.view
-            record_delete(self)
-        try:
-            conftoresults.main()
-        except:
-            pass
+        if len(Result.objects.filter(idc__alias=self.idc.alias)) != 0:
+            if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
+                conftoresults.main()
+                saveAllConf()
+            else:
+                for iparea in IPArea.objects.all():
+                    if ("%s.%s"%(self.name,self.domain),self.idc.alias) in iparea.service_route:
+                        self.viewname = iparea.view
+                        record_nsupdate(record)
         super(Record,self).delete()
         
     class Admin:

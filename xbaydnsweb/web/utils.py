@@ -48,10 +48,10 @@ def record_nsupdate(record):
         print "add_data",add_data
         nsupobj.addRecord(add_data)
         nsupobj.commitChanges()
+        print "NSUpdate OK"
     except:
         print traceback.print_exc()
         print "NSUpdate Error!"
-    print "NSUpdate OK"
     
 def record_delete(record):
     try:
@@ -120,7 +120,13 @@ def genNamedConf(path):
 def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
     genNamedConf(path)
     updateDomain()
-   
+
+def getDetectedIDC():
+    CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
+    r = open(CONF_FILE).readline()
+    agents=r.split(',')
+    agents=map(lambda x:x.strip(),agents)
+
 def update_allow_transfer(slaveip, path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
 
     named_conf_path = os.path.join(path, "named.conf")
