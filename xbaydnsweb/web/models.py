@@ -24,8 +24,14 @@ class Domain(models.Model):
         from xbaydnsweb.web.utils import *
         super(Domain,self).save()
         rt=RecordType.objects.get(record_type='NS')
-        Record.objects.create(name=self.default_ns,domain=self,record_type=rt,
-                            record_info=self.record_info,ttl=self.ttl,idc=self.idc)
+        ns_record  = Record()
+        ns_record.name = self.default_ns
+        ns_record.domain = self
+        ns_record.record_type = rt
+        ns_record.record_info = self.record_info
+        ns_record.ttl = self.ttl
+        ns_record.idc = self.idc
+        super(Record,ns_record).save()
         saveAllConf()
     def delete(self):
         from xbaydnsweb.web.utils import *
@@ -183,7 +189,7 @@ class Record(models.Model):
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
-    ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'))
+    ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'),default=3600)
 
     def save(self):
         from xbaydnsweb.web.utils import *
@@ -198,10 +204,10 @@ class Record(models.Model):
                 record_nsupdate(self)
             else:
                 if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
-                    self.viewname="view_default"
-                    record_nsupdate(self)
                     conftoresults.main()
                     saveAllConf()
+                    self.viewname="view_default"
+                    record_nsupdate(self)
                 else:
                     if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==0:
                         conftoresults.main()
