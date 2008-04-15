@@ -12,7 +12,7 @@ options {
     disable-empty-zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA";
 
     recursion no;
-    allow-transfer { none; };
+    allow-transfer { ${ALLOW_TRANSFER}; };
     allow-update { ${ALLOW_IP}; };
 };
 

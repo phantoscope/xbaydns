@@ -15,7 +15,7 @@ options {
     directory       "${CONF_DIR}";
 
     recursion no;
-    allow-transfer { none; };
+    allow-transfer { ${ALLOW_TRANSFER}; };
     allow-update { ${ALLOW_IP}; };
 };
 
