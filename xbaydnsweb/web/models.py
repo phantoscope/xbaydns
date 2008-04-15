@@ -13,12 +13,12 @@ log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
     """Domain Model"""
-    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:sina.com.cn')
-    default_ns = models.CharField(max_length=100,verbose_name='默认NS',help_text='ns1.sina.com.cn')
+    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
+    default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_idc_verbose_name'),help_text='example.com.cn.')
     idc = models.ForeignKey('IDC',verbose_name=_('record_idc_verbose_name'))
-    record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
-    mainter = models.CharField(max_length=100,verbose_name='',help_text='')
-    ttl = models.IntegerField(max_length=100,verbose_name='TTL',help_text='3600')
+    record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn.')
+    mainter = models.CharField(max_length=100,verbose_name=_('domain_maintainer'),help_text='')
+    ttl = models.IntegerField(max_length=100,verbose_name=_('domain_ttl'),default=3600,help_text='3600')
 
     def save(self):
         from xbaydnsweb.web.utils import *
@@ -33,6 +33,12 @@ class Domain(models.Model):
         saveAllConf()
     class Admin:
         list_display = ('name',)
+        list_display = ('name','mainter','ttl')
+        search_fields = ('name','mainter')
+        fields = (
+                (_('domain_fields_domaininfo_verbose_name'), {'fields': ('name','mainter','ttl')}),
+                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','idc','record_info',)}),
+        )
         #search_fields = ('name',)
     class Meta:
         ordering = ('name',)
@@ -88,7 +94,7 @@ class Node(models.Model):
     regtime = models.DateTimeField(blank=True, null=True, verbose_name=_('node_regtime_verbose_name'))
 
     class Admin:
-        list_display = ('name','codename', 'authzcode', 'regtime')
+        list_display = ('name','codename', 'ip','authzcode', 'regtime')
         fields = (
                (_('node_verbose_name'), {'fields': ('name','codename','ip')}),
         )
@@ -188,6 +194,8 @@ class Record(models.Model):
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
                     record_nsupdate(self)
+                self.viewname="view_default"
+                record_nsupdate(self)
             else:
                 if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
                     conftoresults.main()
