@@ -123,9 +123,12 @@ def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
 
 def getDetectedIDC():
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
-    r = open(CONF_FILE).readline()
-    agents=r.split(',')
-    agents=map(lambda x:x.strip(),agents)
+    try:
+        r = open(CONF_FILE).readline()
+        agents=r.split(',')
+        agents=map(lambda x:x.strip(),agents)
+    except:
+        agents = []
     return agents
 
 def update_allow_transfer(slaveip, path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
