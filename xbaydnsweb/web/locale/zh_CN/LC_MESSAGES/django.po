@@ -53,11 +53,11 @@ msgstr "注册时间"
 
 #: models.py:54 models.py:59
 msgid "idc_verbose_name"
-msgstr "机房/服务出口"
+msgstr "服务出口"
 
 #: models.py:60
 msgid "idc_verbose_name_plural"
-msgstr "1.2 机房/服务出口管理"
+msgstr "1.2 服务出口管理"
 
 #: models.py:78
 msgid "node_name_verbose_name"
@@ -113,7 +113,7 @@ msgstr "不能定义重复记录"
 
 #: models.py:170
 msgid "record_name_verbose_name"
-msgstr "名称"
+msgstr "记录名称"
 
 #: models.py:171
 msgid "record_domain_verbose_name"
@@ -121,7 +121,7 @@ msgstr "所属域"
 
 #: models.py:172
 msgid "record_idc_verbose_name"
-msgstr "所属机房/服务出口"
+msgstr "所属服务出口"
 
 #: models.py:174
 msgid "record_info_name"
@@ -133,7 +133,7 @@ msgstr "缺省记录"
 
 #: models.py:176
 msgid "record_ttl_verbose_name"
-msgstr "缓存时间(s)"
+msgstr "TTL(s)"
 
 #: models.py:247
 msgid "record_fields_domaininfo_verbose_name"
@@ -141,7 +141,7 @@ msgstr "域名信息"
 
 #: models.py:248
 msgid "record_fields_idcinfo_verbose_name"
-msgstr "机房/服务出口信息"
+msgstr "服务出口信息"
 
 #: models.py:253
 msgid "record_verbose_name"
@@ -179,20 +179,20 @@ msgstr "生成成功"
 msgid "Smart View Msg Error"
 msgstr "生成失败"
 
-#~ msgid "SmartTitle"
-#~ msgstr "智能探测结果"
+msgid "SmartTitle"
+msgstr "智能探测结果"
 
-#~ msgid "SmartSubmitButton"
-#~ msgstr "应用结果"
+msgid "SmartSubmitButton"
+msgstr "应用结果"
 
-#~ msgid "xBayDNS Title"
-#~ msgstr "xBayDNS Admin"
+msgid "xBayDNS Title"
+msgstr "xBayDNS Admin"
 
-#~ msgid "xBayDNS Site Name"
-#~ msgstr "xBayDNS Administrator"
+msgid "xBayDNS Site Name"
+msgstr "xBayDNS Administrator"
 
-#~ msgid "MyApp Title"
-#~ msgstr "自定义模块"
+msgid "MyApp Title"
+msgstr "自定义模块"
 
-#~ msgid "MyApp Smart"
-#~ msgstr "查看智能探测结果"
+msgid "MyApp Smart"
+msgstr "查看智能探测结果"
