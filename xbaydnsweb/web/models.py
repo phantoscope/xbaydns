@@ -13,7 +13,7 @@ log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
     """Domain Model"""
-    name = models.CharField(max_length=100,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
+    name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
     default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_idc_verbose_name'),help_text='example.com.cn.')
     idc = models.ForeignKey('IDC',verbose_name=_('record_idc_verbose_name'))
     record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn.')
