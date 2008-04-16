@@ -36,16 +36,6 @@ def record_nsupdate(record):
         nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
         #['foo', 3600, 'IN', 'A', ['192.168.1.1', '172.16.1.1']]#record style
         add_data=genRecordList(record)
-        try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type.record_type)
-            print "record_a",record_a
-            if len(record_a)!=0:
-                del_data=genRecordList(record)
-                nsupobj.removeRecord(del_data)
-                nsupobj.commitChanges()
-        except:
-            print traceback.print_exc()
-            print "query error"
         print "add_data",add_data
         nsupobj.addRecord(add_data)
         nsupobj.commitChanges()
@@ -57,16 +47,6 @@ def record_nsupdate(record):
 def record_delete(record):
     try:
         nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
-        try:
-            record_a = nsupobj.queryRecord('%s.%s'%(record.name,record.domain), rdtype=record.record_type.record_type)
-            print "record_a",record_a
-            if len(record_a)!=0:
-                del_data=genRecordList(record)
-                nsupobj.removeRecord(del_data)
-                nsupobj.commitChanges()
-        except:
-            print traceback.print_exc()
-            print "query error"
         del_data=genRecordList(record)
         nsupobj.removeRecord(del_data)
         nsupobj.commitChanges()

@@ -7,7 +7,7 @@ from xbaydnsweb import conftoresults
 from datetime import datetime
 import traceback
 import logging.config
-import re,hashlib,time
+import re,hashlib,time,copy
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
@@ -194,19 +194,28 @@ class Record(models.Model):
     def save(self):
         from xbaydnsweb.web.utils import *
         from xbaydns.conf import sysconf
+        old_record = None
+        if self.id != None:
+            old_record = copy.deepcopy(self)
         super(Record,self).save()
         try:
             if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
+                    if old_record !=None:
+                        record_delete(old_record)
                     record_nsupdate(self)
                 self.viewname="view_default"
+                if old_record !=None:
+                    record_delete(old_record)
                 record_nsupdate(self)
             else:
                 if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
                     conftoresults.main()
                     saveAllConf()
                     self.viewname="view_default"
+                    if old_record !=None:
+                        record_delete(old_record)
                     record_nsupdate(self)
                 else:
                     if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==0:
@@ -216,10 +225,14 @@ class Record(models.Model):
                         for iparea in IPArea.objects.all():
                             if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                                 self.viewname = iparea.view
-                                record_nsupdate(self) 
+                                if old_record !=None:
+                                    record_delete(old_record)
+                                record_nsupdate(self)
            
             if self.is_defaultidc == True:
                 self.viewname="view_default"
+                if old_record !=None:
+                    record_delete(old_record)
                 record_nsupdate(self)
         except:
             super(Record,self).delete()
