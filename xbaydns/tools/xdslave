@@ -53,6 +53,7 @@ crontab -u root /tmp/root_crontab
 
 #5. prepare bind's chroot
 #-----------------------
+rm -rff $BINDCHROOT/etc/{acl,view,dynamic}
 mkdir -p $BINDCHROOT/{etc/{acl,view,dynamic},dev,var/{run,dump,stats,log}}
 touch $BINDCHROOT/var/log/named.log
 touch $BINDCHROOT/var/log/query.log
