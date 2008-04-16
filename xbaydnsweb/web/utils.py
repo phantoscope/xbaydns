@@ -42,6 +42,7 @@ def record_nsupdate(record):
             if len(record_a)!=0:
                 del_data=genRecordList(record)
                 nsupobj.removeRecord(del_data)
+                nsupobj.commitChanges()
         except:
             print traceback.print_exc()
             print "query error"
@@ -62,6 +63,7 @@ def record_delete(record):
             if len(record_a)!=0:
                 del_data=genRecordList(record)
                 nsupobj.removeRecord(del_data)
+                nsupobj.commitChanges()
         except:
             print traceback.print_exc()
             print "query error"
