@@ -22,16 +22,20 @@ class Domain(models.Model):
 
     def save(self):
         from xbaydnsweb.web.utils import *
+        sign = True
+        if self.id != None:
+            sign = False
         super(Domain,self).save()
-        rt=RecordType.objects.get(record_type='NS')
-        ns_record  = Record()
-        ns_record.name = self.default_ns
-        ns_record.domain = self
-        ns_record.record_type = rt
-        ns_record.record_info = self.record_info
-        ns_record.ttl = self.ttl
-        ns_record.idc = self.idc
-        super(Record,ns_record).save()
+        if sign == True:
+            rt=RecordType.objects.get(record_type='NS')
+            ns_record  = Record()
+            ns_record.name = self.default_ns
+            ns_record.domain = self
+            ns_record.record_type = rt
+            ns_record.record_info = self.record_info
+            ns_record.ttl = self.ttl
+            ns_record.idc = self.idc
+            super(Record,ns_record).save()
         saveAllConf()
     def delete(self):
         from xbaydnsweb.web.utils import *
