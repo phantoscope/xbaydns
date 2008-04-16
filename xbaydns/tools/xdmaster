@@ -1,7 +1,27 @@
 #!/bin/sh
 
-if [ $# != 2 ]; then
-    echo "Usage: $0 <master_ip> <path_to_bind_chroot>"
+XDPREFIX=/opt/xbaydns
+
+#pre init check env var
+#-------------------------------------
+if [ -z "${XDPREFIX}" ]
+then
+    echo "XDPREFIX is not init"
+    exit 1
+fi
+
+masterstartup(){
+killall named >& /dev/null
+${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u named
+/bin/sh ${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/named/var/log/xdweb.log &
+}
+
+if [ -f ${XDPREFIX}/named/sbin/named -a -f ${XDPREFIX}/bin/xdweb ]
+then
+    masterstartup
+    exit 0
+elif [ $# != 2 ]; then
+    echo "First time Usage: $0 <master_ip> <path_to_bind_chroot>"
     exit 1
 fi
 
@@ -126,6 +146,4 @@ HOME      :${XDPREFIX}/home/xbaydns
 Browse http://$MASTERIP username/password for administrator: admin/admin
 DON'T FORGET TO CHANGE YOUR PASSWORD!
 "
-killall named
-${XDPREFIX}/named/sbin/named -t $XBAYDNS_CHROOT_PATH -u named
-${XDPREFIX}/bin/xdweb
+masterstartup
