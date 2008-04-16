@@ -1,0 +1,14 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{% if change %}
+    <script type="text/javascript">
+	function init(){
+		var fieldset=document.getElementsByTagName('fieldset')
+		if(fieldset.length==2)
+			fieldset[1].style.display='none'
+	}
+	window.onload=init
+    </script>
+{% endif %}
+{% endblock %}

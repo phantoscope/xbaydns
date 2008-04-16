@@ -1,16 +1,13 @@
 {% extends "admin/change_form.html" %}
 
 {% block extrahead %}
+{% if change %}
 <script type="text/javascript">
 	function init(){
-		var url=window.location.href.split('/')
-		if(url.length>6){
-			if(url[5]!='add'){
-				var pubkey=document.getElementById("id_pubkey")
-				pubkey.setAttribute("readonly","readonly")
-			}
-		}
+		var pubkey=document.getElementById("id_pubkey")
+		pubkey.setAttribute("readonly","readonly")
 	}
 	window.onload=init
 </script>
+{% endif %}
 {% endblock %}
