@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: xbaydns v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-16 05:48+0800\n"
-"PO-Revision-Date: 2008-04-10 19:49+0800\n"
+"PO-Revision-Date: 2008-04-16 17:14+0800\n"
 "Last-Translator: nemo <nemo_fc@sina.com>\n"
 "Language-Team: Simplified Chinese <paradise.qingfeng@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -25,25 +25,26 @@ msgstr "域"
 
 #: models.py:17
 #, fuzzy
-msgid "domain_record_idc_verbose_name"
-msgstr "所属服务出口"
+msgid "domain_record_ns_name"
+msgstr "NS记录名"
 
-#: models.py:18 models.py:182
+#: models.py:18
+#: models.py:182
 msgid "record_idc_verbose_name"
 msgstr "所属服务出口"
 
 #: models.py:19
 #, fuzzy
 msgid "domain_record_info_name"
-msgstr "记录值"
+msgstr "NS记录值"
 
 #: models.py:20
 msgid "domain_maintainer"
-msgstr ""
+msgstr "域管理员"
 
 #: models.py:21
 msgid "domain_ttl"
-msgstr ""
+msgstr "TTL(s)"
 
 #: models.py:39
 #, fuzzy
@@ -53,7 +54,7 @@ msgstr "域名信息"
 #: models.py:40
 #, fuzzy
 msgid "domain_fields_default_ns_verbose_name"
-msgstr "缺省记录"
+msgstr "缺省NS记录"
 
 #: models.py:45
 msgid "domain_verbose_name"
@@ -83,7 +84,8 @@ msgstr "公钥"
 msgid "idc_regtime_verbose_name"
 msgstr "注册时间"
 
-#: models.py:64 models.py:69
+#: models.py:64
+#: models.py:69
 msgid "idc_verbose_name"
 msgstr "服务出口"
 
@@ -119,7 +121,8 @@ msgstr "公钥"
 msgid "node_regtime_verbose_name"
 msgstr "注册时间"
 
-#: models.py:99 models.py:104
+#: models.py:99
+#: models.py:104
 msgid "node_verbose_name"
 msgstr "辅DNS"
 
@@ -131,7 +134,8 @@ msgstr "1.4 辅DNS管理"
 msgid "record_type"
 msgstr "记录类型"
 
-#: models.py:132 models.py:183
+#: models.py:132
+#: models.py:183
 msgid "record_type_name"
 msgstr "记录类型"
 
@@ -209,18 +213,14 @@ msgstr "生成失败"
 
 #~ msgid "SmartTitle"
 #~ msgstr "智能探测结果"
-
 #~ msgid "SmartSubmitButton"
 #~ msgstr "应用结果"
-
 #~ msgid "xBayDNS Title"
 #~ msgstr "xBayDNS Admin"
-
 #~ msgid "xBayDNS Site Name"
 #~ msgstr "xBayDNS Administrator"
-
 #~ msgid "MyApp Title"
 #~ msgstr "自定义模块"
-
 #~ msgid "MyApp Smart"
 #~ msgstr "查看智能探测结果"
+
