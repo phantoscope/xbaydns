@@ -6,6 +6,8 @@ usage() {
     echo "       $0 slave  <master_ip> <authz_code> <path_to_bind_chroot>"
 }
 
+XDPREFIX=/opt/xbaydns
+export XDPREFIX
     
 if [ $# -lt 3 ]; then
     usage
@@ -15,10 +17,10 @@ else
     MASTERIP=$2
     if [ $TYPE = "master" ]; then
         BIND_CHROOT=$3
-        xdmaster $MASTERIP $BIND_CHROOT
+        ${XDPREFIX}/bin/xdmaster $MASTERIP $BIND_CHROOT
     elif [ $TYPE = "agent" ]; then
         AUTHZCODE=$3 
-        xdagent $MASTERIP $AUTHZCODE
+        ${XDPREFIX}/bin/xdagent $MASTERIP $AUTHZCODE
     elif [ $TYPE = "slave" ]; then
         if [ $# -lt 4 ]; then
             usage
@@ -26,7 +28,7 @@ else
         fi
         AUTHZCODE=$3
         BIND_CHROOT=$4
-        xdslave $MASTERIP $AUTHZCODE $BIND_CHROOT
+        ${XDPREFIX}/bin/xdslave $MASTERIP $AUTHZCODE $BIND_CHROOT
     else
         usage
         exit 1

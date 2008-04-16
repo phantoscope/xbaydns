@@ -1,7 +1,15 @@
 #!/bin/sh
 
-xbaydns_path=`xdwherepkg`/xbaydnsweb
+#pre init check env var
+#-------------------------------------
+if [ -z "${XDPREFIX}" ]
+then
+    echo "XDPREFIX is not init"
+    exit 1
+fi
+
+xbaydns_path=`${XDPREFIX}/bin/xdwherepkg`/xbaydnsweb
 echo $xbaydns_path
 cd $xbaydns_path
-source /home/xbaydns/xdenv
-python2.5 manage.py runserver 0.0.0.0:80
+source ${XDPREFIX}/home/xbaydns/xdenv
+${XDPREFIX}/bin/python2.5 manage.py runserver 0.0.0.0:80
