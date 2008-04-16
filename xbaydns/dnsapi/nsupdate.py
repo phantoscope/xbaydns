@@ -33,7 +33,7 @@ class NSUpdate:
             namedconf_obj = namedconf.NamedConf()
             keys = namedconf_obj.loadViewKey(view)
             self.tsigkey = dns.tsigkeyring.from_text(keys)
-        self.domain_info = self._getDomainInfo()
+        #self.domain_info = self._getDomainInfo()
         self.updatemsg = dns.update.Update(self.domain, keyring = self.tsigkey)
         
     def _getDomainInfo(self):
