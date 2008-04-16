@@ -48,6 +48,7 @@ def record_delete(record):
     try:
         nsupobj = nsupdate.NSUpdate('127.0.0.1',"%s."%record.domain,view=record.viewname)
         del_data=genRecordList(record)
+        print "del_data",del_data
         nsupobj.removeRecord(del_data)
         nsupobj.commitChanges()
         print "NSUpdate OK"
