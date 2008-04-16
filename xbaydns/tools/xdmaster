@@ -16,8 +16,9 @@ ${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u named
 /bin/sh ${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/named/var/log/xdweb.log &
 }
 
-if [ -f ${XDPREFIX}/named/sbin/named -a -f ${XDPREFIX}/bin/xdweb ]
+if [ -d ${XDPREFIX}/home/xbaydns -a -f ${XDPREFIX}/home/xbaydns/xdenv ]
 then
+    source ${XDPREFIX}/home/xbaydns/xdenv
     masterstartup
     exit 0
 elif [ $# != 2 ]; then
