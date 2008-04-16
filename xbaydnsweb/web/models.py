@@ -196,7 +196,7 @@ class Record(models.Model):
         from xbaydns.conf import sysconf
         old_record = None
         if self.id != None:
-            old_record = copy.deepcopy(self)
+            old_record = copy.deepcopy(Record.objects.get(id=self.id))
         super(Record,self).save()
         try:
             if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
