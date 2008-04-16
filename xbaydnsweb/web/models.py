@@ -182,7 +182,7 @@ def isValiableRInfo(field_data,all_data):
 
 def isDuplicateRecord(field_data,all_data):
     if len(Record.objects.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
-                          record_type__id=str(all_data['record_type']),record_info=str(all_data['record_info']))) >0:
+                          record_type__id=str(all_data['record_type']),record_info=str(all_data['record_info']),ttl=str(all_data['ttl']),is_defaultidc=str(all_data['is_defaultidc']))) >0:
         raise validators.ValidationError(_("duplicate_record"))
     
 class Record(models.Model):
