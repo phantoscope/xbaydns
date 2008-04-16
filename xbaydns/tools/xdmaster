@@ -104,6 +104,9 @@ chown -R xbaydns:named /home/xbaydns
 chmod -R 700 /home/xbaydns
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
+
+rndc reload
+
 echo "\
 
 
