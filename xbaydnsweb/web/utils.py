@@ -16,6 +16,7 @@ from xbaydns.dnsapi.namedconf import *
 from xbaydns.conf import sysconf
 from xbaydns.dnsapi import nsupdate
 from xbaydns.tools import algorithms
+from django.db.models import Q
 
 log = logging.getLogger('xbaydnsweb.web.utils')
 #logging.basicConfig(level=logging.DEBUG)
@@ -60,14 +61,21 @@ def getRecords(iparea):
     records=[]
     for domain_name,idc_alias in list(eval(iparea.service_route)):
         
-        records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias))
+        records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias,record_type__record_type='A'))
     return records
 
 def updateDomain():
     """发出nsupdate请求,更新所有record和更新默认机房的记录"""
     for iparea in IPArea.objects.all():
+        """把A纪录分布到对应的VIEW中"""
         records=getRecords(iparea)
         for record in records:
+            print "record ",record
+            record.viewname=iparea.view
+            print record.name,record.domain,record.viewname
+            record_nsupdate(record)
+        """把非A记录加入每一个VIEW"""
+        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')):
             print "record ",record
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname
