@@ -1,6 +1,8 @@
 {% extends "admin/change_form.html" %}
 
 {% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" src="../../../jsi18n/"></script>
 {% if change %}
 <script type="text/javascript">
 	function init(){
