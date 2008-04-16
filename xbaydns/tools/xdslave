@@ -80,15 +80,16 @@ xdinitbind slave $MASTERIP
 
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
+rndc reload
 chown -R named:named $BINDCHROOT
 chmod -R 770 $BINDCHROOT
 chown -R xdslave:named /home/xdslave
 chmod -R 700 /home/xdslave
-MYNAME=`cat /home/xdslave/myname`
 
 
 #7. message
 #=============================
+MYNAME=`cat /home/xdslave/myname`
 echo "\
 
 
