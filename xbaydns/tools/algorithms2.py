@@ -9,7 +9,7 @@ def quicksort(dict,keys):
     result = (keys[0],float(dict[keys[0]].strip()))
     for k,v in dict.items():
         if k in keys: 
-            if result[1] > float(dict[k].strip()):
+            if result[1] > float(dict[k].strip()) and float(dict[k].strip())>=0:
                 result = (k,float(dict[k].strip()))
         else:
             pass
