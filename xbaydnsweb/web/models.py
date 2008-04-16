@@ -202,10 +202,12 @@ class Record(models.Model):
             if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
+                    old_record.viewname = iparea.view
                     if old_record !=None:
                         record_delete(old_record)
                     record_nsupdate(self)
                 self.viewname="view_default"
+                old_record.viewname = "view_default"
                 if old_record !=None:
                     record_delete(old_record)
                 record_nsupdate(self)
@@ -214,6 +216,7 @@ class Record(models.Model):
                     conftoresults.main()
                     saveAllConf()
                     self.viewname="view_default"
+                    old_record.viewname = "view_default"
                     if old_record !=None:
                         record_delete(old_record)
                     record_nsupdate(self)
@@ -225,12 +228,14 @@ class Record(models.Model):
                         for iparea in IPArea.objects.all():
                             if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                                 self.viewname = iparea.view
+                                old_record.viewname = iparea.view
                                 if old_record !=None:
                                     record_delete(old_record)
                                 record_nsupdate(self)
            
             if self.is_defaultidc == True:
                 self.viewname="view_default"
+                old_record.viewname = "view_default"
                 if old_record !=None:
                     record_delete(old_record)
                 record_nsupdate(self)
