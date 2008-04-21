@@ -16,7 +16,6 @@ class Domain(models.Model):
     """Domain Model"""
     name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
     default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_ns_name'),help_text='example.com.cn.')
-    idc = models.ForeignKey('IDC',verbose_name=_('record_idc_verbose_name'))
     record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn')
     mainter = models.CharField(max_length=100,verbose_name=_('domain_maintainer'),help_text='')
     ttl = models.IntegerField(max_length=100,verbose_name=_('domain_ttl'),default=3600,help_text='3600')
@@ -35,7 +34,6 @@ class Domain(models.Model):
             ns_record.record_type = rt
             ns_record.record_info = self.record_info
             ns_record.ttl = self.ttl
-            ns_record.idc = self.idc
             super(Record,ns_record).save()
         saveAllConf()
     def delete(self):
@@ -169,18 +167,18 @@ def isValiableRInfo(field_data,all_data):
     if r_type.record_type == 'A':
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
         if ipv4_re.match(str(all_data['record_info'])) == None:
-            raise validators.ValidationError("error")
+            raise validators.ValidationError(_('record_info_iperr'))
         if all_data['idc'] == None or all_data['idc'] == '':
-            raise validators.ValidationError("error")
+            raise validators.ValidationError(_('record_a_idc_required'))
     elif r_type.record_type == 'CNAME':
         try:
             domain_str = all_data['record_info']
             name = domain_str[:domain_str.index('.')]
             domain = domain_str[domain_str.index('.')+1:]
             if len(Record.objects.filter(name=name,domain__name=domain)) == 0:
-                raise validators.ValidationError("error")
+                raise validators.ValidationError(_('record_not_existed_a'))
         except:
-            raise validators.ValidationError("error")
+            raise validators.ValidationError(_('record_syntax_err'))
 
 def isDuplicateRecord(field_data,all_data):
     if len(Record.objects.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
