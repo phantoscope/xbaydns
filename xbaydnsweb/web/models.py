@@ -167,18 +167,19 @@ def isValiableRInfo(field_data,all_data):
     r_type = RecordType.objects.get(id=all_data['record_type'])
     if r_type == 'A':
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
-        ipv4_re.match(str(field_data), 1)  
+        if ipv4_re.match(str(all_data['record_info'])) == None:
+            raise validators.ValidationError("IP地址格式不正确")
+        if all_data['idc'] == None:
+            raise validators.ValidationError("请指定本记录的服务出口")
     elif r_type == 'CNAME':
         try:
             name = field_data[:field_data.index('.')]
             domain = field_data[field_data.index('.')+1:]
             
             if len(Record.objects.filter(name=name,domain__name=domain)) == 0:
-                raise validators.ValidationError("field synax error")
+                raise validators.ValidationError("指向的A记录不存在")
         except:
-            raise validators.ValidationError("field synax error")
-    elif r_type == 'A':
-        pass
+            raise validators.ValidationError("格式不正确")
 
 def isDuplicateRecord(field_data,all_data):
     if len(Record.objects.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
@@ -189,8 +190,8 @@ class Record(models.Model):
     """Record Model"""
     name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
     domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
-    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
-    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True)
+    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'),validator_list=[validator_list,])
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'),default=3600)
 
