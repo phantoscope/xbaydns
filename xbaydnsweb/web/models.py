@@ -209,7 +209,7 @@ class Record(models.Model):
                 old_record.viewname = "view_default"
                 record_delete(old_record)
             record_nsupdate(self)
-            if self.record_type.record_type != 'A':
+            if self.record_type.record_type == 'A':
                 if self.idc.alias not in getDetectedIDC():
                     for iparea in IPArea.objects.all():
                         self.viewname = iparea.view
@@ -233,6 +233,13 @@ class Record(models.Model):
                                         old_record.viewname = iparea.view
                                         record_delete(old_record)
                                     record_nsupdate(self)
+            else:
+                for iparea in IPArea.objects.all():
+                    self.viewname = iparea.view
+                    if old_record !=None:
+                        old_record.viewname = iparea.view
+                        record_delete(old_record)
+                    record_nsupdate(self)
         except:
             super(Record,self).delete()
             print traceback.print_exc()
