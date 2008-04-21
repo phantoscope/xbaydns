@@ -27,7 +27,7 @@ def getResultTime():
     from xbaydns.conf import sysconf
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     try:
-        time_str = time.ctime(os.stat(CONF_FILE))
+        time_str = time.ctime(os.stat(CONF_FILE)[8])
     except:
         time_str = ''
     return time_str
