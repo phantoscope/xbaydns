@@ -8,6 +8,7 @@ from datetime import datetime
 import traceback
 import logging.config
 import re,hashlib,time,copy
+from django.core import validators
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
