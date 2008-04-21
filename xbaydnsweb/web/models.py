@@ -189,10 +189,10 @@ def isDuplicateRecord(field_data,all_data):
     
 class Record(models.Model):
     """Record Model"""
+    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'),validator_list=[isValiableRInfo,])
     name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
     domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True,null=True)
-    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'),validator_list=[isValiableRInfo,])
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'),default=3600)
 
@@ -209,29 +209,30 @@ class Record(models.Model):
                 old_record.viewname = "view_default"
                 record_delete(old_record)
             record_nsupdate(self)
-            if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
-                for iparea in IPArea.objects.all():
-                    self.viewname = iparea.view
-                    if old_record !=None:
-                        old_record.viewname = iparea.view
-                        record_delete(old_record)
-                    record_nsupdate(self)
-            else:
-                if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
-                    conftoresults.main()
-                    saveAllConf()
+            if self.record_type.record_type != 'A':
+                if self.idc.alias not in getDetectedIDC():
+                    for iparea in IPArea.objects.all():
+                        self.viewname = iparea.view
+                        if old_record !=None:
+                            old_record.viewname = iparea.view
+                            record_delete(old_record)
+                        record_nsupdate(self)
                 else:
-                    if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
+                    if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
                         conftoresults.main()
                         saveAllConf()
                     else:
-                        for iparea in IPArea.objects.all():
-                            if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
-                                self.viewname = iparea.view
-                                if old_record !=None:
-                                    old_record.viewname = iparea.view
-                                    record_delete(old_record)
-                                record_nsupdate(self)
+                        if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
+                            conftoresults.main()
+                            saveAllConf()
+                        else:
+                            for iparea in IPArea.objects.all():
+                                if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
+                                    self.viewname = iparea.view
+                                    if old_record !=None:
+                                        old_record.viewname = iparea.view
+                                        record_delete(old_record)
+                                    record_nsupdate(self)
         except:
             super(Record,self).delete()
             print traceback.print_exc()
