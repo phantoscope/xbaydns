@@ -203,6 +203,11 @@ class Record(models.Model):
             old_record = copy.deepcopy(Record.objects.get(id=self.id))
         super(Record,self).save()
         try:
+            self.viewname="view_default"
+            if old_record !=None:
+                old_record.viewname = "view_default"
+                record_delete(old_record)
+            record_nsupdate(self)
             if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
@@ -210,29 +215,14 @@ class Record(models.Model):
                         old_record.viewname = iparea.view
                         record_delete(old_record)
                     record_nsupdate(self)
-                self.viewname="view_default"
-                if old_record !=None:
-                    old_record.viewname = "view_default"
-                    record_delete(old_record)
-                record_nsupdate(self)
             else:
                 if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
                     conftoresults.main()
                     saveAllConf()
-                    self.viewname="view_default"
-                    if old_record !=None:
-                        old_record.viewname = "view_default"
-                        record_delete(old_record)
-                    record_nsupdate(self)
                 else:
                     if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
                         conftoresults.main()
                         saveAllConf()
-                        self.viewname="view_default"
-                        if old_record !=None:
-                            old_record.viewname = "view_default"
-                            record_delete(old_record)
-                        record_nsupdate(self)
                     else:
                         for iparea in IPArea.objects.all():
                             if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
@@ -241,13 +231,6 @@ class Record(models.Model):
                                     old_record.viewname = iparea.view
                                     record_delete(old_record)
                                 record_nsupdate(self)
-           
-            if self.is_defaultidc == True:
-                self.viewname="view_default"
-                if old_record !=None:
-                    old_record.viewname = "view_default"
-                    record_delete(old_record)
-                record_nsupdate(self)
         except:
             super(Record,self).delete()
             print traceback.print_exc()
@@ -255,10 +238,9 @@ class Record(models.Model):
     def delete(self):
         from xbaydnsweb.web.utils import *
         if len(Record.objects.filter(record_type__record_type='NS',domain=self.domain))==1 and self.record_type.record_type == "NS":
-            return 
-        if self.is_defaultidc == True:
-                self.viewname="view_default"
-                record_delete(self)
+            return
+        self.viewname="view_default"
+        record_delete(self)
         if len(Result.objects.filter(idc__alias=self.idc.alias)) != 0:
             if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
                 super(Record,self).delete()
@@ -266,8 +248,6 @@ class Record(models.Model):
                     if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
                         record_delete(self)
-                self.viewname="view_default"
-                record_delete(self)
                 conftoresults.main()
                 saveAllConf()
                 return
@@ -276,14 +256,10 @@ class Record(models.Model):
                     if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
                         record_delete(self)
-                self.viewname="view_default"
-                record_delete(self)
         else:
             for iparea in IPArea.objects.all():
                 self.viewname = iparea.view
                 record_delete(self)
-            self.viewname="view_default"
-            record_delete(self)
         super(Record,self).delete()
         
     class Admin:
