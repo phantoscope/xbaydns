@@ -9,7 +9,7 @@
 <div id="content-main">
 {% block object-tools %}
 {% if has_add_permission %}
-<ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% blocktrans%} {{iparea_apply}} {% endblocktrans %}</a></li>
+<ul class="object-tools"><li><a href="add/{% if is_popup %}?_popup=1{% endif %}" class="addlink">{% trans "iparea_apply" %}</a></li>
 <li>{% getResultTime %}</li></ul>
 {% endif %}
 {% endblock %}
