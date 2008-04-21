@@ -166,13 +166,13 @@ class IPArea(models.Model):
 
 def isValiableRInfo(field_data,all_data):
     r_type = RecordType.objects.get(id=all_data['record_type'])
-    if r_type == 'A':
+    if r_type.record_type == 'A':
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
         if ipv4_re.match(str(all_data['record_info'])) == None:
             raise validators.ValidationError("IP地址格式不正确")
         if all_data['idc'] == None:
             raise validators.ValidationError("请指定本记录的服务出口")
-    elif r_type == 'CNAME':
+    elif r_type.record_type == 'CNAME':
         try:
             name = field_data[:field_data.index('.')]
             domain = field_data[field_data.index('.')+1:]
