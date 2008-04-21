@@ -192,7 +192,6 @@ class Record(models.Model):
     idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
     record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
-    is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'),default=3600)
 
     def save(self):
@@ -263,13 +262,12 @@ class Record(models.Model):
         super(Record,self).delete()
         
     class Admin:
-        list_display = ('name','domain','record_type','record_info','ttl','idc','is_defaultidc')
+        list_display = ('name','domain','record_type','record_info','ttl','idc')
         search_fields = ('name','domain','idc','record_info','record_type')
         fields = (
                 (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain','ttl')}),
-                (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc','is_defaultidc',)}),
+                (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc',)}),
         )
-        #list_filter = ('is_defaultidc', 'idc')
     class Meta:
         ordering = ('name',)
         verbose_name = _('record_verbose_name')

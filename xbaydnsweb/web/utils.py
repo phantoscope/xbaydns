@@ -81,7 +81,7 @@ def updateDomain():
             print record.name,record.domain,record.viewname
             record_nsupdate(record)
     """更新默认机房的记录"""
-    for record in Record.objects.filter(is_defaultidc=True):
+    for record in Record.objects.all():
         record.viewname="view_default"
         print record.name,record.domain,record.viewname
         record_nsupdate(record)
