@@ -11,6 +11,13 @@ from xbaydnsweb.web.models import IDC, Node
 import os
 import datetime
 
+def loadGenView():
+    from xbaydns.conf import sysconf
+    from xbaydnsweb import conftoresults
+    conftoresults.main()
+    saveAllConf()
+    return render_to_response('admin/web/iparea/change_list.html',locals())
+
 def smartload(request):
     if request.method == 'POST':
         msg = _("Smart View Msg Complete")
