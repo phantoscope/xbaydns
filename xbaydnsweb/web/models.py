@@ -174,9 +174,9 @@ def isValiableRInfo(field_data,all_data):
             raise validators.ValidationError("error")
     elif r_type.record_type == 'CNAME':
         try:
-            name = field_data[:field_data.index('.')]
-            domain = field_data[field_data.index('.')+1:]
-            
+            domain_str = all_data['record_info']
+            name = domain_str[:domain_str.index('.')]
+            domain = domain_str[domain_str.index('.')+1:]
             if len(Record.objects.filter(name=name,domain__name=domain)) == 0:
                 raise validators.ValidationError("error")
         except:
