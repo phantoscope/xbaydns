@@ -169,18 +169,18 @@ def isValiableRInfo(field_data,all_data):
     if r_type.record_type == 'A':
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
         if ipv4_re.match(str(all_data['record_info'])) == None:
-            raise validators.ValidationError("IP地址格式不正确")
-        if all_data['idc'] == None:
-            raise validators.ValidationError("请指定本记录的服务出口")
+            raise validators.ValidationError("error")
+        if all_data['idc'] == None or all_data['idc'] == '':
+            raise validators.ValidationError("error")
     elif r_type.record_type == 'CNAME':
         try:
             name = field_data[:field_data.index('.')]
             domain = field_data[field_data.index('.')+1:]
             
             if len(Record.objects.filter(name=name,domain__name=domain)) == 0:
-                raise validators.ValidationError("指向的A记录不存在")
+                raise validators.ValidationError("error")
         except:
-            raise validators.ValidationError("格式不正确")
+            raise validators.ValidationError("error")
 
 def isDuplicateRecord(field_data,all_data):
     if len(Record.objects.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
