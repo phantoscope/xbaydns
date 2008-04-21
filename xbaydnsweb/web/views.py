@@ -11,7 +11,7 @@ from xbaydnsweb.web.models import IDC, Node
 import os
 import datetime
 
-def loadGenView(request):
+def loadgenview(request):
     from xbaydns.conf import sysconf
     from xbaydnsweb import conftoresults
     conftoresults.main()
