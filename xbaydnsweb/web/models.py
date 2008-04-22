@@ -152,7 +152,7 @@ class IPArea(models.Model):
     service_route = models.TextField(verbose_name='service_route',help_text='')
     
     class Admin:
-        list_display = ('ip','view','acl','service_route')
+        list_display = ('ip','service_route')
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('view','acl')
