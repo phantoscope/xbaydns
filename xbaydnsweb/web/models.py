@@ -133,8 +133,8 @@ class RecordType(models.Model):
     """Record types"""
     record_type = models.CharField(max_length=10,verbose_name=_('record_type'),help_text='')
     
-    class Admin:
-        list_display = ('record_type',)
+#    class Admin:
+#        list_display = ('record_type',)
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('record_type',)
@@ -290,8 +290,8 @@ class Result(models.Model):
     record = models.CharField(max_length=200,verbose_name=_('result_record_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('result_idc_verbose_name'))
 
-    class Admin:
-        list_display = ('ip','record','idc')
+#    class Admin:
+#        list_display = ('ip','record','idc')
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('record',)
