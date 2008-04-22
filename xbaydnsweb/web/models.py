@@ -156,8 +156,8 @@ class IPArea(models.Model):
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('view','acl')
-        verbose_name = 'IPArea'
-        verbose_name_plural = 'IPArea'
+        verbose_name = _('iparea_verbose_name')
+        verbose_name_plural = _('iparea_verbose_name_plural')
 
     def __unicode__(self):
         return self.ip
