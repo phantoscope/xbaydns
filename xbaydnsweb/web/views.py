@@ -1,6 +1,6 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from xbaydnsweb.web.models import Record,Result
 from xbaydnsweb.web.templatetags.webtags import resultToHtml
@@ -16,7 +16,7 @@ def loadgenview(request):
     from xbaydnsweb import conftoresults
     conftoresults.main()
     saveAllConf()
-    return render_to_response('admin/web/iparea/change_list.html',locals())
+    return HttpResponseRedirect('/web/iparea/')
 
 def smartload(request):
     if request.method == 'POST':
