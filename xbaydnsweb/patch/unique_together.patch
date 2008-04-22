@@ -1,7 +1,7 @@
-Index: /Users/yanxu/python/django/trunk/django/db/models/manipulators.py
+Index: django/db/models/manipulators.py
 ===================================================================
---- /Users/yanxu/python/django/trunk/django/db/models/manipulators.py	（版本 7428）
-+++ /Users/yanxu/python/django/trunk/django/db/models/manipulators.py	（工作副本）
+--- django/db/models/manipulators.py	（版本 7438）
++++ django/db/models/manipulators.py	（工作副本）
 @@ -305,8 +305,9 @@
      if hasattr(self, 'original_object') and self.original_object._get_pk_val() == old_obj._get_pk_val():
          pass
