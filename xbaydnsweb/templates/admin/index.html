@@ -8,27 +8,43 @@
 
 {% block content %}
 <div id="content-main">
-	{% if perms.auth %}
-	<div class="module"><h2>Auth</h2><table>
-	    {% if perms.auth.add_group or perms.auth.change_group %}
-	    <tr>
-	        <th>{% if perms.auth.change_group %}<a href="auth/group/">{% endif %}Groups{% if perms.auth.change_group %}</a>{% endif %}</th>
-	        <td class="x50">{% if perms.auth.add_group %}<a href="auth/group/add/" class="addlink">{% endif %}Add{% if perms.auth.add_group %}</a>{% endif %}</td>
-	        <td class="x75">{% if perms.auth.change_group %}<a href="auth/group/" class="changelink">{% endif %}Change{% if perms.auth.change_group %}</a>{% endif %}</td>
-	    </tr>
-	    {% endif %}
-	    {% if perms.auth.add_user or perms.auth.change_user %}
-	    <tr>
-	        <th>{% if perms.auth.change_user %}<a href="auth/user/">{% endif %}Users{% if perms.auth.change_user %}</a>{% endif %}</th>
-	        <td class="x50">{% if perms.auth.add_user %}<a href="auth/user/add/" class="addlink">{% endif %}Add{% if perms.auth.add_user %}</a>{% endif %}</td>
-	        <td class="x75">{% if perms.auth.change_user %}<a href="auth/user/" class="changelink">{% endif %}Change{% if perms.auth.change_user %}</a>{% endif %}</td>
-	    </tr>
-	    {% endif %}
-	</table></div>
-	{% endif %}
-	
-	{% include "admin/index_web.html" %}
-	
+
+{% load adminapplist %}
+
+{% get_admin_app_list as app_list %}
+{% if app_list %}
+    {% for app in app_list %}
+        <div class="module">
+        <table summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">
+        <caption>{% blocktrans with app.name as name %}{{ name }}{% endblocktrans %}</caption>
+        {% for model in app.models %}
+            <tr>
+            {% if model.perms.change %}
+                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+            {% else %}
+                <th scope="row">{{ model.name }}</th>
+            {% endif %}
+
+            {% if model.perms.add %}
+                <td><a href="{{ model.admin_url }}add/" class="addlink">{% trans 'Add' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+
+            {% if model.perms.change %}
+                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+        </div>
+    {% endfor %}
+
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
 </div>
 {% endblock %}
 
