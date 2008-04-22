@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: xbaydns v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-16 05:48+0800\n"
-"PO-Revision-Date: 2008-04-22 16:24+0800\n"
+"PO-Revision-Date: 2008-04-22 16:31+0800\n"
 "Last-Translator: nemo <nemo_fc@sina.com>\n"
 "Language-Team: Simplified Chinese <paradise.qingfeng@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -234,5 +234,8 @@ msgid "iparea_time"
 msgstr "最新探测时间"
 
 msgid "xBayDNS Site Name"
+msgstr "xBayDNS"
+
+msgid "xBayDNS Title"
 msgstr "xBayDNS"
 
