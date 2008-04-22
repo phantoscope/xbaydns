@@ -42,8 +42,8 @@ fi
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bak
 cp ${XDPREFIX}/home/xdslave/.ssh/known_hosts ~/.ssh/known_hosts
 
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/prog ${XDPREFIX}/home/xdslave
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/slave.conf ${XDPREFIX}/home/xdslave/slave.conf
+rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/prog ${XDPREFIX}/home/xdslave
+rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/slave.conf ${XDPREFIX}/home/xdslave/slave.conf
 
 mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 

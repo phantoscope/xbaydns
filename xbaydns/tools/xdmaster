@@ -13,7 +13,7 @@ fi
 masterstartup(){
 killall named >& /dev/null
 ${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u named
-/bin/sh ${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/named/var/log/xdweb.log &
+runuser -s /bin/bash - xbaydns -c "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log" &
 }
 
 if [ -d ${XDPREFIX}/home/xbaydns -a -f ${XDPREFIX}/home/xbaydns/xdenv ]
@@ -109,6 +109,7 @@ mkdir -p $BINDCHROOT/{etc,dev,var/{run,dump,stats,log}}
 chown -R named:named $BINDCHROOT/var/{run,dump,stats}
 touch $BINDCHROOT/var/log/named.log
 chown -R named:named $BINDCHROOT/var/log/named.log
+chmod -R g+w $BINDCHROOT/etc
 
 rm -rf $BINDCHROOT/dev/{random,zero,null}
 mknod $BINDCHROOT/dev/random c 1 8
@@ -126,6 +127,7 @@ XBAYDNS_BIND_USER=named
 PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
 export PATH XDPREFIX XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
 "|tee ${XDPREFIX}/home/xbaydns/xdenv
+cp ${XDPREFIX}/home/xbaydns/xdenv ${XDPREFIX}/home/xbaydns/.profile
 
 chmod +x ${XDPREFIX}/home/xbaydns/xdenv
 source ${XDPREFIX}/home/xbaydns/xdenv

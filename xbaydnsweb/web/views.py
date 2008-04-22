@@ -5,6 +5,7 @@ from django.utils.translation import ugettext as _
 from xbaydnsweb.web.models import Record,Result
 from xbaydnsweb.web.templatetags.webtags import resultToHtml
 from xbaydnsweb.web.utils import saveAllConf
+from xbaydns.conf import sysconf
 from django.conf import settings
 import traceback
 from xbaydnsweb.web.models import IDC, Node
@@ -35,14 +36,15 @@ def smartload(request):
 
 def regen_allkey():
     #TODO: it's awful to refresh all key when update one key
-    open('/home/xbaydns/.ssh/authorized_keys', 'w').write('')
+    print os.path.join(sysconf.xdprefix, 'home/xbaydns/.ssh/authorized_keys')
+    open(os.path.join(sysconf.xdprefix, 'home/xbaydns/.ssh/authorized_keys'), 'w').write('')
     try:
         for idc in IDC.objects.all():
             if idc.pubkey.startswith('ssh-dss'):
-                open('/home/xbaydns/.ssh/authorized_keys', 'a').write(idc.pubkey + '\n')
+                open(os.path.join(sysconf.xdprefix, 'home/xbaydns/.ssh/authorized_keys'), 'a').write(idc.pubkey + '\n')
         for node in Node.objects.filter(type = 'slave'):
             if node.pubkey.startswith('ssh-dss'):
-                open('/home/xbaydns/.ssh/authorized_keys', 'a').write(node.pubkey + '\n')
+                open(os.path.join(sysconf.xdprefix, 'home/xbaydns/.ssh/authorized_keys'), 'a').write(node.pubkey + '\n')
     except:
         print traceback.print_exc()
         return False

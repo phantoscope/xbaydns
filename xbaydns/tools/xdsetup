@@ -22,7 +22,7 @@ else
         AUTHZCODE=$3 
         ${XDPREFIX}/bin/xdagent $MASTERIP $AUTHZCODE
     elif [ $TYPE = "slave" ]; then
-        if [ $# -lt 4 ]; then
+        if [ $# -lt 3 ]; then
             usage
             exit 1
         fi

@@ -11,5 +11,4 @@ fi
 xbaydns_path=`${XDPREFIX}/bin/xdwherepkg`/xbaydnsweb
 echo $xbaydns_path
 cd $xbaydns_path
-source ${XDPREFIX}/home/xbaydns/xdenv
-${XDPREFIX}/bin/python2.5 manage.py runserver 0.0.0.0:80
+${XDPREFIX}/bin/python2.5 manage.py runserver 0.0.0.0:8080
