@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: xbaydns v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-16 05:48+0800\n"
-"PO-Revision-Date: 2008-04-22 16:08+0800\n"
+"PO-Revision-Date: 2008-04-22 16:12+0800\n"
 "Last-Translator: nemo <nemo_fc@sina.com>\n"
 "Language-Team: Simplified Chinese <paradise.qingfeng@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -45,12 +45,10 @@ msgid "domain_ttl"
 msgstr "TTL(s)"
 
 #: models.py:39
-#, fuzzy
 msgid "domain_fields_domaininfo_verbose_name"
 msgstr "域名信息"
 
 #: models.py:40
-#, fuzzy
 msgid "domain_fields_default_ns_verbose_name"
 msgstr "缺省NS记录"
 
