@@ -49,8 +49,8 @@ namedstop = ""
 # 这是bind的重启脚本
 namedrestart = ""
 # 这是xbaydns运算数据目录
-#xbaydnsdb = "/Users/xbaydns/view"
-xbaydnsdb = os.path.expanduser('~/view')
+xbaydnsdb = "/home/xbaydns/view"
+#xbaydnsdb = os.path.expanduser('~/view')
 
 namedef = {'Darwin':
                 {'chroot_path':'/', 

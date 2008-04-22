@@ -14,8 +14,11 @@ import datetime
 def loadgenview(request):
     from xbaydns.conf import sysconf
     from xbaydnsweb import conftoresults
-    conftoresults.main()
-    saveAllConf()
+    try:
+        conftoresults.main()
+        saveAllConf()
+    except:
+        pass
     return HttpResponseRedirect('/web/iparea/')
 
 def smartload(request):
