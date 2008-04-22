@@ -46,7 +46,7 @@ class Domain(models.Model):
         search_fields = ('name','mainter')
         fields = (
                 (_('domain_fields_domaininfo_verbose_name'), {'fields': ('name','mainter','ttl')}),
-                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','idc','record_info',)}),
+                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','record_info',)}),
         )
         #search_fields = ('name',)
     class Meta:
