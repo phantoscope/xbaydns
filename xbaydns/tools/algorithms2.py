@@ -8,8 +8,10 @@ from types import *
 def quicksort(dict,keys):
     result = (keys[0],float(dict[keys[0]].strip()))
     for k,v in dict.items():
-        if k in keys: 
+        if k in keys:
             if result[1] > float(dict[k].strip()) and float(dict[k].strip())>=0:
+                result = (k,float(dict[k].strip()))
+            elif result[1] < 0:
                 result = (k,float(dict[k].strip()))
         else:
             pass
@@ -40,10 +42,11 @@ class PerformanceMatrix:
     
     def partitions(self):
         for service,servers in self.services.items():
+            print service,servers
             for ip,speeds in self.matrix.items():
-                self.ips.setdefault(ip,[])
                 result = quicksort(speeds,servers)
                 if result > 0:
+                    self.ips.setdefault(ip,[])
                     self.ips[ip].append((result,service))
         partitions = {}
         for ip, selection in self.ips.items():
@@ -54,17 +57,23 @@ class PerformanceMatrix:
                 
 if __name__=='__main__':
     import random
-    services = {'www' :['D1', 'D2'], 'ftp' :['D2', 'D3'], 'mtv' : ['D1','D3']}
+    services = {'www.hello.com' :['xd', 'gz'], 'ftp.hello.com' :['gz', 'xa'], 'www.world.com' : ['xd','xa']}
     pmatrix = PerformanceMatrix(services)
     #for i in range(1,10):
     #    pmatrix.ip(ipgen(),speeds = {'D1':random.randint(1,10),'D2':random.randint(1,10),'D3':random.randint(1,10)})
-    pmatrix.ip('10.210.12.1',speeds = {'D1':'1','D2':'2','D3':'3'})
-    pmatrix.ip('10.210.12.2',speeds = {'D1':'3','D2':'2','D3':'1'})
-    pmatrix.ip('10.210.12.3',speeds = {'D1':'2','D2':'3','D3':'1'})
-    pmatrix.ip('10.210.12.4',speeds = {'D1':'1','D2':'2','D3':'3'})
+    pmatrix.ip('99.1.1.1',speeds = {'xd':'5','gz':'10','xa':'15'})
+    pmatrix.ip('99.2.2.2',speeds = {'xd':'5','gz':'15','xa':'20'})
+    pmatrix.ip('99.3.3.3',speeds = {'xd':'5','gz':'20','xa':'25'})
+    pmatrix.ip('99.4.4.4',speeds = {'xd':'15','gz':'10','xa':'5'})
+    pmatrix.ip('99.5.5.5',speeds = {'xd':'20','gz':'15','xa':'10'})
+    pmatrix.ip('99.6.6.6',speeds = {'xd':'10','gz':'15','xa':'5'})
+    pmatrix.ip('99.7.7.7',speeds = {'xd':'20','gz':'15','xa':'5'})
+    pmatrix.ip('99.8.8.8',speeds = {'xd':'10','gz':'10','xa':'10'})
+    pmatrix.ip('99.9.9.9',speeds = {'xd':'10','gz':'-1','xa':'-1'})
+    pmatrix.ip('99.10.10.10',speeds = {'xd':'10','gz':'-1','xa':'5'})
+    pmatrix.ip('99.11.11.11',speeds = {'xd':'-1','gz':'-1','xa':'-1'})
     print pmatrix.matrix
     start = time.time()
     print pmatrix.partitions()
     end = time.time()
     print "cost time: %f"%(end-start)
-    print pmatrix.ips
