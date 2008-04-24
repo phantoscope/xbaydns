@@ -43,7 +43,7 @@ mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
 
 #4. setup up cron
-==================================
+#==================================
 crontab -u xdslave -l >/home/xdslave/old_crontab 2>/dev/null
 crontab -u xdslave /home/xdslave/prog/crontab
 crontab -u root -l |grep -v ReloadNamed>/tmp/root_crontab 2>/dev/null
