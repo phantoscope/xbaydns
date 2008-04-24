@@ -6,23 +6,26 @@ import time, sets
 from types import *
 
 def quicksort(dict,keys):
-    result = (keys[0],float(dict[keys[0]].strip()))
-    for k,v in dict.items():
-        if k in keys:
-            if result[1] > float(dict[k].strip()) and float(dict[k].strip())>=0:
-                result = (k,float(dict[k].strip()))
-            elif result[1] < 0:
-                result = (k,float(dict[k].strip()))
+    for i,idc in enumerate(keys):
+        if i == 0:
+            result = [[idc],float(dict[idc].strip())]
         else:
-            pass
+            if result[1] > float(dict[idc].strip()) and float(dict[idc].strip())>=0:
+                result[0] = [idc]
+                result[1] = float(dict[idc].strip())
+            elif  result[1] == float(dict[idc].strip()) and float(dict[idc].strip())>=0:
+                result[0].append(idc)
+            elif result[1] < 0:
+                result = [[idc],float(dict[idc].strip())]
     if result[1] <0:
-        return -1
-    return result[0]
+        return keys
+    else:
+        return result[0]
 
 def getRoute(selection):
     result = ''
     for i in selection:
-        result = result + ','+i[0]
+        result = result + ','+str(i[0])
     return result[1:]
 
 def ipgen():
@@ -77,3 +80,4 @@ if __name__=='__main__':
     print pmatrix.partitions()
     end = time.time()
     print "cost time: %f"%(end-start)
+    print pmatrix.ips
