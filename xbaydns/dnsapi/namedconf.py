@@ -245,6 +245,21 @@ $TTL %(ttl)s ;10 minute
                 f.close()
         dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
         os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
+    
+    def convAclViewResult(self):
+        """将acl_include顺序化"""
+        acls, views, acl_default, view_default = [],[],[],[]
+        for conf in self.acl_include:
+            if conf.find('default')!=-1:
+                if conf.find('acl')!=-1:
+                    acl_default.append(conf)
+                elif conf.find('view')!=-1:
+                    view_default.append(conf)
+            elif conf.find('acl')!=-1:
+                acls.append(conf)
+            elif conf.find('view')!=-1:
+                views.append(conf)
+        return acls+acl_default+views+view_default
 
     '''
     保存acldef.conf文件,保存所有生成的include语句
@@ -253,7 +268,8 @@ $TTL %(ttl)s ;10 minute
     def __saveAcldef(self,path):
         acl_file=os.path.join(
                 path,sysconf.filename_map['acl'])
-        open(acl_file,'w').write('\n'.join(self.acl_include))
+        new_include=convAclViewResult(self.acl_include)
+        open(acl_file,'w').write('\n'.join(new_include))
     '''
     保存acl和views的配置文件
     ''' 
