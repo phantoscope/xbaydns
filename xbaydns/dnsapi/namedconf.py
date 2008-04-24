@@ -268,7 +268,7 @@ $TTL %(ttl)s ;10 minute
     def __saveAcldef(self,path):
         acl_file=os.path.join(
                 path,sysconf.filename_map['acl'])
-        new_include=convAclViewResult(self.acl_include)
+        new_include=self.convAclViewResult(self.acl_include)
         open(acl_file,'w').write('\n'.join(new_include))
     '''
     保存acl和views的配置文件
