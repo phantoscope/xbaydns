@@ -1,0 +1,18 @@
+echo "-------------- 34 -----------------------"
+dig @10.210.128.34 www.hello.com |grep hello.com
+dig @10.210.128.34 ftp.hello.com |grep hello.com
+dig @10.210.128.34 www.world.com |grep world.com
+
+echo ""
+echo ""
+echo "-------------- 35 -----------------------"
+dig @10.210.128.35 www.hello.com |grep hello.com
+dig @10.210.128.35 ftp.hello.com |grep hello.com
+dig @10.210.128.35 www.world.com |grep world.com
+
+echo ""
+echo ""
+echo "-------------- 26 -----------------------"
+dig @10.210.128.26 www.hello.com |grep hello.com
+dig @10.210.128.26 ftp.hello.com |grep hello.com
+dig @10.210.128.26 www.world.com |grep world.com
