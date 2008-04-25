@@ -1,6 +1,6 @@
 # encoding: utf-8
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from xbaydnsweb.web.models import Record,Result
 from xbaydnsweb.web.templatetags.webtags import resultToHtml
@@ -11,6 +11,16 @@ import traceback
 from xbaydnsweb.web.models import IDC, Node
 import os
 import datetime
+
+def loadgenview(request):
+    from xbaydns.conf import sysconf
+    from xbaydnsweb import conftoresults
+    try:
+        conftoresults.main()
+        saveAllConf()
+    except:
+        pass
+    return HttpResponseRedirect('/web/iparea/')
 
 def smartload(request):
     if request.method == 'POST':

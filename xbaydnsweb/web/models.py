@@ -8,15 +8,15 @@ from datetime import datetime
 import traceback
 import logging.config
 import re,hashlib,time,copy
+from django.core import validators
 
 log = logging.getLogger('xbaydnsweb.web.models')
 
 class Domain(models.Model):
     """Domain Model"""
     name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
-    default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_idc_verbose_name'),help_text='example.com.cn.')
-    idc = models.ForeignKey('IDC',verbose_name=_('record_idc_verbose_name'))
-    record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn.')
+    default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_ns_name'),help_text='example.com.cn.')
+    record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn')
     mainter = models.CharField(max_length=100,verbose_name=_('domain_maintainer'),help_text='')
     ttl = models.IntegerField(max_length=100,verbose_name=_('domain_ttl'),default=3600,help_text='3600')
 
@@ -34,7 +34,6 @@ class Domain(models.Model):
             ns_record.record_type = rt
             ns_record.record_info = self.record_info
             ns_record.ttl = self.ttl
-            ns_record.idc = self.idc
             super(Record,ns_record).save()
         saveAllConf()
     def delete(self):
@@ -47,7 +46,7 @@ class Domain(models.Model):
         search_fields = ('name','mainter')
         fields = (
                 (_('domain_fields_domaininfo_verbose_name'), {'fields': ('name','mainter','ttl')}),
-                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','idc','record_info',)}),
+                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','record_info',)}),
         )
         #search_fields = ('name',)
     class Meta:
@@ -134,8 +133,8 @@ class RecordType(models.Model):
     """Record types"""
     record_type = models.CharField(max_length=10,verbose_name=_('record_type'),help_text='')
     
-    class Admin:
-        list_display = ('record_type',)
+#    class Admin:
+#        list_display = ('record_type',)
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('record_type',)
@@ -153,46 +152,46 @@ class IPArea(models.Model):
     service_route = models.TextField(verbose_name='service_route',help_text='')
     
     class Admin:
-        list_display = ('ip','view','acl','service_route')
+        list_display = ('ip','service_route')
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('view','acl')
-        verbose_name = 'IPArea'
-        verbose_name_plural = 'IPArea'
+        verbose_name = _('iparea_verbose_name')
+        verbose_name_plural = _('iparea_verbose_name_plural')
 
     def __unicode__(self):
         return self.ip
 
 def isValiableRInfo(field_data,all_data):
     r_type = RecordType.objects.get(id=all_data['record_type'])
-    if r_type == 'A':
+    if r_type.record_type == 'A':
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
-        ipv4_re.match(str(field_data), 1)  
-    elif r_type == 'CNAME':
+        if ipv4_re.match(str(all_data['record_info'])) == None:
+            raise validators.ValidationError(_('record_info_iperr'))
+        if all_data['idc'] == None or all_data['idc'] == '':
+            raise validators.ValidationError(_('record_a_idc_required'))
+    elif r_type.record_type == 'CNAME':
         try:
-            name = field_data[:field_data.index('.')]
-            domain = field_data[field_data.index('.')+1:]
-            
+            domain_str = all_data['record_info']
+            name = domain_str[:domain_str.index('.')]
+            domain = domain_str[domain_str.index('.')+1:]
             if len(Record.objects.filter(name=name,domain__name=domain)) == 0:
-                raise validators.ValidationError("field synax error")
+                raise validators.ValidationError(_('record_not_existed_a'))
         except:
-            raise validators.ValidationError("field synax error")
-    elif r_type == 'A':
-        pass
+            raise validators.ValidationError(_('record_syntax_err'))
 
 def isDuplicateRecord(field_data,all_data):
     if len(Record.objects.filter(name=str(all_data['name']),domain__id=str(all_data['domain']),idc__id=str(all_data['idc']),\
-                          record_type__id=str(all_data['record_type']),record_info=str(all_data['record_info']))) >0:
+                          record_type__id=str(all_data['record_type']),record_info=str(all_data['record_info']),ttl=str(all_data['ttl']))) >0:
         raise validators.ValidationError(_("duplicate_record"))
     
 class Record(models.Model):
     """Record Model"""
-    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www',validator_list=[isDuplicateRecord])
+    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'),validator_list=[isValiableRInfo,])
+    name = models.CharField(max_length=100,verbose_name=_('record_name_verbose_name'),help_text='例如:www')
     domain = models.ForeignKey(Domain,verbose_name=_('record_domain_verbose_name'))
-    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'))
-    record_type = models.ForeignKey(RecordType,verbose_name=_('record_type_name'))
+    idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True,null=True)
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
-    is_defaultidc = models.BooleanField(default=False,verbose_name=_('record_is_defaultidc_verbose_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'),default=3600)
 
     def save(self):
@@ -203,89 +202,85 @@ class Record(models.Model):
             old_record = copy.deepcopy(Record.objects.get(id=self.id))
         super(Record,self).save()
         try:
-            if self.idc.alias not in getDetectedIDC() or self.record_type.record_type != 'A':
+            self.viewname="view_default"
+            if old_record !=None:
+                old_record.viewname = "view_default"
+                record_delete(old_record)
+            record_nsupdate(self)
+            if self.record_type.record_type == 'A':
+                if self.idc.alias not in getDetectedIDC():
+                    for iparea in IPArea.objects.all():
+                        self.viewname = iparea.view
+                        if old_record !=None:
+                            old_record.viewname = iparea.view
+                            record_delete(old_record)
+                        record_nsupdate(self)
+                else:
+                    if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
+                        conftoresults.main()
+                        saveAllConf()
+                    else:
+                        if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
+                            conftoresults.main()
+                            saveAllConf()
+                        else:
+                            for iparea in IPArea.objects.all():
+                                if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
+                                    self.viewname = iparea.view
+                                    if old_record !=None:
+                                        old_record.viewname = iparea.view
+                                        record_delete(old_record)
+                                    record_nsupdate(self)
+            else:
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
                     if old_record !=None:
                         old_record.viewname = iparea.view
                         record_delete(old_record)
                     record_nsupdate(self)
-                self.viewname="view_default"
-                if old_record !=None:
-                    old_record.viewname = "view_default"
-                    record_delete(old_record)
-                record_nsupdate(self)
-            else:
-                if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
-                    conftoresults.main()
-                    saveAllConf()
-                    self.viewname="view_default"
-                    if old_record !=None:
-                        old_record.viewname = "view_default"
-                        record_delete(old_record)
-                    record_nsupdate(self)
-                else:
-                    if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==0:
-                        conftoresults.main()
-                        saveAllConf()
-                    else:
-                        for iparea in IPArea.objects.all():
-                            if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
-                                self.viewname = iparea.view
-                                if old_record !=None:
-                                    old_record.viewname = iparea.view
-                                    record_delete(old_record)
-                                record_nsupdate(self)
-           
-            if self.is_defaultidc == True:
-                self.viewname="view_default"
-                if old_record !=None:
-                    old_record.viewname = "view_default"
-                    record_delete(old_record)
-                record_nsupdate(self)
         except:
             super(Record,self).delete()
             print traceback.print_exc()
 
     def delete(self):
         from xbaydnsweb.web.utils import *
-        if len(Record.objects.filter(record_type__record_type='NS',domain=self.domain))==1:
-            return 
-        if self.is_defaultidc == True:
-                self.viewname="view_default"
-                record_delete(self)
+        if len(Record.objects.filter(record_type__record_type='NS',domain=self.domain))==1 and self.record_type.record_type == "NS":
+            return
+        self.viewname="view_default"
+        record_delete(self)
         if len(Result.objects.filter(idc__alias=self.idc.alias)) != 0:
             if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
                 super(Record,self).delete()
+                for iparea in IPArea.objects.all():
+                    if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
+                        self.viewname = iparea.view
+                        record_delete(self)
                 conftoresults.main()
                 saveAllConf()
+                return
             else:
                 for iparea in IPArea.objects.all():
                     if ("%s.%s"%(self.name,self.domain),self.idc.alias) in list(eval(iparea.service_route)):
                         self.viewname = iparea.view
                         record_delete(self)
-                self.viewname="view_default"
-                record_delete(self)
         else:
             for iparea in IPArea.objects.all():
                 self.viewname = iparea.view
                 record_delete(self)
-            self.viewname="view_default"
-            record_delete(self)
         super(Record,self).delete()
         
     class Admin:
-        list_display = ('name','domain','record_type','record_info','ttl','idc','is_defaultidc')
+        list_display = ('name','domain','record_type','record_info','ttl','idc')
         search_fields = ('name','domain','idc','record_info','record_type')
         fields = (
                 (_('record_fields_domaininfo_verbose_name'), {'fields': ('record_type','name','domain','ttl')}),
-                (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc','is_defaultidc',)}),
+                (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc',)}),
         )
-        #list_filter = ('is_defaultidc', 'idc')
     class Meta:
         ordering = ('name',)
         verbose_name = _('record_verbose_name')
         verbose_name_plural = _('record_verbose_name_plural')
+        unique_together = (("record_type","domain", "name","idc","record_info"),)
     def __unicode__(self):
         return '%s.%s in %s'%(self.name,self.domain,self.idc)
 
@@ -295,8 +290,8 @@ class Result(models.Model):
     record = models.CharField(max_length=200,verbose_name=_('result_record_verbose_name'))
     idc = models.ForeignKey(IDC,verbose_name=_('result_idc_verbose_name'))
 
-    class Admin:
-        list_display = ('ip','record','idc')
+#    class Admin:
+#        list_display = ('ip','record','idc')
         #search_fields = ('ip','record','idc')
     class Meta:
         ordering = ('record',)

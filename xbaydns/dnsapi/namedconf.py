@@ -244,7 +244,7 @@ $TTL %(ttl)s ;10 minute
                 f.write(zonedata)
                 f.close()
         dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
-        os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
+        os.system("chmod -R g+w %s"% dpath)
 
     '''
     保存acldef.conf文件,保存所有生成的include语句

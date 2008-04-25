@@ -28,7 +28,7 @@ setup(
     packages = find_packages(exclude=['*tests*']),
     include_package_data = True,
     scripts = [
-        'xbaydns/tools/xdgenview', 
+        'xbaydns/tools/xdloadview', 
         'xbaydns/tools/xdweb',
         'xbaydns/tools/xdsetup',
         'xbaydns/tools/xdmaster',

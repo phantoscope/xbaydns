@@ -1,0 +1,64 @@
+{% load i18n %}
+{% if perms.web %}
+<div class="module"><h2>Web</h2><table>
+	{% if perms.web.add_domain or perms.web.change_domain %}
+    <tr>
+        <th>{% if perms.web.change_domain %}<a href="web/domain/">{% endif %}{% trans "domain_verbose_name_plural" %}{% if perms.web.change_domain %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_domain %}<a href="web/domain/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_domain %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_domain %}<a href="web/domain/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_domain %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+
+	{% if perms.web.add_idc or perms.web.change_idc %}
+    <tr>
+        <th>{% if perms.web.change_idc %}<a href="web/idc/">{% endif %}{% trans "idc_verbose_name_plural" %}{% if perms.web.change_idc %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_idc %}<a href="web/idc/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_idc %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_idc %}<a href="web/idc/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_idc %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+	
+	{% if perms.web.add_record or perms.web.change_record %}
+    <tr>
+        <th>{% if perms.web.change_record %}<a href="web/record/">{% endif %}{% trans "record_verbose_name_plural" %}{% if perms.web.change_record %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_record %}<a href="web/record/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_record %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_record %}<a href="web/record/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_record %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+
+    {% if perms.web.add_node or perms.web.change_node %}
+    <tr>
+        <th>{% if perms.web.change_node %}<a href="web/node/">{% endif %}{% trans "node_verbose_name_plural" %}{% if perms.web.change_node %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_node %}<a href="web/node/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_node %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_node %}<a href="web/node/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_node %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+
+	{% if perms.web.add_result or perms.web.change_result %}
+    <tr>
+        <th>{% if perms.web.change_result %}<a href="web/result/">{% endif %}{% trans "result_verbose_name_plural" %}{% if perms.web.change_result %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_result %}<a href="web/result/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_result %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_result %}<a href="web/result/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_result %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if perms.web.add_recordtype or perms.web.change_recordtype %}
+    <tr>
+        <th>{% if perms.web.change_recordtype %}<a href="web/recordtype/">{% endif %}{% trans "record_type_name_plural" %}{% if perms.web.change_recordtype %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_recordtype %}<a href="web/recordtype/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_recordtype %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_recordtype %}<a href="web/recordtype/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_recordtype %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+    
+    
+
+	{% if perms.web.add_iparea or perms.web.change_iparea %}
+    <tr>
+        <th>{% if perms.web.change_iparea %}<a href="web/iparea/">{% endif %}{% trans "IPArea" %}{% if perms.web.change_iparea %}</a>{% endif %}</th>
+        <td class="x50">{% if perms.web.add_iparea %}<a href="web/iparea/add/" class="addlink">{% endif %}{% trans "Add" %}{% if perms.web.add_iparea %}</a>{% endif %}</td>
+        <td class="x75">{% if perms.web.change_iparea %}<a href="web/iparea/" class="changelink">{% endif %}{% trans "Change" %}{% if perms.web.change_iparea %}</a>{% endif %}</td>
+    </tr>
+    {% endif %}
+    
+    
+</table></div>
+{% endif %}

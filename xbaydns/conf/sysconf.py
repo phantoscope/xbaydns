@@ -51,6 +51,7 @@ namedrestart = ""
 # 这是xbaydns运算数据目录
 xdprefix = "/opt/xbaydns"
 xbaydnsdb = os.path.join(xdprefix, "home/xbaydns/view")
+#xbaydnsdb = os.path.expanduser('~/view')
 
 namedef = {'Darwin':
                 {'chroot_path':'/', 

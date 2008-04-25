@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: xbaydns v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-16 05:48+0800\n"
-"PO-Revision-Date: 2008-04-10 19:49+0800\n"
+"PO-Revision-Date: 2008-04-22 17:24+0800\n"
 "Last-Translator: nemo <nemo_fc@sina.com>\n"
 "Language-Team: Simplified Chinese <paradise.qingfeng@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -24,36 +24,33 @@ msgid "domain_name_verbose_name"
 msgstr "域"
 
 #: models.py:17
-#, fuzzy
-msgid "domain_record_idc_verbose_name"
-msgstr "所属服务出口"
+msgid "domain_record_ns_name"
+msgstr "NS记录名"
 
-#: models.py:18 models.py:182
+#: models.py:18
+#: models.py:182
 msgid "record_idc_verbose_name"
 msgstr "所属服务出口"
 
 #: models.py:19
-#, fuzzy
 msgid "domain_record_info_name"
-msgstr "记录值"
+msgstr "NS记录值"
 
 #: models.py:20
 msgid "domain_maintainer"
-msgstr ""
+msgstr "域管理员"
 
 #: models.py:21
 msgid "domain_ttl"
-msgstr ""
+msgstr "TTL(s)"
 
 #: models.py:39
-#, fuzzy
 msgid "domain_fields_domaininfo_verbose_name"
 msgstr "域名信息"
 
 #: models.py:40
-#, fuzzy
 msgid "domain_fields_default_ns_verbose_name"
-msgstr "缺省记录"
+msgstr "缺省NS记录"
 
 #: models.py:45
 msgid "domain_verbose_name"
@@ -83,13 +80,14 @@ msgstr "公钥"
 msgid "idc_regtime_verbose_name"
 msgstr "注册时间"
 
-#: models.py:64 models.py:69
+#: models.py:64
+#: models.py:69
 msgid "idc_verbose_name"
 msgstr "服务出口"
 
 #: models.py:70
 msgid "idc_verbose_name_plural"
-msgstr "1.2 服务出口管理"
+msgstr "1.3 服务出口管理"
 
 #: models.py:88
 msgid "node_name_verbose_name"
@@ -119,7 +117,8 @@ msgstr "公钥"
 msgid "node_regtime_verbose_name"
 msgstr "注册时间"
 
-#: models.py:99 models.py:104
+#: models.py:99
+#: models.py:104
 msgid "node_verbose_name"
 msgstr "辅DNS"
 
@@ -131,13 +130,34 @@ msgstr "1.4 辅DNS管理"
 msgid "record_type"
 msgstr "记录类型"
 
-#: models.py:132 models.py:183
+#: models.py:132
+#: models.py:183
 msgid "record_type_name"
 msgstr "记录类型"
 
+#: models.py:159
+msgid "iparea_verbose_name_plural"
+msgstr "1.5 智能分区管理"
+
+#: models.py:160
+msgid "iparea_verbose_name"
+msgstr "智能分区管理"
+
+#: models.py:183
+msgid "record_info_iperr"
+msgstr "IP地址格式不正确"
+
+#: models.py:183
+msgid "record_a_idc_required"
+msgstr "请指定本记录的服务出口"
+
 #: models.py:133
-msgid "record_type_name_plural"
-msgstr "记录类型"
+msgid "record_not_existed_a"
+msgstr "指向的A记录不存在"
+
+#: models.py:133
+msgid "record_syntax_err"
+msgstr "格式不正确"
 
 #: models.py:176
 msgid "duplicate_record"
@@ -177,7 +197,7 @@ msgstr "记录"
 
 #: models.py:255
 msgid "record_verbose_name_plural"
-msgstr "1.3 记录管理"
+msgstr "1.2 记录管理"
 
 #: models.py:261
 msgid "result_ip_verbose_name"
@@ -207,20 +227,21 @@ msgstr "生成成功"
 msgid "Smart View Msg Error"
 msgstr "生成失败"
 
-#~ msgid "SmartTitle"
-#~ msgstr "智能探测结果"
+msgid "iparea_apply"
+msgstr "应用最新智能探测结果"
 
-#~ msgid "SmartSubmitButton"
-#~ msgstr "应用结果"
+msgid "iparea_time"
+msgstr "最新探测时间"
 
-#~ msgid "xBayDNS Title"
-#~ msgstr "xBayDNS Admin"
+msgid "iparea_ip_verbose_name"
+msgstr "来源IP"
 
-#~ msgid "xBayDNS Site Name"
-#~ msgstr "xBayDNS Administrator"
+msgid "iparea_service_route_verbose_name"
+msgstr "服务路径"
 
-#~ msgid "MyApp Title"
-#~ msgstr "自定义模块"
+msgid "xBayDNS Site Name"
+msgstr "xBayDNS"
 
-#~ msgid "MyApp Smart"
-#~ msgstr "查看智能探测结果"
+msgid "xBayDNS Title"
+msgstr "xBayDNS"
+

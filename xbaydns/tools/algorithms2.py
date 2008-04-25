@@ -9,10 +9,12 @@ def quicksort(dict,keys):
     result = (keys[0],float(dict[keys[0]].strip()))
     for k,v in dict.items():
         if k in keys: 
-            if result[1] > float(dict[k].strip()):
+            if result[1] > float(dict[k].strip()) and float(dict[k].strip())>=0:
                 result = (k,float(dict[k].strip()))
         else:
             pass
+    if result[1] <0:
+        return -1
     return result[0]
 
 def getRoute(selection):
@@ -41,7 +43,8 @@ class PerformanceMatrix:
             for ip,speeds in self.matrix.items():
                 self.ips.setdefault(ip,[])
                 result = quicksort(speeds,servers)
-                self.ips[ip].append((result,service))
+                if result > 0:
+                    self.ips[ip].append((result,service))
         partitions = {}
         for ip, selection in self.ips.items():
             route = getRoute(selection)

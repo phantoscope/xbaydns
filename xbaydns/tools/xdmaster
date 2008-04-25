@@ -12,7 +12,7 @@ fi
 
 masterstartup(){
 killall named >& /dev/null
-${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u named
+${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u xbaydns
 runuser -s /bin/bash - xbaydns -c "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log" &
 }
 
@@ -74,6 +74,7 @@ ln -s `which rsync` $SMRSH_ALLOWCMD_DIR/
 #1.2 make user(xbaydns) for sync
 #-----------------------------------
 rm -rf ${XDPREFIX}/home/xbaydns
+groupadd named
 userdel xbaydns
 useradd xbaydns -g named -s $SMRSH_CMD -d ${XDPREFIX}/home/xbaydns
 
@@ -106,10 +107,9 @@ crontab -u xbaydns ${XDPREFIX}/home/xbaydns/prog/crontab
 #2.prepare bind's chroot
 #-----------------------
 mkdir -p $BINDCHROOT/{etc,dev,var/{run,dump,stats,log}}
-chown -R named:named $BINDCHROOT/var/{run,dump,stats}
+chown -R xbaydns:named $BINDCHROOT/var/{run,dump,stats}
 touch $BINDCHROOT/var/log/named.log
-chown -R named:named $BINDCHROOT/var/log/named.log
-chmod -R g+w $BINDCHROOT/etc
+chown -R xbaydns:named $BINDCHROOT/var/log/named.log
 
 rm -rf $BINDCHROOT/dev/{random,zero,null}
 mknod $BINDCHROOT/dev/random c 1 8
@@ -123,7 +123,7 @@ XDPREFIX=${XDPREFIX}
 XBAYDNS_CHROOT_PATH=$BINDCHROOT
 XBAYDNS_BIND_CONF=etc
 XBAYDNS_BIND_START=${XDPREFIX}/named/sbin/named
-XBAYDNS_BIND_USER=named
+XBAYDNS_BIND_USER=xbaydns
 PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
 export PATH XDPREFIX XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
 "|tee ${XDPREFIX}/home/xbaydns/xdenv
@@ -131,13 +131,15 @@ cp ${XDPREFIX}/home/xbaydns/xdenv ${XDPREFIX}/home/xbaydns/.profile
 
 chmod +x ${XDPREFIX}/home/xbaydns/xdenv
 source ${XDPREFIX}/home/xbaydns/xdenv
-id named || useradd named -s /sbin/nologin
 ${XDPREFIX}/bin/xdinitbind master
-chown -R named:named $BINDCHROOT
+chown -R xbaydns:named $BINDCHROOT
 chown -R xbaydns:named ${XDPREFIX}/home/xbaydns
 chmod -R 700 ${XDPREFIX}/home/xbaydns
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
+
+$BINDCHROOT/sbin/rndc reload
+
 echo "\
 
 
