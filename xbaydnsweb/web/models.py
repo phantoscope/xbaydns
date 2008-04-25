@@ -216,7 +216,7 @@ class Record(models.Model):
                             record_delete(old_record)
                         record_nsupdate(self)
                 else:
-                    if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
+                    if len(Record.objects.filter(idc=self.idc,record_type__record_type='A')) == 1:
                         conftoresults.main()
                         saveAllConf()
                     else:

@@ -58,13 +58,14 @@ def main():
             speeds_dict.update({agent:time})
         pmatrix.ip(ip,speeds_dict)
     iparea =pmatrix.partitions()
-    for k,v in pmatrix.ips.items():
-        for d,i in v:
-            Result.objects.create(ip=k,record=i,idc=IDC.objects.filter(alias=d)[0])
+#    for k,v in pmatrix.ips.items():
+#        for d,i in v:
+#            Result.objects.create(ip=k,record=i,idc=IDC.objects.filter(alias=d)[0])
     for k,v in iparea.items():
         service_route=[]
-        for service,idc in zip(services,k.split(',')):
-            service_route.append((service,idc))
+        for service,idcs in zip(services,eval(k)):
+            for idc in idcs:
+                service_route.append((service,idc))
         IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
 
 if __name__ == '__main__':
