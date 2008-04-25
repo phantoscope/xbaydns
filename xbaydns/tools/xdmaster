@@ -13,7 +13,15 @@ fi
 masterstartup(){
 killall named >& /dev/null
 ${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u xbaydns
+$BINDCHROOT/sbin/rndc reload
+OS=`uname`
+if [ "${OS}" = "Linux" ]
+then
 runuser -s /bin/bash - xbaydns -c "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log" &
+elif [ "${OS}" = "FreeBSD" ]
+then
+daemon -u xbaydns "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log"
+fi
 }
 
 if [ -d ${XDPREFIX}/home/xbaydns -a -f ${XDPREFIX}/home/xbaydns/xdenv ]
@@ -86,6 +94,7 @@ mkdir -p ${XDPREFIX}/home/xbaydns/view/{iplatency,idcview}
 mkdir -p ${XDPREFIX}/home/xbaydns/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
 mkdir -p ${XDPREFIX}/home/xbaydns/agent/{prog,iplatency}
 
+cp `${XDPREFIX}/bin/xdwherepkg`/xbaydnsweb/xbaydns.db ${XDPREFIX}/home/xbaydns/
 touch ${XDPREFIX}/home/xbaydns/.ssh/authorized_keys
 
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/prober/* ${XDPREFIX}/home/xbaydns/agent/prog
@@ -100,6 +109,10 @@ echo "MASTER_IP=\"$MASTERIP\"">${XDPREFIX}/home/xbaydns/slave/slave.conf
 
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/master/* ${XDPREFIX}/home/xbaydns/prog
 chmod +x ${XDPREFIX}/home/xbaydns/prog/*
+
+echo "*/5 * * * * ${XDPREFIX}/home/xbaydns/prog/Log2IPlist.sh" > ${XDPREFIX}/home/xbaydns/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xbaydns/prog/genidcview.sh" >> ${XDPREFIX}/home/xbaydns/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xbaydns/prog/genslaveconf.sh" >> ${XDPREFIX}/home/xbaydns/prog/crontab
 
 crontab -u xbaydns -l >${XDPREFIX}/home/xbaydns/old_crontab 2>/dev/null
 crontab -u xbaydns ${XDPREFIX}/home/xbaydns/prog/crontab
@@ -137,8 +150,6 @@ chown -R xbaydns:named ${XDPREFIX}/home/xbaydns
 chmod -R 700 ${XDPREFIX}/home/xbaydns
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
-
-$BINDCHROOT/sbin/rndc reload
 
 echo "\
 
