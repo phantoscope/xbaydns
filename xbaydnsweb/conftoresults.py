@@ -62,11 +62,13 @@ def main():
 #        for d,i in v:
 #            Result.objects.create(ip=k,record=i,idc=IDC.objects.filter(alias=d)[0])
     for k,v in iparea.items():
-        service_route=[]
-        for service,idcs in zip(services,eval(k)):
-            for idc in idcs:
-                service_route.append((service,idc))
-        IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
+        service_route_list = zip(services,eval(k))
+        if services.items() != service_route_list:
+            service_route=[]
+            for service,idcs in service_route_list:
+                for idc in idcs:
+                    service_route.append((service,idc))
+            IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
 
 if __name__ == '__main__':
     os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
