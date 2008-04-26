@@ -274,6 +274,8 @@ $TTL %(ttl)s ;10 minute
     保存acl和views的配置文件
     ''' 
     def save(self,path=sysconf.namedconf):
+        os.system("rndc freeze")
+        os.system("rndc thaw")
         self.__saveAcls(path)
         self.__saveViews(path)
         self.__saveDomains(path)

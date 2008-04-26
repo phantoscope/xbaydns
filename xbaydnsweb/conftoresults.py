@@ -38,6 +38,7 @@ def main():
     from xbaydns.conf import sysconf
     from xbaydnsweb.web.models import IDC,Result,Record,IPArea
     from xbaydns.tools.algorithms2 import quicksort,getRoute,PerformanceMatrix
+    from types import ListType
     
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     
@@ -66,8 +67,11 @@ def main():
         if services.items() != service_route_list:
             service_route=[]
             for service,idcs in service_route_list:
-                for idc in idcs:
-                    service_route.append((service,idc))
+                if type(idcs) == ListType:
+                    for idc in idcs:
+                        service_route.append((service,idc))
+                else:
+                    service_route.append((service,idcs))
             IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
 
 if __name__ == '__main__':
