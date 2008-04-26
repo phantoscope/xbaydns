@@ -17,6 +17,7 @@ class Domain(models.Model):
     name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
     default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_ns_name'),help_text='example.com.cn.')
     record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn')
+    a_record_info = models.CharField(max_length=100,verbose_name=_('domain_a_record_info_name'),help_text='1.1.1.1')
     mainter = models.CharField(max_length=100,verbose_name=_('domain_maintainer'),help_text='')
     ttl = models.IntegerField(max_length=100,verbose_name=_('domain_ttl'),default=3600,help_text='3600')
 
@@ -35,6 +36,14 @@ class Domain(models.Model):
             ns_record.record_info = self.record_info
             ns_record.ttl = self.ttl
             super(Record,ns_record).save()
+            rt=RecordType.objects.get(record_type='A')
+            ans_record  = Record()
+            ans_record.name = self.record_info[:self.record_info.index('.')]
+            ans_record.domain = self
+            ans_record.record_type = rt
+            ans_record.record_info = self.a_record_info
+            ans_record.ttl = self.ttl
+            super(Record,ans_record).save()
         saveAllConf()
     def delete(self):
         from xbaydnsweb.web.utils import *
@@ -46,7 +55,7 @@ class Domain(models.Model):
         search_fields = ('name','mainter')
         fields = (
                 (_('domain_fields_domaininfo_verbose_name'), {'fields': ('name','mainter','ttl')}),
-                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','record_info',)}),
+                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','record_info','a_record_info')}),
         )
         #search_fields = ('name',)
     class Meta:
