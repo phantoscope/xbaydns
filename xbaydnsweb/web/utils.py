@@ -59,7 +59,7 @@ def record_delete(record):
 def getRecords(iparea):
     """将Result的结果按照域名合并汇总并返回"""
     records=[]
-    for domain_name,idc in list(eval(iparea.service_route)):
+    for domain_name,idc_alias in list(eval(iparea.service_route)):
         records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias,record_type__record_type='A'))
     return records
 
