@@ -1,13 +1,13 @@
 #!/bin/sh
 
 export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
-source /home/xbaydns/xdenv
+source ../xdenv
 #TODO
-source /home/xbaydns/master.conf
+source ../master.conf
 
-env|grep XBAY
-export MASTER_PATH=$XBAYDNS_CHROOT_PATH/etc
-export SLAVE_PATH=/home/xbaydns/slave/named/etc
+#env|grep XBAY
+export MASTER_PATH=${XBAYDNS_CHROOT_PATH}/etc
+export SLAVE_PATH=${XDPREFIX}/home/xbaydns/slave/named/etc
 echo "SLAVE_PATH",$SLAVE_PATH
 mkdir -p $SLAVE_PATH
 cp -rf $MASTER_PATH/acl $SLAVE_PATH

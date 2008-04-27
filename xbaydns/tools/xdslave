@@ -42,8 +42,8 @@ fi
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bak
 cp ${XDPREFIX}/home/xdslave/.ssh/known_hosts ~/.ssh/known_hosts
 
-rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/prog ${XDPREFIX}/home/xdslave
-rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/slave.conf ${XDPREFIX}/home/xdslave/slave.conf
+rsync -avz -e "ssh -i ${XDPREFIX}/home/xdslave/rsync-key" xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/prog ${XDPREFIX}/home/xdslave
+rsync -avz -e "ssh -i ${XDPREFIX}/home/xdslave/rsync-key" xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/slave/slave.conf ${XDPREFIX}/home/xdslave/slave.conf
 
 mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
@@ -51,10 +51,10 @@ mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 #4. setup up cron
 ==================================
 crontab -u xdslave -l >${XDPREFIX}/home/xdslave/old_crontab 2>/dev/null
+echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UploadLog.sh" > ${XDPREFIX}/home/xdslave/prog/crontab
+#echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/ReloadNamed.sh" >>${XDPREFIX}/home/xdslave/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UpdateNamed.sh">>${XDPREFIX}/home/xdslave/prog/crontab
 crontab -u xdslave ${XDPREFIX}/home/xdslave/prog/crontab
-crontab -u root -l |grep -v UpdateNamed>/tmp/root_crontab 2>/dev/null
-echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UpdateNamed.sh">>/tmp/root_crontab
-crontab -u root /tmp/root_crontab
 
 
 #5. prepare bind's chroot
@@ -76,19 +76,19 @@ echo "\
 XBAYDNS_CHROOT_PATH=$BINDCHROOT
 XBAYDNS_BIND_CONF=/etc
 XBAYDNS_BIND_START=${XDPREFIX}/named/sbin/named
-XBAYDNS_BIND_USER=named
+XBAYDNS_BIND_USER=xdslave
 PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
 export PATH XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
 "|tee ${XDPREFIX}/home/xdslave/xdenv
 
 chmod +x ${XDPREFIX}/home/xdslave/xdenv
 source ${XDPREFIX}/home/xdslave/xdenv
-id named || useradd named -s /sbin/nologin
+id xdslave || useradd xdslave -s /sbin/nologin
 ${XDPREFIX}/bin/xdinitbind slave $MASTERIP
 
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
-chown -R named:named $BINDCHROOT
+chown -R xdslave:named $BINDCHROOT
 chmod -R 770 $BINDCHROOT
 chown -R xdslave:named ${XDPREFIX}/home/xdslave
 chmod -R 700 ${XDPREFIX}/home/xdslave
@@ -108,7 +108,7 @@ HOME      :${XDPREFIX}/home/xdslave
 
 The next thing you may do:
 .  Start named server and make sure named running normally
-   #${XDPREFIX}/named/sbin/named -t $XBAYDNS_CHROOT_PATH -u named
+   #${XDPREFIX}/named/sbin/named -t $XBAYDNS_CHROOT_PATH -u xdslave
    #tail -f /var/log/messages
 
 "

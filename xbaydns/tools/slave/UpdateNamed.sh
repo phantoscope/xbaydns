@@ -29,8 +29,6 @@ if ! diff ${XDPREFIX}/home/xdslave/named/etc/view  $XBAYDNS_CHROOT_PATH/etc/view
 fi
 
 if [ -f need_reload ]; then
-   chown -R named:named $XBAYDNS_CHROOT_PATH/etc/{acl,view}
-   chmod -R 770 $XBAYDNS_CHROOT_PATH/etc/{acl,view}
-   rndc reload
+   ${XDPREFIX}/named/sbin/rndc reload
    rm need_reload
 fi

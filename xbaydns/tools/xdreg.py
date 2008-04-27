@@ -18,7 +18,7 @@ slavehome = xdprefix+'/home/xdslave'
 
 def reg_agent(server, authzcode, pubkey):
     import urllib2
-    url = "http://%s/agent/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
+    url = "http://%s:8080/agent/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
     sock = urllib2.urlopen(url)
     stream = sock.read()
     sock.close()
@@ -34,7 +34,7 @@ def reg_agent(server, authzcode, pubkey):
 
 def reg_slave(server, authzcode, pubkey):
     import urllib2
-    url = "http://%s/slave/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
+    url = "http://%s:8080/slave/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
     print "URL:%s" % url
     sock = urllib2.urlopen(url)
     stream = sock.read()
@@ -71,13 +71,13 @@ def main():
             parser.print_help()
             sys.exit(1)
 
-        pubkey_string = open(os.path.join(agenthome,'rsync-key.pub'), 'w').read()
+        pubkey_string = open(os.path.join(agenthome,'rsync-key.pub'), 'r').read()
         return reg_agent(options.server, options.authzcode, pubkey_string)
     elif (args[0] == 'slave'):
         if len(options.authzcode) == 0:
             parser.print_help()
             sys.exit(1)
-        pubkey_string = open(os.path.join(slavehome, 'rsync-key.pub'), 'w').read()
+        pubkey_string = open(os.path.join(slavehome, 'rsync-key.pub'), 'r').read()
         return reg_slave(options.server, options.authzcode, pubkey_string)
     else:
         parser.print_help()
