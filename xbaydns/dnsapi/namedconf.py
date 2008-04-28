@@ -151,9 +151,16 @@ key "%s" {
     '''
     获取Serial
     '''
-    def getSerial(self):
-        d=datetime.datetime.now()
-        return '%s%s%s01'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2))
+    def getSerial(self,zonefilepath):
+        from dns import zone,rdatatype,rdataset,rdata
+        try:
+            zoneinfo = zone.from_file(zonefilepath)
+            soaset = zoneinfo.get_rdataset(l.origin,dns.rdatatype.SOA)
+            if len(soaset) > 0:
+                return soaset[0].serial + 1
+        except:
+            d=datetime.datetime.now()
+            return '%s%s%s000001'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2))
     
     '''
     del domain(domain) 删除一个DNS域 
@@ -215,8 +222,9 @@ key "%s" {
         for view,domains in self.domains.items():
             for domain,value in domains.items():
                 if domain=='defaultzone':continue
-                f=open(os.path.join(path,"%s"
-                        %self.getDomainFileName(domain,view)),"w")
+                zonefilepath=os.path.join(path,"%s"
+                        %self.getDomainFileName(domain,view))
+                f=open(zonefilepath,"w")
                 domain_admin=sysconf.default_admin
                 domain_ttl='3600'
                 info=Domain.objects.filter(name=domain)
@@ -228,25 +236,24 @@ key "%s" {
                     except:
                         r_name = ns.record_info
                     nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
-                allnsinfo='\n'.join( map(lambda x:'%s IN NS %s'%(x.name,x.record_info),nsrecord) )
-                allnsainfo='\n'.join( map(lambda x:'%s IN A %s'%(x.name,x.record_info),nsareords) )
+                allnsinfo='\n'.join( map(lambda x:'%s            NS    %s'%(x.name,x.record_info),nsrecord) )
+                allnsainfo='\n'.join( map(lambda x:'%s            A    %s'%(x.name,x.record_info),nsareords) )
                 domain_admin=str(info[0].mainter)
                 domain_ttl=str(info[0].ttl)
 
                 zonedata='''
-$ORIGIN .
-$TTL %(ttl)s ;10 minute
+$ORIGIN %(domain)s.
+$TTL %(ttl)s    ;10 minute
 %(domain)s IN SOA %(soa)s. %(admin)s. (
-	    %(time)s	; serial
-	    60		; refresh (1 minute)
-	    3600	; retry (1 hour)
-	    604800	; expire (1 week)
-	    3600	; minimum (1 hour)
+                %(time)s	; serial
+                60		    ; refresh (1 minute)
+                3600	    ; retry (1 hour)
+	            604800	    ; expire (1 week)
+	            3600	    ; minimum (1 hour)
 	    )
-
 %(ns)s
 %(nsa)s
-'''%{'domain':domain,'time':self.getSerial(),
+'''%{'domain':domain,'time':self.getSerial(zonefilepath),
                      'ns':allnsinfo,'soa':sysconf.default_soa,
                      'admin':domain_admin,'ttl':domain_ttl,'nsa':allnsainfo}
                 f.write(zonedata)
