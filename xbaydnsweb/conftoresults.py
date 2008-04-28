@@ -26,6 +26,11 @@ def getServiceRegions():
             service_reg.setdefault(key,[r[2]])
     return service_reg
 
+def getRegions():
+    from xbaydnsweb.web.models import IDC
+    regions = IDC.objects.all()
+    return map(lambda x:x.alias,regions)
+
 def findFastSpeed(agents,times):
     times=map(lambda x:float(x.strip()),times)
     if reduce(lambda x,y:x==y, times):return []
@@ -45,6 +50,8 @@ def main():
     map(lambda x:x.delete(),Result.objects.all())
     map(lambda x:x.delete(),IPArea.objects.all())
     services = getServiceRegions()
+    regions_alias = getRegions()
+    
     print "services: ",str(services)
     pmatrix = PerformanceMatrix(services)
     for i,r in enumerate(open(CONF_FILE)):
@@ -56,7 +63,8 @@ def main():
         ip,times=r[0],r[1:]
         speeds_dict ={}
         for agent,time in zip(agents,times):
-            speeds_dict.update({agent:time})
+            if agent in regions_alias:
+                speeds_dict.update({agent:time})
         pmatrix.ip(ip,speeds_dict)
     iparea =pmatrix.partitions()
 #    for k,v in pmatrix.ips.items():

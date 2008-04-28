@@ -6,17 +6,15 @@ import time, sets
 from types import *
 
 def quicksort(dict,keys):
+    result = [[''],-1]
     for i,idc in enumerate(keys):
-        if i == 0:
+        if result[1] > float(dict[idc].strip()) and float(dict[idc].strip())>=0:
+            result[0] = [idc]
+            result[1] = float(dict[idc].strip())
+        elif  result[1] == float(dict[idc].strip()) and float(dict[idc].strip())>=0:
+            result[0].append(idc)
+        elif result[1] < 0:
             result = [[idc],float(dict[idc].strip())]
-        else:
-            if result[1] > float(dict[idc].strip()) and float(dict[idc].strip())>=0:
-                result[0] = [idc]
-                result[1] = float(dict[idc].strip())
-            elif  result[1] == float(dict[idc].strip()) and float(dict[idc].strip())>=0:
-                result[0].append(idc)
-            elif result[1] < 0:
-                result = [[idc],float(dict[idc].strip())]
     if result[1] <0:
         return keys
     else:
