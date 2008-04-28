@@ -79,6 +79,7 @@ XBAYDNS_BIND_USER=xdslave
 PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
 export PATH XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
 "|tee ${XDPREFIX}/home/xdslave/xdenv
+cp ${XDPREFIX}/home/xdslave/xdenv ${XDPREFIX}/home/xdslave/.profile
 
 chmod +x ${XDPREFIX}/home/xdslave/xdenv
 source ${XDPREFIX}/home/xdslave/xdenv

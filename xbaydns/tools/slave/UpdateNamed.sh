@@ -4,27 +4,25 @@ export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 PPATH=`dirname $0`
 if [ -f "$PPATH/../slave.conf" ]; then
 	. $PPATH/../slave.conf
-	. ${XDPREFIX}/home/xdslave/xdenv
+	. $PPATH/../xdenv
 fi
 
-cd $PPATH/..
+cd ${PPATH}/..
 
-rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' \
- xbaydns\@$MASTER_IP:${XDPREFIX}/home/xbaydns/slave/named/etc/acl ${XDPREFIX}/home/xdslave/named/etc/
+rsync -avz -e 'ssh -i ${PPATH}/../rsync-key' \
+ xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/slave/named/etc/acl ${PPATH}/../named/etc/
 
-if ! diff ${XDPREFIX}/home/xdslave/named/etc/acl  $XBAYDNS_CHROOT_PATH/etc/acl  > /dev/null 2>&1; then
-    rsync -avz ${XDPREFIX}/home/xdslave/named/etc/acl $XBAYDNS_CHROOT_PATH/etc/
+if ! diff ${PPATH}/../named/etc/acl  ${XBAYDNS_CHROOT_PATH}/etc/acl  > /dev/null 2>&1; then
+    rsync -avz ${PPATH}/../named/etc/acl ${XBAYDNS_CHROOT_PATH}/etc/
     touch need_reload
 fi
 
 
-rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' \
- xbaydns\@$MASTER_IP:${XDPREFIX}/home/xbaydns/slave/named/etc/view  ${XDPREFIX}/home/xdslave/named/etc/
+rsync -avz -e 'ssh -i ${PPATH}/../rsync-key' \
+ xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/slave/named/etc/view  ${PPATH}/../named/etc/
 
-
-
-if ! diff ${XDPREFIX}/home/xdslave/named/etc/view  $XBAYDNS_CHROOT_PATH/etc/view  > /dev/null 2>&1; then
-    rsync -avz ${XDPREFIX}/home/xdslave/named/etc/view $XBAYDNS_CHROOT_PATH/etc/
+if ! diff ${PPATH}/../named/etc/view  ${XBAYDNS_CHROOT_PATH}/etc/view  > /dev/null 2>&1; then
+    rsync -avz ${PPATH}/../named/etc/view ${XBAYDNS_CHROOT_PATH}/etc/
     touch need_reload
 fi
 

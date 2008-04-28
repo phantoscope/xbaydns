@@ -11,5 +11,4 @@ if [ -f "$PPATH/../agent.conf" ]; then
 fi
 
 cd $PPATH
-"${XDPREFIX}/bin/"python iplatency.py ../iplist ../iplatency/${AGENT_NAME}-`date "+%Y-%m-%d"`
-
+../../../bin/python2.5 iplatency.py ../iplist ../iplatency/${AGENT_NAME}-`date "+%Y-%m-%d"`

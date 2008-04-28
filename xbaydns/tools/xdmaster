@@ -1,7 +1,5 @@
 #!/bin/sh
 
-XDPREFIX=/opt/xbaydns
-
 #pre init check env var
 #-------------------------------------
 if [ -z "${XDPREFIX}" ]
@@ -10,6 +8,8 @@ then
     exit 1
 fi
 
+#function for master startup
+#-------------------------------------
 masterstartup(){
 killall named >& /dev/null
 ${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u xbaydns
@@ -23,6 +23,7 @@ then
 daemon -u xbaydns "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log"
 fi
 }
+#-------------------------------------
 
 if [ -d ${XDPREFIX}/home/xbaydns -a -f ${XDPREFIX}/home/xbaydns/xdenv ]
 then
@@ -100,12 +101,15 @@ touch ${XDPREFIX}/home/xbaydns/.ssh/authorized_keys
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/prober/* ${XDPREFIX}/home/xbaydns/agent/prog
 chmod +x ${XDPREFIX}/home/xbaydns/agent/prog/*
 echo "MASTER_IP=\"$MASTERIP\"">${XDPREFIX}/home/xbaydns/agent/agent.conf
+echo "XBAYDNSHOME=\"$XBAYDNSHOME\"">${XDPREFIX}/home/xbaydns/agent/agent.conf
 echo "MASTER_IP=\"$MASTERIP\"">${XDPREFIX}/home/xbaydns/master.conf
+echo "XBAYDNSHOME=\"$XBAYDNSHOME\"">${XDPREFIX}/home/xbaydns/master.conf
 
 
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/slave/* ${XDPREFIX}/home/xbaydns/slave/prog
 chmod +x ${XDPREFIX}/home/xbaydns/slave/prog/*
 echo "MASTER_IP=\"$MASTERIP\"">${XDPREFIX}/home/xbaydns/slave/slave.conf
+echo "XBAYDNSHOME=\"$XBAYDNSHOME\"">${XDPREFIX}/home/xbaydns/slave/slave.conf
 
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/master/* ${XDPREFIX}/home/xbaydns/prog
 chmod +x ${XDPREFIX}/home/xbaydns/prog/*

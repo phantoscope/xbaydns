@@ -8,7 +8,7 @@ if [ -f "$PPATH/../agent.conf" ]; then
 fi
 
 cd $PPATH
-rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdagent/rsync-key' xbaydns\@$MASTER_IP:${XDPREFIX}/home/xbaydns/agent/prog/* .
-rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdagent/rsync-key' xbaydns\@$MASTER_IP:${XDPREFIX}/home/xbaydns/agent/agent.conf ..
+rsync -avz -e 'ssh -i ../rsync-key' xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/agent/prog/* .
+rsync -avz -e 'ssh -i ../rsync-key' xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/agent/agent.conf ..
 
-chmod +x ${XDPREFIX}/home/xdagent/prog/*
+chmod +x *
