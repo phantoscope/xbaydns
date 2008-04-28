@@ -2,8 +2,8 @@
 
 usage() {
     echo "Usage: $0 master <master_ip> <prefix>"
-    echo "       $0 agent  <master_ip> <authz_code>"
-    echo "       $0 slave  <master_ip> <authz_code> <prefix>"
+    echo "       $0 agent  <master_ip> <prefix> <authz_code>"
+    echo "       $0 slave  <master_ip> <prefix> <authz_code>"
 }
 
 
@@ -19,14 +19,14 @@ else
     if [ $TYPE = "master" ]; then
         ${XDPREFIX}/bin/xdmaster $MASTERIP $BIND_CHROOT
     elif [ $TYPE = "agent" ]; then
-        AUTHZCODE=$3 
+        AUTHZCODE=$4
         ${XDPREFIX}/bin/xdagent $MASTERIP $AUTHZCODE
     elif [ $TYPE = "slave" ]; then
         if [ $# -lt 3 ]; then
             usage
             exit 1
         fi
-        AUTHZCODE=$3
+        AUTHZCODE=$4
         ${XDPREFIX}/bin/xdslave $MASTERIP $AUTHZCODE $BIND_CHROOT
     else
         usage

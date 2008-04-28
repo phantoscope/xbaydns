@@ -49,7 +49,7 @@ mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
 
 #4. setup up cron
-==================================
+#==================================
 crontab -u xdslave -l >${XDPREFIX}/home/xdslave/old_crontab 2>/dev/null
 echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UploadLog.sh" > ${XDPREFIX}/home/xdslave/prog/crontab
 echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UpdateNamed.sh">>${XDPREFIX}/home/xdslave/prog/crontab
