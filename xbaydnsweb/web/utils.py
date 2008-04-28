@@ -26,9 +26,9 @@ def genRecordList(record):
     if rtstr == 'A':
         return [[str(record.name),record.ttl,'IN','A',[str(record.record_info),]],]
     elif rtstr == 'CNAME':
-        return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
+        return [[str(record.name),record.ttl,'IN','CNAME',[str("%s."%record.record_info),]],]
     elif rtstr == 'NS':
-        return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
+        return [[str(record.name),record.ttl,'IN','NS',[str("%s."%record.record_info),]],]
 
 
 def record_nsupdate(record):
@@ -74,7 +74,7 @@ def updateDomain():
             print record.name,record.domain,record.viewname
             record_nsupdate(record)
         """把非A记录加入每一个VIEW"""
-        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')):
+        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')(Q(record_type__record_type='A') and Q(idc__isnull=True))):
             print "record ",record
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname

@@ -221,7 +221,7 @@ key "%s" {
                 nsttl='360'
                 nsinfo=Domain.objects.filter(name=domain)
                 if len(nsinfo)>0:
-                    allnsinfo='\n'.join( map(lambda x:' IN NS '.join([x.default_ns,x.record_info]),nsinfo) )
+                    allnsinfo='\n'.join( map(lambda x:'%s IN NS %s'%(x.default_ns,x.record_info),nsinfo) )
                     nsadmin=str(nsinfo[0].mainter)
                     nsttl=str(nsinfo[0].ttl)
                 else:
