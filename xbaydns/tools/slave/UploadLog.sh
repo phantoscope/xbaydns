@@ -11,4 +11,4 @@ if [ -f "$PPATH/../slave.conf" ]; then
 fi
 
 cd $PPATH/..
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' $XBAYDNS_CHROOT_PATH/var/log/query.log xbaydns\@$MASTER_IP:/home/xbaydns/slave//named/log/${SLAVE_NAME}-query.log
+rsync -avz -e 'ssh -i ${XDPREFIX}/home/xdslave/rsync-key' $XBAYDNS_CHROOT_PATH/var/log/query.log xbaydns\@$MASTER_IP:/home/xbaydns/slave//named/log/${SLAVE_NAME}-query.log
