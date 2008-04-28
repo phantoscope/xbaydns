@@ -52,7 +52,6 @@ mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 ==================================
 crontab -u xdslave -l >${XDPREFIX}/home/xdslave/old_crontab 2>/dev/null
 echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UploadLog.sh" > ${XDPREFIX}/home/xdslave/prog/crontab
-#echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/ReloadNamed.sh" >>${XDPREFIX}/home/xdslave/prog/crontab
 echo "*/5 * * * * ${XDPREFIX}/home/xdslave/prog/UpdateNamed.sh">>${XDPREFIX}/home/xdslave/prog/crontab
 crontab -u xdslave ${XDPREFIX}/home/xdslave/prog/crontab
 

@@ -46,10 +46,10 @@ mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
 #4. setup up cron
 #==================================
-echo "*/5 * * * * /home/xdagent/prog/UpdateAgent.sh">${XDPREFIX}/home/xdagent/prog/crontab
-echo "*/5 * * * * /home/xdagent/prog/UpdateIPList.sh">>${XDPREFIX}/home/xdagent/prog/crontab
-echo "*/5 * * * * /home/xdagent/prog/ProbeIPlist.sh">>${XDPREFIX}/home/xdagent/prog/crontab
-echo "*/5 * * * * /home/xdagent/prog/UploadProbeResults.sh">>${XDPREFIX}/home/xdagent/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/UpdateAgent.sh">${XDPREFIX}/home/xdagent/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/UpdateIPList.sh">>${XDPREFIX}/home/xdagent/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/ProbeIPlist.sh">>${XDPREFIX}/home/xdagent/prog/crontab
+echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/UploadProbeResults.sh">>${XDPREFIX}/home/xdagent/prog/crontab
 crontab -u xdagent -l >${XDPREFIX}/home/xdagent/old_crontab 2>/dev/null
 crontab -u xdagent ${XDPREFIX}/home/xdagent/prog/crontab
 
