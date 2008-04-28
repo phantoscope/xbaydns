@@ -1,21 +1,21 @@
 #!/bin/sh
 
 usage() {
-    echo "Usage: $0 master <master_ip>"
+    echo "Usage: $0 master <master_ip> <prefix>"
     echo "       $0 agent  <master_ip> <authz_code>"
-    echo "       $0 slave  <master_ip> <authz_code>"
+    echo "       $0 slave  <master_ip> <authz_code> <prefix>"
 }
 
-XDPREFIX=/opt/xbaydns
-BIND_CHROOT=${XDPREFIX}/named
-export XDPREFIX BIND_CHROOT
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 3 ]; then
     usage
     exit 1
 else
     TYPE=$1
     MASTERIP=$2
+    XDPREFIX=$3
+    BIND_CHROOT=${XDPREFIX}/named
+    export XDPREFIX BIND_CHROOT
     if [ $TYPE = "master" ]; then
         ${XDPREFIX}/bin/xdmaster $MASTERIP $BIND_CHROOT
     elif [ $TYPE = "agent" ]; then
