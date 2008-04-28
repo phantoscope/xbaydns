@@ -241,10 +241,9 @@ key "%s" {
                 domain_admin=str(info[0].mainter)
                 domain_ttl=str(info[0].ttl)
 
-                zonedata='''
-$ORIGIN %(domain)s.
+                zonedata='''$ORIGIN %(domain)s.
 $TTL %(ttl)s    ;10 minute
-%(domain)s IN SOA %(soa)s. %(admin)s. (
+%(domain)s. IN SOA %(soa)s. %(admin)s. (
                 %(time)s	; serial
                 60		    ; refresh (1 minute)
                 3600	    ; retry (1 hour)
