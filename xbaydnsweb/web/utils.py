@@ -74,7 +74,7 @@ def updateDomain():
             print record.name,record.domain,record.viewname
             record_nsupdate(record)
         """把非A记录加入每一个VIEW"""
-        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')(Q(record_type__record_type='A') and Q(idc__isnull=True))):
+        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')|(Q(record_type__record_type='A') and Q(idc__isnull=True))):
             print "record ",record
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname
