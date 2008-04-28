@@ -229,7 +229,7 @@ key "%s" {
                         r_name = ns.record_info
                     nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
                 allnsinfo='\n'.join( map(lambda x:'%s IN NS %s'%(x.name,x.record_info),nsrecord) )
-                allnsainfo='\n'.join( map(lambda x:'%s IN NS %s'%(x.name,x.record_info),nsareords) )
+                allnsainfo='\n'.join( map(lambda x:'%s IN A %s'%(x.name,x.record_info),nsareords) )
                 domain_admin=str(info[0].mainter)
                 domain_ttl=str(info[0].ttl)
 
