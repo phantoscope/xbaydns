@@ -220,11 +220,18 @@ key "%s" {
                 domain_admin=sysconf.default_admin
                 domain_ttl='3600'
                 info=Domain.objects.filter(name=domain)
-                nsrecord=Record.objects.filter(domain=domain,record_type__recordtype='NS')
-
+                nsrecord=Record.objects.filter(domain=info[0],record_type__record_type='NS')
+                nsareords=[]
+                for ns in nsrecord:
+                    try:
+                        r_name = ns.record_info[:ns.record_info.index('.')]
+                    except:
+                        r_name = ns.record_info
+                    nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
                 allnsinfo='\n'.join( map(lambda x:'%s IN NS %s'%(x.name,x.record_info),nsrecord) )
+                allnsainfo='\n'.join( map(lambda x:'%s IN NS %s'%(x.name,x.record_info),nsareords) )
                 domain_admin=str(info[0].mainter)
-                domain_ttl=str(nsinfo[0].ttl)
+                domain_ttl=str(info[0].ttl)
 
                 zonedata='''
 $ORIGIN .
@@ -238,9 +245,10 @@ $TTL %(ttl)s ;10 minute
 	    )
 
 %(ns)s
+%(nsa)s
 '''%{'domain':domain,'time':self.getSerial(),
                      'ns':allnsinfo,'soa':sysconf.default_soa,
-                     'admin':domain_admin,'ttl':domain_ttl}
+                     'admin':domain_admin,'ttl':domain_ttl,'nsa':allnsainfo}
                 f.write(zonedata)
                 f.close()
         dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
