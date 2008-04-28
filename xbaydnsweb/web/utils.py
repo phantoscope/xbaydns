@@ -26,9 +26,9 @@ def genRecordList(record):
     if rtstr == 'A':
         return [[str(record.name),record.ttl,'IN','A',[str(record.record_info),]],]
     elif rtstr == 'CNAME':
-        return [[str(record.name),record.ttl,'IN','CNAME',[str("%s."%record.record_info),]],]
+        return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
     elif rtstr == 'NS':
-        return [[str(record.name),record.ttl,'IN','NS',[str("%s."%record.record_info),]],]
+        return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
 
 
 def record_nsupdate(record):
