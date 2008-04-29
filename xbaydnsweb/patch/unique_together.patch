@@ -1,16 +1,13 @@
 Index: django/db/models/manipulators.py
 ===================================================================
---- django/db/models/manipulators.py	（版本 7438）
+--- django/db/models/manipulators.py	（版本 7506）
 +++ django/db/models/manipulators.py	（工作副本）
-@@ -305,8 +305,9 @@
-     if hasattr(self, 'original_object') and self.original_object._get_pk_val() == old_obj._get_pk_val():
+@@ -306,7 +306,7 @@
          pass
      else:
--        raise validators.ValidationError, _("%(object)s with this %(type)s already exists for the given %(field)s.") % \
+         raise validators.ValidationError, _("%(object)s with this %(type)s already exists for the given %(field)s.") % \
 -            {'object': capfirst(opts.verbose_name), 'type': field_list[0].verbose_name, 'field': get_text_list([f.verbose_name for f in field_list[1:]], _('and'))}
-+        raise validators.ValidationError, unicode(_("already exists"))
-+        #raise validators.ValidationError, unicode(_("%(object)s with this %(type)s already exists for the given %(field)s.")) % \
-+        #    {'object': capfirst(opts.verbose_name), 'type': field_list[0].verbose_name, 'field': get_text_list([f.verbose_name for f in field_list[1:]], _('and'))}
++            {'object': capfirst(opts.verbose_name), 'type': field_list[0].verbose_name.decode('utf8'), 'field': get_text_list([f.verbose_name for f in field_list[1:]], _('and'))}
  
  def manipulator_validator_unique_for_date(from_field, date_field, opts, lookup_type, self, field_data, all_data):
      from django.db.models.fields.related import ManyToOneRel

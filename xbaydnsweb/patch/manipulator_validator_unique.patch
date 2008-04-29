@@ -1,13 +1,13 @@
 Index: django/db/models/fields/__init__.py
 ===================================================================
---- django/db/models/fields/__init__.py	（版本 7490）
+--- django/db/models/fields/__init__.py	（版本 7506）
 +++ django/db/models/fields/__init__.py	（工作副本）
-@@ -50,7 +50,7 @@
+@@ -51,7 +51,7 @@
          return
      if getattr(self, 'original_object', None) and self.original_object._get_pk_val() == old_obj._get_pk_val():
          return
 -    raise validators.ValidationError, _("%(optname)s with this %(fieldname)s already exists.") % {'optname': capfirst(opts.verbose_name), 'fieldname': f.verbose_name}
-+    raise validators.ValidationError, unicode(_("fieldname already exists"))
++    raise validators.ValidationError, _("%(optname)s with this %(fieldname)s already exists.")%{'optname':capfirst(opts.verbose_name),'fieldname':f.verbose_name.decode('utf8')}
  
  # A guide to Field parameters:
  #
