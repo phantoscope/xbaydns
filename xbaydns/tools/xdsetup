@@ -14,10 +14,9 @@ else
     TYPE=$1
     MASTERIP=$2
     XDPREFIX=$3
-    BIND_CHROOT=${XDPREFIX}/named
-    export XDPREFIX BIND_CHROOT
+    export XDPREFIX
     if [ $TYPE = "master" ]; then
-        ${XDPREFIX}/bin/xdmaster $MASTERIP $BIND_CHROOT
+        ${XDPREFIX}/bin/xdmaster $MASTERIP
     elif [ $TYPE = "agent" ]; then
         AUTHZCODE=$4
         ${XDPREFIX}/bin/xdagent $MASTERIP $AUTHZCODE
@@ -27,7 +26,7 @@ else
             exit 1
         fi
         AUTHZCODE=$4
-        ${XDPREFIX}/bin/xdslave $MASTERIP $AUTHZCODE $BIND_CHROOT
+        ${XDPREFIX}/bin/xdslave $MASTERIP $AUTHZCODE
     else
         usage
         exit 1

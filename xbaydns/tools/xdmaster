@@ -1,6 +1,5 @@
 #!/bin/sh
 
-XDPREFIX=/opt/xbaydns
 #pre init check env var
 #-------------------------------------
 if [ -z "${XDPREFIX}" ]
@@ -9,35 +8,8 @@ then
     exit 1
 fi
 
-#function for master startup
-#-------------------------------------
-masterstartup(){
-killall named >& /dev/null
-${XDPREFIX}/named/sbin/named -t ${XDPREFIX}/named -u xbaydns
-$BINDCHROOT/sbin/rndc reload
-OS=`uname`
-if [ "${OS}" = "Linux" ]
-then
-runuser -s /bin/bash - xbaydns -c "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log" &
-elif [ "${OS}" = "FreeBSD" ]
-then
-daemon -u xbaydns "${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log"
-fi
-}
-#-------------------------------------
-
-if [ -d ${XDPREFIX}/home/xbaydns -a -f ${XDPREFIX}/home/xbaydns/xdenv ]
-then
-    source ${XDPREFIX}/home/xbaydns/xdenv
-    masterstartup
-    exit 0
-elif [ $# != 2 ]; then
-    echo "First time Usage: $0 <master_ip> <path_to_bind_chroot>"
-    exit 1
-fi
-
 MASTERIP=$1
-BINDCHROOT=$2
+BINDCHROOT=${XDPREFIX}/named
 
 #1.init sync&cron enviroment 
 #===========================
@@ -147,6 +119,65 @@ chmod -R 700 ${XBAYDNSHOME}
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 
+#4.generate the startup script
+#=============================
+echo "\
+#!/bin/sh
+
+OS=\`uname\`
+NAMED=\`pgrep named\`
+
+if [ ! -f ${BINDCHROOT}/sbin/named -a ! -f ${XDPREFIX}/bin/xdweb ]; then
+        echo 'named or xbaydnsweb is not existed!'
+        exit 1
+fi
+
+startall(){
+        if [ -n \"\${NAMED}\" ]
+        then
+            echo 'named is already started, use restart instead.'
+            exit 1
+        fi
+        ${BINDCHROOT}/sbin/named -t ${BINDCHROOT} -u xbaydns
+        if [ \"\${OS}\" = \"Linux\" ]
+        then
+            runuser -s /bin/bash - xbaydns -c \"${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log\" &
+        elif [ \"\${OS}\" = \"FreeBSD\" ]
+        then
+            daemon -u xbaydns \"${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log\"
+        fi
+}
+
+stopall(){
+        if [ -n \"\${NAMED}\" ]
+        then
+            kill \${NAMED}
+        fi
+        killall ${BINDCHROOT}/sbin/named >& /dev/null
+        killall ${XDPREFIX}/bin/python2.5 >& /dev/null
+}
+
+case \"$1\" in
+start)
+        startall
+        ;;
+restart)
+        stopall
+        startall
+        ;;
+stop)
+        stopall
+        ;;
+*)
+        echo \"Usage: $0 {start|stop|restart}\"
+        exit 1
+        ;;
+esac
+exit 0
+" > ${XBAYDNSHOME}/master.sh
+
+#5.print prompt informations
+#===========================
 echo "\
 
 
@@ -155,7 +186,8 @@ XBayDNS(enabled master) installed successfully!
 MASTER    :$MASTERIP
 HOME      :${XBAYDNSHOME}
 
+Use \"${XBAYDNSHOME}/master.sh start\" to start all services.
+
 Browse http://$MASTERIP username/password for administrator: admin/admin
 DON'T FORGET TO CHANGE YOUR PASSWORD!
 "
-masterstartup

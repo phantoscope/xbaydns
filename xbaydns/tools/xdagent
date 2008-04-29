@@ -8,6 +8,8 @@ fi
 MASTERIP=$1
 AUTHZCODE=$2
 
+XDAGENTHOME=${XDPREFIX}/home/xdagent
+
 #pre init check env var
 #-------------------------------------
 if [ -z "${XDPREFIX}" ]
@@ -18,12 +20,12 @@ fi
 
 #1. init user(xdagent) enviroment 
 #===============================
-rm -rf ${XDPREFIX}/home/xdagent
+rm -rf ${XDAGENTHOME}
 userdel xdagent
-useradd xdagent -g named -s /sbin/nologin -d ${XDPREFIX}/home/xdagent
-mkdir -p ${XDPREFIX}/home/xdagent/{.ssh,prog,iplatency}
-touch ${XDPREFIX}/home/xdagent/.ssh/known_hosts
-ssh-keygen -t dsa -f ${XDPREFIX}/home/xdagent/rsync-key -N ""
+useradd xdagent -g named -s /sbin/nologin -d ${XDAGENTHOME}
+mkdir -p ${XDAGENTHOME}/{.ssh,prog,iplatency}
+touch ${XDAGENTHOME}/.ssh/known_hosts
+ssh-keygen -t dsa -f ${XDAGENTHOME}/rsync-key -N ""
 
 
 #2. register to Master 
@@ -38,31 +40,32 @@ fi
 #3. sync program and configuration
 #=============================== 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bak
-cp ${XDPREFIX}/home/xdagent/.ssh/known_hosts ~/.ssh/known_hosts
-rsync -avz -e "ssh -i ${XDPREFIX}/home/xdagent/rsync-key" xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/agent/prog ${XDPREFIX}/home/xdagent
-rsync -avz -e "ssh -i ${XDPREFIX}/home/xdagent/rsync-key" xbaydns@$MASTERIP:${XDPREFIX}/home/xbaydns/agent/agent.conf ${XDPREFIX}/home/xdagent
+cp ${XDAGENTHOME}/.ssh/known_hosts ~/.ssh/known_hosts
+MASTERHOME=`cat /tmp/MASTERHOME`
+rsync -avz -e "ssh -i ${XDAGENTHOME}/rsync-key" xbaydns@$MASTERIP:${MASTERHOME}/agent/prog ${XDAGENTHOME}
+rsync -avz -e "ssh -i ${XDAGENTHOME}/rsync-key" xbaydns@$MASTERIP:${MASTERHOME}/agent/agent.conf ${XDAGENTHOME}
 mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
 
 #4. setup up cron
 #==================================
-echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/UpdateAgent.sh">${XDPREFIX}/home/xdagent/prog/crontab
-echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/UpdateIPList.sh">>${XDPREFIX}/home/xdagent/prog/crontab
-echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/ProbeIPlist.sh">>${XDPREFIX}/home/xdagent/prog/crontab
-echo "*/5 * * * * ${XDPREFIX}/home/xdagent/prog/UploadProbeResults.sh">>${XDPREFIX}/home/xdagent/prog/crontab
-crontab -u xdagent -l >${XDPREFIX}/home/xdagent/old_crontab 2>/dev/null
-crontab -u xdagent ${XDPREFIX}/home/xdagent/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/UpdateAgent.sh">${XDAGENTHOME}/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/UpdateIPList.sh">>${XDAGENTHOME}/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/ProbeIPlist.sh">>${XDAGENTHOME}/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/UploadProbeResults.sh">>${XDAGENTHOME}/prog/crontab
+crontab -u xdagent -l >${XDAGENTHOME}/old_crontab 2>/dev/null
+crontab -u xdagent ${XDAGENTHOME}/prog/crontab
 
 
-chmod +x ${XDPREFIX}/home/xdagent/prog/*
-chown -R xdagent:named ${XDPREFIX}/home/xdagent
-chmod 700 ${XDPREFIX}/home/xdagent
+chmod +x ${XDAGENTHOME}/prog/*
+chown -R xdagent:named ${XDAGENTHOME}
+chmod 700 ${XDAGENTHOME}
 
 
 
 #5. message
 #=============================
-MYNAME=`cat ${XDPREFIX}/home/xdagent/myname`
+MYNAME=`cat ${XDAGENTHOME}/myname`
 echo "\
 
 
@@ -70,6 +73,6 @@ echo "\
 XBayDNS(enabled agent) installed successfully!
 MASTER    :$MASTERIP
 AGENT CODE:$MYNAME
-HOME      :${XDPREFIX}/home/xdagent
+HOME      :${XDAGENTHOME}
 
 "

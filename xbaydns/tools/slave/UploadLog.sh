@@ -7,7 +7,7 @@ PPATH=`dirname $0`
 SLAVE_NAME=`cat $PPATH/../myname`
 if [ -f "$PPATH/../slave.conf" ]; then
 	. $PPATH/../slave.conf
-	. /home/xdslave/xdenv
+	. $PPATH/../xdenv
 fi
 
 cd ${PPATH}/..

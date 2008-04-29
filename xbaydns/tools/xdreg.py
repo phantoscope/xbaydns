@@ -30,6 +30,7 @@ def reg_agent(server, authzcode, pubkey):
 
     open(os.path.join(agenthome,'myname'), 'w').write(resp['yourname'])
     open(os.path.join(agenthome,'.ssh/known_hosts'), 'w').write(server + ' ' + resp['master_pubkey'])
+    open(os.path,join('/tmp', 'MASTERHOME'), 'w').write(resp['xbaydnshome'])
 
 
 def reg_slave(server, authzcode, pubkey):
@@ -47,6 +48,7 @@ def reg_slave(server, authzcode, pubkey):
  
     open(os.path.join(slavehome, 'myname'), 'w').write(resp['yourname'])
     open(os.path.join(slavehome, '.ssh/known_hosts'), 'w').write(server + ' ' + resp['master_pubkey'])
+    open(os.path,join('/tmp', 'MASTERHOME'), 'w').write(resp['xbaydnshome'])
 
 def main():
     """Main entry point for running the xdagent ."""

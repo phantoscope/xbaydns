@@ -127,6 +127,7 @@ def create_slave(request, authzcode, pubkey):
         resp['retcode'] = 'SUCC'
         resp['yourname'] = node.codename
         resp['master_pubkey'] = master_pubkey
+        resp['xbaydnshome'] = os.path.join(sysconf.xdprefix, 'home/xbaydns')
     else:
         resp['retcode'] = 'FAIL'
         resp['retmsg'] = "Internal server error"
