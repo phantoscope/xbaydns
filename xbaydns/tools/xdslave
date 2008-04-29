@@ -128,13 +128,16 @@ stopall(){
 case \"\$1\" in
 start)
         startall
+        echo 'slave named started'
         ;;
 restart)
         stopall
         startall
+        echo 'slave named restarted'
         ;;
 stop)
         stopall
+        echo 'slave named stoped'
         ;;
 reload)
         ${BINDCHROOT}/sbin/rndc reload
@@ -147,6 +150,7 @@ esac
 exit 0
 " > ${XDSLAVEHOME}/slave.sh
 chmod +x ${XDSLAVEHOME}/slave.sh
+ln -s ${XDSLAVEHOME}/slave.sh ${XDPREFIX}/bin/
 
 #7. message
 #=============================

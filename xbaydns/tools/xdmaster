@@ -65,9 +65,9 @@ touch ${XBAYDNSHOME}/.ssh/authorized_keys
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/prober/* ${XBAYDNSHOME}/agent/prog
 chmod +x ${XBAYDNSHOME}/agent/prog/*
 echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/agent/agent.conf
-echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">${XBAYDNSHOME}/agent/agent.conf
+echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/agent/agent.conf
 echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/master.conf
-echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">${XBAYDNSHOME}/master.conf
+echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/master.conf
 
 
 cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/slave/* ${XBAYDNSHOME}/slave/prog
@@ -160,13 +160,16 @@ stopall(){
 case \"\$1\" in
 start)
         startall
+        echo 'Services started'
         ;;
 restart)
         stopall
         startall
+        echo 'Sevices restarted'
         ;;
 stop)
         stopall
+        echo 'Sevices stoped'
         ;;
 *)
         echo \"Usage: $0 {start|stop|restart}\"
@@ -176,6 +179,7 @@ esac
 exit 0
 " > ${XBAYDNSHOME}/master.sh
 chmod +x ${XBAYDNSHOME}/master.sh
+ln -s ${XBAYDNSHOME}/master.sh ${XDPREFIX}/bin/
 
 #5.print prompt informations
 #===========================
