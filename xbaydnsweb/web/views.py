@@ -92,6 +92,7 @@ def create_agent(request, authzcode, pubkey):
         resp['retcode'] = 'SUCC'
         resp['yourname'] = idc.alias
         resp['master_pubkey'] = master_pubkey
+        resp['xbaydnshome'] = os.path.join(sysconf.xdprefix, 'home/xbaydns')
     else:
         resp['retcode'] = 'FAIL'
         resp['retmsg'] = "Internal server error"
