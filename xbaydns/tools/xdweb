@@ -8,7 +8,6 @@ then
     exit 1
 fi
 
-xbaydns_path=`${XDPREFIX}/bin/xdwherepkg`/xbaydnsweb
-echo $xbaydns_path
+xbaydns_path=`${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdwherepkg`/xbaydnsweb
 cd $xbaydns_path
 ${XDPREFIX}/bin/python2.5 manage.py runserver 0.0.0.0:8080

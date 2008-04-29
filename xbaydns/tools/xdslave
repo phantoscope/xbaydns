@@ -28,7 +28,7 @@ ssh-keygen -t dsa -f ${XDSLAVEHOME}/rsync-key -N ""
 #2. register to Master 
 #================================
 echo "xdreg slave -m $MASTERIP -a $AUTHZCODE"
-${XDPREFIX}/bin/xdreg slave -m $MASTERIP -a $AUTHZCODE
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdreg slave -m $MASTERIP -a $AUTHZCODE
 if [ $? -ne 0 ]; then
 exit 1
 fi
@@ -115,9 +115,9 @@ startall(){
 stopall(){
         if [ -n \"\${NAMED}\" ]
         then
-            kill \${NAMED}
+            kill -9 \${NAMED}
         fi
-        killall ${BINDCHROOT}/sbin/named >& /dev/null
+        killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
 }
 
 case \"\$1\" in

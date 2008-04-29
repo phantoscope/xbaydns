@@ -31,7 +31,7 @@ ssh-keygen -t dsa -f ${XDAGENTHOME}/rsync-key -N ""
 #2. register to Master 
 #================================
 echo "xdreg agent -m $MASTERIP -a $AUTHZCODE"
-${XDPREFIX}/bin/xdreg agent -m $MASTERIP -a $AUTHZCODE
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdreg agent -m $MASTERIP -a $AUTHZCODE
 if [ $? -ne 0 ]; then
 exit 1
 fi

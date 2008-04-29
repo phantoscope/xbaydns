@@ -48,6 +48,7 @@ ln -s `which rsync` $SMRSH_ALLOWCMD_DIR/
 #1.2 make user(xbaydns) for sync
 #-----------------------------------
 XBAYDNSHOME=${XDPREFIX}/home/xbaydns
+XBAYDNSEGG=`${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdwherepkg`
 rm -rf ${XBAYDNSHOME}
 groupadd named
 userdel xbaydns
@@ -59,10 +60,10 @@ mkdir -p ${XBAYDNSHOME}/view/{iplatency,idcview}
 mkdir -p ${XBAYDNSHOME}/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
 mkdir -p ${XBAYDNSHOME}/agent/{prog,iplatency}
 
-cp `${XDPREFIX}/bin/xdwherepkg`/xbaydnsweb/xbaydns.db ${XBAYDNSHOME}
+cp ${XBAYDNSEGG}/xbaydnsweb/xbaydns.db ${XBAYDNSHOME}
 touch ${XBAYDNSHOME}/.ssh/authorized_keys
 
-cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/prober/* ${XBAYDNSHOME}/agent/prog
+cp -r ${XBAYDNSEGG}/xbaydns/tools/prober/* ${XBAYDNSHOME}/agent/prog
 chmod +x ${XBAYDNSHOME}/agent/prog/*
 echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/agent/agent.conf
 echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/agent/agent.conf
@@ -70,12 +71,12 @@ echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/master.conf
 echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/master.conf
 
 
-cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/slave/* ${XBAYDNSHOME}/slave/prog
+cp -r ${XBAYDNSEGG}/xbaydns/tools/slave/* ${XBAYDNSHOME}/slave/prog
 chmod +x ${XBAYDNSHOME}/slave/prog/*
 echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/slave/slave.conf
 echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">${XBAYDNSHOME}/slave/slave.conf
 
-cp -r `${XDPREFIX}/bin/xdwherepkg`/xbaydns/tools/master/* ${XBAYDNSHOME}/prog
+cp -r ${XBAYDNSEGG}/xbaydns/tools/master/* ${XBAYDNSHOME}/prog
 chmod +x ${XBAYDNSHOME}/prog/*
 
 echo "*/5 * * * * ${XBAYDNSHOME}/prog/Log2IPlist.sh" > ${XBAYDNSHOME}/prog/crontab
@@ -112,7 +113,7 @@ cp ${XBAYDNSHOME}/xdenv ${XBAYDNSHOME}/.profile
 
 chmod +x ${XBAYDNSHOME}/xdenv
 source ${XBAYDNSHOME}/xdenv
-${XDPREFIX}/bin/xdinitbind master
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdinitbind master
 chown -R xbaydns:named $BINDCHROOT
 chown -R xbaydns:named ${XBAYDNSHOME}
 chmod -R 700 ${XBAYDNSHOME}
@@ -151,10 +152,10 @@ startall(){
 stopall(){
         if [ -n \"\${NAMED}\" ]
         then
-            kill \${NAMED}
+            kill -9 \${NAMED}
         fi
-        killall ${BINDCHROOT}/sbin/named >& /dev/null
-        killall ${XDPREFIX}/bin/python2.5 >& /dev/null
+        killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
+        killall -9 ${XDPREFIX}/bin/python2.5 >& /dev/null
 }
 
 case \"\$1\" in
