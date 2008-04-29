@@ -1,10 +1,5 @@
 #!/bin/sh
 
-if [ $# != 3 ]; then
-    echo "Usage: $0 <master_ip> <authzcode> <path_to_xbaydns>"
-    exit 1
-fi
-
 MASTERIP=$1
 AUTHZCODE=$2
 
@@ -114,7 +109,7 @@ startall(){
             echo 'named is already started, use restart instead.'
             exit 1
         fi
-        ${BINDCHROOT}/sbin/named -t ${BINDCHROOT} -u xbaydns
+        ${BINDCHROOT}/sbin/named -t ${BINDCHROOT} -u xdslave
 }
 
 stopall(){
