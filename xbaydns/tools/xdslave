@@ -125,7 +125,7 @@ stopall(){
         killall ${BINDCHROOT}/sbin/named >& /dev/null
 }
 
-case \"$1\" in
+case \"\$1\" in
 start)
         startall
         ;;
@@ -146,6 +146,7 @@ reload)
 esac
 exit 0
 " > ${XDSLAVEHOME}/slave.sh
+chmod +x ${XDSLAVEHOME}/slave.sh
 
 #7. message
 #=============================

@@ -157,7 +157,7 @@ stopall(){
         killall ${XDPREFIX}/bin/python2.5 >& /dev/null
 }
 
-case \"$1\" in
+case \"\$1\" in
 start)
         startall
         ;;
@@ -175,6 +175,7 @@ stop)
 esac
 exit 0
 " > ${XBAYDNSHOME}/master.sh
+chmod +x ${XBAYDNSHOME}/master.sh
 
 #5.print prompt informations
 #===========================
