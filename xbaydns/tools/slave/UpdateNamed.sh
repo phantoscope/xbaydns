@@ -7,9 +7,7 @@ if [ -f "$PPATH/../slave.conf" ]; then
 	. $PPATH/../xdenv
 fi
 
-cd ${PPATH}/..
-
-rsync -avz -e 'ssh -i ${PPATH}/../rsync-key' \
+rsync -avz -e 'ssh -i ../rsync-key' \
  xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/slave/named/etc/acl ${PPATH}/../named/etc/
 
 if ! diff ${PPATH}/../named/etc/acl  ${XBAYDNS_CHROOT_PATH}/etc/acl  > /dev/null 2>&1; then
@@ -18,7 +16,7 @@ if ! diff ${PPATH}/../named/etc/acl  ${XBAYDNS_CHROOT_PATH}/etc/acl  > /dev/null
 fi
 
 
-rsync -avz -e 'ssh -i ${PPATH}/../rsync-key' \
+rsync -avz -e 'ssh -i ../rsync-key' \
  xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/slave/named/etc/view  ${PPATH}/../named/etc/
 
 if ! diff ${PPATH}/../named/etc/view  ${XBAYDNS_CHROOT_PATH}/etc/view  > /dev/null 2>&1; then
@@ -27,6 +25,6 @@ if ! diff ${PPATH}/../named/etc/view  ${XBAYDNS_CHROOT_PATH}/etc/view  > /dev/nu
 fi
 
 if [ -f need_reload ]; then
-   ${XDPREFIX}/named/sbin/rndc reload
+   ${XBAYDNS_CHROOT_PATH}/sbin/rndc reload
    rm need_reload
 fi

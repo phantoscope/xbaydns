@@ -24,6 +24,7 @@ mkdir -p ${XDSLAVEHOME}/named/{log,etc/{acl,view,dynamic}}
 
 touch ${XDSLAVEHOME}/.ssh/known_hosts
 ssh-keygen -t dsa -f ${XDSLAVEHOME}/rsync-key -N ""
+chmod a+w /dev/null
 
 #2. register to Master 
 #================================
@@ -116,6 +117,7 @@ stopall(){
         if [ -n \"\${NAMED}\" ]
         then
             kill -9 \${NAMED}
+            NAMED=\`pgrep named\`; export NAMED
         fi
         killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
 }
@@ -147,7 +149,7 @@ exit 0
 chmod +x ${XDSLAVEHOME}/slave.sh
 ln -s ${XDSLAVEHOME}/slave.sh ${XDPREFIX}/bin/
 
-#7. message
+#8. message
 #=============================
 echo "\
 

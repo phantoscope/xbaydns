@@ -74,7 +74,7 @@ echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/master.conf
 cp -r ${XBAYDNSEGG}/xbaydns/tools/slave/* ${XBAYDNSHOME}/slave/prog
 chmod +x ${XBAYDNSHOME}/slave/prog/*
 echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/slave/slave.conf
-echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">${XBAYDNSHOME}/slave/slave.conf
+echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/slave/slave.conf
 
 cp -r ${XBAYDNSEGG}/xbaydns/tools/master/* ${XBAYDNSHOME}/prog
 chmod +x ${XBAYDNSHOME}/prog/*
@@ -153,6 +153,7 @@ stopall(){
         if [ -n \"\${NAMED}\" ]
         then
             kill -9 \${NAMED}
+            NAMED=\`pgrep named\`; export NAMED
         fi
         killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
         killall -9 ${XDPREFIX}/bin/python2.5 >& /dev/null
@@ -194,6 +195,6 @@ HOME      :${XBAYDNSHOME}
 
 Use \"${XBAYDNSHOME}/master.sh start\" to start all services.
 
-Browse http://$MASTERIP username/password for administrator: admin/admin
+Browse http://$MASTERIP:8080 username/password for administrator: admin/admin
 DON'T FORGET TO CHANGE YOUR PASSWORD!
 "
