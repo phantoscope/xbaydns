@@ -147,7 +147,7 @@ esac
 exit 0
 " > ${XDSLAVEHOME}/slave.sh
 chmod +x ${XDSLAVEHOME}/slave.sh
-ln -s ${XDSLAVEHOME}/slave.sh ${XDPREFIX}/bin/
+ln -sf ${XDSLAVEHOME}/slave.sh ${XDPREFIX}/bin/
 
 #8. message
 #=============================
