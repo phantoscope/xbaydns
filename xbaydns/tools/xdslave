@@ -82,7 +82,7 @@ cp ${XDSLAVEHOME}/xdenv ${XDPREFIX}/home/xdslave/.profile
 chmod +x ${XDSLAVEHOME}/xdenv
 source ${XDSLAVEHOME}/xdenv
 id xdslave || useradd xdslave -s /sbin/nologin
-${XDPREFIX}/bin/xdinitbind slave $MASTERIP
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdinitbind slave $MASTERIP
 
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
