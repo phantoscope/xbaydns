@@ -7,6 +7,7 @@ if [ -f "$PPATH/../slave.conf" ]; then
 	. $PPATH/../xdenv
 fi
 
+cd ${PPATH}
 rsync -avz -e 'ssh -i ../rsync-key' \
  xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/slave/named/etc/acl ${PPATH}/../named/etc/
 
@@ -15,7 +16,7 @@ if ! diff ${PPATH}/../named/etc/acl  ${XBAYDNS_CHROOT_PATH}/etc/acl  > /dev/null
     touch need_reload
 fi
 
-
+cd ${PPATH}
 rsync -avz -e 'ssh -i ../rsync-key' \
  xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/slave/named/etc/view  ${PPATH}/../named/etc/
 
