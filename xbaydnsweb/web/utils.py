@@ -150,14 +150,17 @@ def checkJNL(path,view_diff):
     pathname=os.path.join(path,'dynamic')
     files = os.listdir(pathname)
     domains = Domain.objects.all()
-    views = ['default'].extend(view_diff['intersection'])
+    views = ['default']
+    views.extend(view_diff['intersection'])
     for view in views:
         for domain in domains:
-            if 'view_view%s.%s.file.jnl'%(view,domain.name) not in files:
-                r = Record.objects.filter(domain=domain.name,record_type__record_type='A')[0]
-                r.viewname = 'view_view%s',view
-                record_delete(r)
-                record_nsupdate(r)
+            records = Record.objects.filter(domain=domain.name,record_type__record_type='A')
+            if records >0:
+                if 'view_view%s.%s.file.jnl'%(view,domain.name) not in files:
+                    r = records[0]
+                    r.viewname = 'view_view%s',view
+                    record_delete(r)
+                    record_nsupdate(r)
     
 def getDetectedIDC():
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
