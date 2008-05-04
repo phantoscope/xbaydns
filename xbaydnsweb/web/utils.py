@@ -90,7 +90,7 @@ def updateDomain(view_diff):
             record_nsupdate(record)
     """更新默认机房的记录"""
     for record in Record.objects.all():
-        record.viewname="view_default"
+        record.viewname="view_viewdefault"
         print record.name,record.domain,record.viewname
         record_nsupdate(record)
 
@@ -115,7 +115,7 @@ def genNamedConf(path):
         iparea.save()
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
-    nc.addView('view_default',['any',])
+    nc.addView('view_viewdefault',['any',])
     
     view_diff = getViewDiff(ipareas,old_ipareas)
     nc.addViewUnChanged(view_diff['intersection'])        
@@ -136,16 +136,22 @@ def getViewDiff(ipareas,old_ipareas):
     view_diff = {}
     ipareas_hash = map(lambda x:x.route_hash,ipareas)
     old_ipareas_hash = map(lambda x:x.route_hash,old_ipareas)
-    view_diff.setdefault('intersection',[o for o in old_ipareas_hash if o in ipareas_hash])
-    view_diff.setdefault('add_hash',[k for k in ipareas_hash if k not in ipareas_hash])
-    view_diff.setdefault('del_hash',[k for k in old_ipareas_hash if k not in old_ipareas_hash])
+    if len(old_ipareas_hash) != 0:
+        view_diff.setdefault('intersection',[o for o in old_ipareas_hash if o in ipareas_hash])
+        view_diff.setdefault('add_hash',[k for k in ipareas_hash if k not in ipareas_hash])
+        view_diff.setdefault('del_hash',[k for k in old_ipareas_hash if k not in old_ipareas_hash])
+    else:
+        view_diff.setdefault('intersection',[])
+        view_diff.setdefault('add_hash',ipareas_hash)
+        view_diff.setdefault('del_hash',[])
     return view_diff
 
 def checkJNL(path,view_diff):
     pathname=os.path.join(path,'dynamic')
     files = os.listdir(pathname)
     domains = Domain.objects.all()
-    for view in view_diff['intersection']:
+    views = ['default'].extend(view_diff['intersection'])
+    for view in views:
         for domain in domains:
             if 'view_view%s.%s.file.jnl'%(view,domain.name) not in files:
                 r = Record.objects.filter(domain=domain.name,record_type__record_type='A')[0]

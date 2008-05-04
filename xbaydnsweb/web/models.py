@@ -210,9 +210,9 @@ class Record(models.Model):
             old_record = copy.deepcopy(Record.objects.get(id=self.id))
         super(Record,self).save()
         try:
-            self.viewname="view_default"
+            self.viewname="view_viewdefault"
             if old_record !=None:
-                old_record.viewname = "view_default"
+                old_record.viewname = "view_viewdefault"
                 record_delete(old_record)
             record_nsupdate(self)
             if self.record_type.record_type == 'A':
@@ -254,7 +254,7 @@ class Record(models.Model):
         from xbaydnsweb.web.utils import *
         if len(Record.objects.filter(record_type__record_type='NS',domain=self.domain))==1 and self.record_type.record_type == "NS":
             return
-        self.viewname="view_default"
+        self.viewname="view_viewdefault"
         record_delete(self)
         if len(Result.objects.filter(idc__alias=self.idc.alias)) != 0:
             if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:
