@@ -159,6 +159,7 @@ class IPArea(models.Model):
     view = models.CharField(max_length=100)
     acl = models.CharField(max_length=100)
     service_route = models.TextField(verbose_name='service_route',help_text='')
+    route_hash = models.CharField(max_length=100,blank=True)
     
     class Admin:
         list_display = ('ip','service_route')
@@ -177,8 +178,6 @@ def isValiableRInfo(field_data,all_data):
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
         if ipv4_re.match(str(all_data['record_info'])) == None:
             raise validators.ValidationError(_('record_info_iperr'))
-        if all_data['idc'] == None or all_data['idc'] == '':
-            raise validators.ValidationError(_('record_a_idc_required'))
     elif r_type.record_type == 'CNAME':
         try:
             domain_str = all_data['record_info']

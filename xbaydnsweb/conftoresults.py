@@ -48,7 +48,12 @@ def main():
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     
     map(lambda x:x.delete(),Result.objects.all())
-    map(lambda x:x.delete(),IPArea.objects.all())
+    map(lambda x:x.delete(),IPArea.objects.filter(ip='0'))
+    
+    for iparea in IPArea.objects.all():
+        iparea.ip = '0'
+        iparea.save()
+    
     services = getServiceRegions()
     regions_alias = getRegions()
     

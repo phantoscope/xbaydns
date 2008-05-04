@@ -10,6 +10,7 @@ from django.core.management import setup_environ
 from xbaydnsweb import settings
 setup_environ(settings)
 
+import traceback
 import logging.config
 from xbaydnsweb.web.models import *
 from xbaydns.dnsapi.namedconf import *
@@ -17,6 +18,7 @@ from xbaydns.conf import sysconf
 from xbaydns.dnsapi import nsupdate
 from xbaydns.tools import algorithms
 from django.db.models import Q
+from hashlib import md5
 
 log = logging.getLogger('xbaydnsweb.web.utils')
 #logging.basicConfig(level=logging.DEBUG)
@@ -28,7 +30,7 @@ def genRecordList(record):
     elif rtstr == 'CNAME':
         return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
     elif rtstr == 'NS':
-        return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
+        return [[str(record.name),record.ttl,'IN','NS',[str(srecord.record_info),]],]
 
 
 def record_nsupdate(record):
@@ -63,9 +65,16 @@ def getRecords(iparea):
         records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias,record_type__record_type='A'))
     return records
 
-def updateDomain():
+def updateDomain(view_diff):
+    for iparea in IPArea.objects.filter(route_hash__in=view_diff['add_hash'],ip='0'):
+        records=getRecords(iparea)
+        for record in records:
+            print "record ",record
+            record.viewname=iparea.view
+            print record.name,record.domain,record.viewname
+            record_delete(record)
     """发出nsupdate请求,更新所有record和更新默认机房的记录"""
-    for iparea in IPArea.objects.all():
+    for iparea in IPArea.objects.filter(route_hash__in=view_diff['add_hash']):
         """把A纪录分布到对应的VIEW中"""
         records=getRecords(iparea)
         for record in records:
@@ -88,32 +97,62 @@ def updateDomain():
 def genNamedConf(path):
     """生成所有named配置文件"""
     nc = NamedConf()
-    ipareas = IPArea.objects.all()
-    for i,iparea in enumerate(ipareas):
-        aclname='acl_acl%s'%i
+    ipareas = IPArea.objects.filter(~Q(ip='0'))
+    old_ipareas = IPArea.objects.filter(ip='0')
+    for iparea in ipareas:
+        srout = eval(iparea.service_route)
+        srout.sort()
+        serial = md5(str(srout)).hexdigest()
+        iparea.route_hash = serial
+        aclname='acl_acl%s'%serial
         print "aclname",aclname
         iparea.acl = aclname
         nc.addAcl(aclname,list(eval(iparea.ip)))
         #每个View对应一种ACL
-        viewname='view_view%s'%i
+        viewname='view_view%s'%serial
         nc.addView(viewname,[aclname,])
         iparea.view = viewname
         iparea.save()
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
     nc.addView('view_default',['any',])
+    
+    view_diff = getViewDiff(ipareas,old_ipareas)
+    nc.addViewUnChanged(view_diff['intersection'])        
     #追加所有的Domain
-    #domain_matchs = map(lambda x:'%s'%x.domain,Record.objects.all())
     domain_matchs = map(lambda x:'%s'%x.name,Domain.objects.all())
     nc.addDomain(domain_matchs)
     nc.save(path)
     nc.reload()
+    return view_diff
         
 #保存所有配置,生成所有bind需要的配置文件
 def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
-    genNamedConf(path)
-    updateDomain()
+    view_diff = genNamedConf(path)
+    updateDomain(view_diff)
+    checkJNL(path,view_diff)
+    
+def getViewDiff(ipareas,old_ipareas):
+    view_diff = {}
+    ipareas_hash = map(lambda x:x.route_hash,ipareas)
+    old_ipareas_hash = map(lambda x:x.route_hash,old_ipareas)
+    view_diff.setdefault('intersection',[o for o in old_ipareas_hash if o in ipareas_hash])
+    view_diff.setdefault('add_hash',[k for k in ipareas_hash if k not in ipareas_hash])
+    view_diff.setdefault('del_hash',[k for k in old_ipareas_hash if k not in old_ipareas_hash])
+    return view_diff
 
+def checkJNL(path,view_diff):
+    pathname=os.path.join(path,'dynamic')
+    files = os.listdir(pathname)
+    domains = Domain.objects.all()
+    for view in view_diff['intersection']:
+        for domain in domains:
+            if 'view_view%s.%s.file.jnl'%(view,domain.name) not in files:
+                r = Record.objects.filter(domain=domain.name,record_type__record_type='A')[0]
+                r.viewname = 'view_view%s',view
+                record_delete(r)
+                record_nsupdate(r)
+    
 def getDetectedIDC():
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     try:

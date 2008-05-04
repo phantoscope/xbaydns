@@ -8,7 +8,7 @@ Copyright (c) 2007 yanxu. All rights reserved.
 
 import logging.config
 import base64
-import os,tempfile,datetime
+import os,tempfile,time
 from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydns.tools.namedconf')
@@ -34,6 +34,11 @@ class NamedConf(object):
         self.views={}
         self.domains={}
         self.acl_include=[]
+        self.unchanged_view_list=[]
+        
+    def addViewUnChanged(self,unchanged_hash_list):
+        self.unchanged_view_list = map(lambda x:'view_view%s'%x,unchanged_hash_list)
+        
     '''
     add acl (acl,aclmatch) 增加一个acl 
     参数说明： 
@@ -152,15 +157,16 @@ key "%s" {
     获取Serial
     '''
     def getSerial(self,zonefilepath):
+        import traceback
         from dns import zone,rdatatype,rdataset,rdata
         try:
-            zoneinfo = zone.from_file(zonefilepath)
-            soaset = zoneinfo.get_rdataset(l.origin,dns.rdatatype.SOA)
+            zoneinfo = zone.from_file(zonefilepath,check_origin=False)
+            soaset = zoneinfo.get_rdataset(zoneinfo.origin,rdatatype.SOA)
             if len(soaset) > 0:
                 return soaset[0].serial + 1
         except:
-            d=datetime.datetime.now()
-            return '%s%s%s000001'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2))
+            d=int(time.time())
+            return '%s'%(d)
     
     '''
     del domain(domain) 删除一个DNS域 
@@ -195,7 +201,9 @@ key "%s" {
             fname=os.path.join('acl/',k+'.conf')
             pathname=os.path.join(path,fname)
             self.acl_include.append('include "%s";'%fname)
-            open(pathname,'w').write(v)
+            f = open(pathname,'w')
+            f.write(v)
+            f.close()
         
     '''
     保存所有view配置文件
@@ -211,7 +219,9 @@ key "%s" {
                 value = v%'\n'.join(self.domains[k].values())
             else:
                 value = v%''
-            open(pathname,'w').write(value)
+            f = open(pathname,'w')
+            f.write(value)
+            f.close()
             
     '''
     保存view中声名的zone文件
@@ -220,6 +230,8 @@ key "%s" {
     def __saveDomains(self,path=sysconf.namedconf):
         from xbaydnsweb.web.models import Domain,Record
         for view,domains in self.domains.items():
+            if view in self.unchanged_view_list:
+                break
             for domain,value in domains.items():
                 if domain=='defaultzone':continue
                 zonefilepath=os.path.join(path,"%s"
@@ -283,13 +295,13 @@ $TTL %(ttl)s    ;10 minute
         acl_file=os.path.join(
                 path,sysconf.filename_map['acl'])
         new_include=self.convAclViewResult()
-        open(acl_file,'w').write('\n'.join(new_include))
+        f = open(acl_file,'w')
+        f.write('\n'.join(new_include))
+        f.close()
     '''
     保存acl和views的配置文件
     ''' 
     def save(self,path=sysconf.namedconf):
-        os.system("rndc freeze")
-        os.system("rndc thaw")
         self.__saveAcls(path)
         self.__saveViews(path)
         self.__saveDomains(path)
