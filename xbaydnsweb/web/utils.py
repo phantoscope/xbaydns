@@ -138,8 +138,8 @@ def getViewDiff(ipareas,old_ipareas):
     old_ipareas_hash = map(lambda x:x.route_hash,old_ipareas)
     if len(old_ipareas_hash) != 0:
         view_diff.setdefault('intersection',[o for o in old_ipareas_hash if o in ipareas_hash])
-        view_diff.setdefault('add_hash',[k for k in ipareas_hash if k not in ipareas_hash])
-        view_diff.setdefault('del_hash',[k for k in old_ipareas_hash if k not in old_ipareas_hash])
+        view_diff.setdefault('add_hash',[k for k in ipareas_hash if k not in old_ipareas_hash])
+        view_diff.setdefault('del_hash',[k for k in old_ipareas_hash if k not in ipareas_hash])
     else:
         view_diff.setdefault('intersection',[])
         view_diff.setdefault('add_hash',ipareas_hash)
@@ -155,7 +155,7 @@ def checkJNL(path,view_diff):
     for view in views:
         for domain in domains:
             records = Record.objects.filter(domain=domain.name,record_type__record_type='A')
-            if records >0:
+            if len(records) >0:
                 if 'view_view%s.%s.file.jnl'%(view,domain.name) not in files:
                     r = records[0]
                     r.viewname = 'view_view%s',view
