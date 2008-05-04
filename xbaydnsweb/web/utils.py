@@ -30,7 +30,7 @@ def genRecordList(record):
     elif rtstr == 'CNAME':
         return [[str(record.name),record.ttl,'IN','CNAME',[str(record.record_info),]],]
     elif rtstr == 'NS':
-        return [[str(record.name),record.ttl,'IN','NS',[str(srecord.record_info),]],]
+        return [[str(record.name),record.ttl,'IN','NS',[str(record.record_info),]],]
 
 
 def record_nsupdate(record):
