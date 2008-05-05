@@ -241,13 +241,15 @@ key "%s" {
                     info=Domain.objects.filter(name=domain)
                     nsrecord=Record.objects.filter(domain=info[0],record_type__record_type='NS')
                     nsareords=[]
+                    filtered_ns = {}
                     for ns in nsrecord:
                         try:
                             r_name = ns.record_info[:ns.record_info.index('.')]
                         except:
                             r_name = ns.record_info
+                        filtered_ns.update({"%s%s%s%s"%(ns.record_type.record_type,ns.name,ns.domain.name,ns.idc):ns})
                         nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
-                    allnsinfo='\n'.join( map(lambda x:'%s            NS    %s'%(x.name,x.record_info),nsrecord) )
+                    allnsinfo='\n'.join( map(lambda x:'%s            NS    %s'%(x.name,x.record_info),filtered_ns.values()) )
                     allnsainfo='\n'.join( map(lambda x:'%s            A    %s'%(x.name,x.record_info),nsareords) )
                     domain_admin=str(info[0].mainter)
                     domain_ttl=str(info[0].ttl)
@@ -266,10 +268,10 @@ $TTL %(ttl)s    ;10 minute
 '''%{'domain':domain,'time':self.getSerial(zonefilepath),
                      'ns':allnsinfo,'soa':sysconf.default_soa,
                      'admin':domain_admin,'ttl':domain_ttl,'nsa':allnsainfo}
-                f.write(zonedata)
-                f.close()
-            dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
-            os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
+                    f.write(zonedata)
+                    f.close()
+        dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
+        os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
     
     def convAclViewResult(self):
         """将acl_include顺序化"""
