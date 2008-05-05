@@ -1,0 +1,12 @@
+cap bjinstallagent 
+cap bjinstallslave 
+cap bjiplatency 
+   
+cap gzinstallagent 
+cap gzinstallslave 
+cap gziplatency 
+
+cap xainstallagent
+cap xaiplatency 
+
+cap putlog

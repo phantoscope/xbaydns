@@ -1,0 +1,53 @@
+set :user, "root"
+set :password, "123qwe"
+
+role :bjagent, "10.210.128.35"
+role :gzagent, "10.210.128.26"
+role :xaagent, "10.210.128.25"
+role :bjslave, "10.210.128.35"
+role :gzslave, "10.210.128.26"
+role :slave, "10.210.128.35", "10.210.128.26"
+
+task :bjinstallagent, :roles => :bjagent do
+  run "cd /home/xbaydns-trunk; svn up; python /home/xbaydns-trunk/setup.py install"
+  run "xdsetup agent 10.210.128.34 0d502fe9d07abeafd843914f86a4844c4c913d2c"
+end
+
+task :gzinstallagent, :roles => :gzagent do
+  run "cd /home/xbaydns-trunk; svn up; python /home/xbaydns-trunk/setup.py install"
+  run "xdsetup agent 10.210.128.34 fe46ab7c7f5f63596cb1b899791dcc2d94f945c3"
+end
+
+task :xainstallagent, :roles => :xaagent do
+  run "cd /home/xbaydns-trunk; svn up; python /home/xbaydns-trunk/setup.py install"
+  run "xdsetup agent 10.210.128.34 93696be1b4f1664c5c4240d1f69e00f340427a67"
+end
+
+task :bjinstallslave, :roles => :bjslave do
+  run "cd /home/xbaydns-trunk; python /home/xbaydns-trunk/setup.py install"
+  run "xdsetup slave 10.210.128.34 6b471b2a79acc3638d750ac02fe85327d5547753 /usr/local/named"
+end
+
+task :gzinstallslave, :roles => :gzslave do
+  run "cd /home/xbaydns-trunk; python /home/xbaydns-trunk/setup.py install"
+  run "xdsetup slave 10.210.128.34 54f4b2b36dbbec7c48f3a8280344232ef60ad809 /usr/local/named"
+end
+
+task :bjiplatency, :roles => :bjagent do
+  run "rm -f /home/xdagent/iplatency/*"
+  run "wget http://10.210.128.34:8000/data/iplatency/BJ-2008-04-19 -O /home/xdagent/iplatency/BJ-2008-04-24"
+end
+
+task :gziplatency, :roles => :gzagent do
+  run "rm -f /home/xdagent/iplatency/*"
+  run "wget http://10.210.128.34:8000/data/iplatency/GZ-2008-04-19 -O /home/xdagent/iplatency/GZ-2008-04-24"
+end
+
+task :xaiplatency, :roles => :xaagent do
+  run "rm -f /home/xdagent/iplatency/*"
+  run "wget http://10.210.128.34:8000/data/iplatency/XA-2008-04-19 -O /home/xdagent/iplatency/XA-2008-04-24"
+end
+
+task :putlog, :roles => :slave do
+  run "cd /usr/local/named/var/log; rm -f named.log; wget http://10.210.128.34:8000/data/named.log; chown named:named named.log; chmod 770 named.log"
+end

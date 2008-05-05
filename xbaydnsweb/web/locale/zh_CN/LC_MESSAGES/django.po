@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: xbaydns v1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-04-16 05:48+0800\n"
-"PO-Revision-Date: 2008-04-22 17:24+0800\n"
+"PO-Revision-Date: 2008-04-27 02:02+0800\n"
 "Last-Translator: nemo <nemo_fc@sina.com>\n"
 "Language-Team: Simplified Chinese <paradise.qingfeng@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -63,6 +63,9 @@ msgstr "1.1 域管理"
 #: models.py:52
 msgid "idc_name_verbose_name"
 msgstr "名称"
+
+msgid "domain_a_record_info_name"
+msgstr "默认NS记录地址"
 
 #: models.py:53
 msgid "idc_alias_verbose_name"

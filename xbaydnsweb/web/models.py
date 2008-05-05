@@ -17,6 +17,7 @@ class Domain(models.Model):
     name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
     default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_ns_name'),help_text='example.com.cn.')
     record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn')
+    a_record_info = models.CharField(max_length=100,verbose_name=_('domain_a_record_info_name'),help_text='1.1.1.1')
     mainter = models.CharField(max_length=100,verbose_name=_('domain_maintainer'),help_text='')
     ttl = models.IntegerField(max_length=100,verbose_name=_('domain_ttl'),default=3600,help_text='3600')
 
@@ -35,6 +36,14 @@ class Domain(models.Model):
             ns_record.record_info = self.record_info
             ns_record.ttl = self.ttl
             super(Record,ns_record).save()
+            rt=RecordType.objects.get(record_type='A')
+            ans_record  = Record()
+            ans_record.name = self.record_info[:self.record_info.index('.')]
+            ans_record.domain = self
+            ans_record.record_type = rt
+            ans_record.record_info = self.a_record_info
+            ans_record.ttl = self.ttl
+            super(Record,ans_record).save()
         saveAllConf()
     def delete(self):
         from xbaydnsweb.web.utils import *
@@ -46,7 +55,7 @@ class Domain(models.Model):
         search_fields = ('name','mainter')
         fields = (
                 (_('domain_fields_domaininfo_verbose_name'), {'fields': ('name','mainter','ttl')}),
-                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','record_info',)}),
+                (_('domain_fields_default_ns_verbose_name'), {'fields': ('default_ns','record_info','a_record_info')}),
         )
         #search_fields = ('name',)
     class Meta:
@@ -150,6 +159,7 @@ class IPArea(models.Model):
     view = models.CharField(max_length=100)
     acl = models.CharField(max_length=100)
     service_route = models.TextField(verbose_name='service_route',help_text='')
+    route_hash = models.CharField(max_length=100,blank=True)
     
     class Admin:
         list_display = ('ip','service_route')
@@ -168,8 +178,6 @@ def isValiableRInfo(field_data,all_data):
         ipv4_re = re.compile(r'^(25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
         if ipv4_re.match(str(all_data['record_info'])) == None:
             raise validators.ValidationError(_('record_info_iperr'))
-        if all_data['idc'] == None or all_data['idc'] == '':
-            raise validators.ValidationError(_('record_a_idc_required'))
     elif r_type.record_type == 'CNAME':
         try:
             domain_str = all_data['record_info']
@@ -202,9 +210,9 @@ class Record(models.Model):
             old_record = copy.deepcopy(Record.objects.get(id=self.id))
         super(Record,self).save()
         try:
-            self.viewname="view_default"
+            self.viewname="view_viewdefault"
             if old_record !=None:
-                old_record.viewname = "view_default"
+                old_record.viewname = "view_viewdefault"
                 record_delete(old_record)
             record_nsupdate(self)
             if self.record_type.record_type == 'A':
@@ -216,7 +224,7 @@ class Record(models.Model):
                             record_delete(old_record)
                         record_nsupdate(self)
                 else:
-                    if len(Result.objects.filter(idc__alias=self.idc.alias)) == 0:
+                    if len(Record.objects.filter(idc=self.idc,record_type__record_type='A')) == 1:
                         conftoresults.main()
                         saveAllConf()
                     else:
@@ -246,7 +254,7 @@ class Record(models.Model):
         from xbaydnsweb.web.utils import *
         if len(Record.objects.filter(record_type__record_type='NS',domain=self.domain))==1 and self.record_type.record_type == "NS":
             return
-        self.viewname="view_default"
+        self.viewname="view_viewdefault"
         record_delete(self)
         if len(Result.objects.filter(idc__alias=self.idc.alias)) != 0:
             if len(Record.objects.filter(name=self.name,domain=self.domain,idc=self.idc))==1:

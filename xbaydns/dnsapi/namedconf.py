@@ -8,7 +8,7 @@ Copyright (c) 2007 yanxu. All rights reserved.
 
 import logging.config
 import base64
-import os,tempfile,datetime
+import os,tempfile,time
 from xbaydns.conf import sysconf
 
 log = logging.getLogger('xbaydns.tools.namedconf')
@@ -34,6 +34,11 @@ class NamedConf(object):
         self.views={}
         self.domains={}
         self.acl_include=[]
+        self.unchanged_view_list=[]
+        
+    def addViewUnChanged(self,unchanged_hash_list):
+        self.unchanged_view_list = map(lambda x:'view_view%s'%x,unchanged_hash_list)
+        
     '''
     add acl (acl,aclmatch) 增加一个acl 
     参数说明： 
@@ -151,9 +156,17 @@ key "%s" {
     '''
     获取Serial
     '''
-    def getSerial(self):
-        d=datetime.datetime.now()
-        return '%s%s%s01'%(d.year,str(d.month).zfill(2),str(d.day).zfill(2))
+    def getSerial(self,zonefilepath):
+        import traceback
+        from dns import zone,rdatatype,rdataset,rdata
+        try:
+            zoneinfo = zone.from_file(zonefilepath,check_origin=False)
+            soaset = zoneinfo.get_rdataset(zoneinfo.origin,rdatatype.SOA)
+            if len(soaset) > 0:
+                return soaset[0].serial + 1
+        except:
+            d=int(time.time())
+            return '%s'%(d)
     
     '''
     del domain(domain) 删除一个DNS域 
@@ -188,7 +201,9 @@ key "%s" {
             fname=os.path.join('acl/',k+'.conf')
             pathname=os.path.join(path,fname)
             self.acl_include.append('include "%s";'%fname)
-            open(pathname,'w').write(v)
+            f = open(pathname,'w')
+            f.write(v)
+            f.close()
         
     '''
     保存所有view配置文件
@@ -204,47 +219,73 @@ key "%s" {
                 value = v%'\n'.join(self.domains[k].values())
             else:
                 value = v%''
-            open(pathname,'w').write(value)
+            f = open(pathname,'w')
+            f.write(value)
+            f.close()
             
     '''
     保存view中声名的zone文件
     '''
     @pathIsExists       
     def __saveDomains(self,path=sysconf.namedconf):
-        from xbaydnsweb.web.models import Domain
+        from xbaydnsweb.web.models import Domain,Record
         for view,domains in self.domains.items():
+            if view in self.unchanged_view_list:
+                break
             for domain,value in domains.items():
                 if domain=='defaultzone':continue
-                f=open(os.path.join(path,"%s"
-                        %self.getDomainFileName(domain,view)),"w")
-                nsadmin=sysconf.default_admin
-                nsttl='360'
-                nsinfo=Domain.objects.filter(name=domain)
-                if len(nsinfo)>0:
-                    allnsinfo='\n'.join( map(lambda x:' IN NS '.join([x.default_ns,x.record_info]),nsinfo) )
-                    nsadmin=str(nsinfo[0].mainter)
-                    nsttl=str(nsinfo[0].ttl)
-                else:
-                    nsinfo='    IN NS %s'%sysconf.default_ns
-                zonedata='''
-$ORIGIN .
-$TTL %(ttl)s ;10 minute
-%(domain)s IN SOA %(soa)s. %(admin)s. (
-	    %(time)s	; serial
-	    60		; refresh (1 minute)
-	    3600	; retry (1 hour)
-	    604800	; expire (1 week)
-	    3600	; minimum (1 hour)
-	    )
+                zonefilepath=os.path.join(path,"%s"
+                        %self.getDomainFileName(domain,view))
+                f=open(zonefilepath,"w")
+                domain_admin=sysconf.default_admin
+                domain_ttl='3600'
+                info=Domain.objects.filter(name=domain)
+                nsrecord=Record.objects.filter(domain=info[0],record_type__record_type='NS')
+                nsareords=[]
+                for ns in nsrecord:
+                    try:
+                        r_name = ns.record_info[:ns.record_info.index('.')]
+                    except:
+                        r_name = ns.record_info
+                    nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
+                allnsinfo='\n'.join( map(lambda x:'%s            NS    %s'%(x.name,x.record_info),nsrecord) )
+                allnsainfo='\n'.join( map(lambda x:'%s            A    %s'%(x.name,x.record_info),nsareords) )
+                domain_admin=str(info[0].mainter)
+                domain_ttl=str(info[0].ttl)
 
+                zonedata='''$ORIGIN %(domain)s.
+$TTL %(ttl)s    ;10 minute
+%(domain)s. IN SOA %(soa)s. %(admin)s. (
+                %(time)s	; serial
+                60		    ; refresh (1 minute)
+                3600	    ; retry (1 hour)
+	            604800	    ; expire (1 week)
+	            3600	    ; minimum (1 hour)
+	    )
 %(ns)s
-'''%{'domain':domain,'time':self.getSerial(),
+%(nsa)s
+'''%{'domain':domain,'time':self.getSerial(zonefilepath),
                      'ns':allnsinfo,'soa':sysconf.default_soa,
-                     'admin':nsadmin,'ttl':nsttl}
+                     'admin':domain_admin,'ttl':domain_ttl,'nsa':allnsainfo}
                 f.write(zonedata)
                 f.close()
         dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
         os.system("chmod -R g+w %s"% dpath)
+    
+    def convAclViewResult(self):
+        """将acl_include顺序化"""
+        acls, views, acl_default, view_default = [],[],[],[]
+        for conf in self.acl_include:
+            if conf.find('default')!=-1:
+                if conf.find('acl')!=-1:
+                    acl_default.append(conf)
+                elif conf.find('view')!=-1:
+                    view_default.append(conf)
+            elif conf.find('acl')!=-1:
+                acls.append(conf)
+            elif conf.find('view')!=-1:
+                views.append(conf)
+        return acls+acl_default+views+view_default
 
     '''
     保存acldef.conf文件,保存所有生成的include语句
@@ -253,7 +294,10 @@ $TTL %(ttl)s ;10 minute
     def __saveAcldef(self,path):
         acl_file=os.path.join(
                 path,sysconf.filename_map['acl'])
-        open(acl_file,'w').write('\n'.join(self.acl_include))
+        new_include=self.convAclViewResult()
+        f = open(acl_file,'w')
+        f.write('\n'.join(new_include))
+        f.close()
     '''
     保存acl和views的配置文件
     ''' 
