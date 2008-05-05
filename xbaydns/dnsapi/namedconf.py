@@ -230,30 +230,29 @@ key "%s" {
     def __saveDomains(self,path=sysconf.namedconf):
         from xbaydnsweb.web.models import Domain,Record
         for view,domains in self.domains.items():
-            if view in self.unchanged_view_list:
-                break
-            for domain,value in domains.items():
-                if domain=='defaultzone':continue
-                zonefilepath=os.path.join(path,"%s"
-                        %self.getDomainFileName(domain,view))
-                f=open(zonefilepath,"w")
-                domain_admin=sysconf.default_admin
-                domain_ttl='3600'
-                info=Domain.objects.filter(name=domain)
-                nsrecord=Record.objects.filter(domain=info[0],record_type__record_type='NS')
-                nsareords=[]
-                for ns in nsrecord:
-                    try:
-                        r_name = ns.record_info[:ns.record_info.index('.')]
-                    except:
-                        r_name = ns.record_info
-                    nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
-                allnsinfo='\n'.join( map(lambda x:'%s            NS    %s'%(x.name,x.record_info),nsrecord) )
-                allnsainfo='\n'.join( map(lambda x:'%s            A    %s'%(x.name,x.record_info),nsareords) )
-                domain_admin=str(info[0].mainter)
-                domain_ttl=str(info[0].ttl)
-
-                zonedata='''$ORIGIN %(domain)s.
+            if view not in self.unchanged_view_list:
+                for domain,value in domains.items():
+                    if domain=='defaultzone':continue
+                    zonefilepath=os.path.join(path,"%s"
+                            %self.getDomainFileName(domain,view))
+                    f=open(zonefilepath,"w")
+                    domain_admin=sysconf.default_admin
+                    domain_ttl='3600'
+                    info=Domain.objects.filter(name=domain)
+                    nsrecord=Record.objects.filter(domain=info[0],record_type__record_type='NS')
+                    nsareords=[]
+                    for ns in nsrecord:
+                        try:
+                            r_name = ns.record_info[:ns.record_info.index('.')]
+                        except:
+                            r_name = ns.record_info
+                        nsareords.extend(Record.objects.filter(name=r_name,domain=ns.domain,record_type__record_type='A'))
+                    allnsinfo='\n'.join( map(lambda x:'%s            NS    %s'%(x.name,x.record_info),nsrecord) )
+                    allnsainfo='\n'.join( map(lambda x:'%s            A    %s'%(x.name,x.record_info),nsareords) )
+                    domain_admin=str(info[0].mainter)
+                    domain_ttl=str(info[0].ttl)
+    
+                    zonedata='''$ORIGIN %(domain)s.
 $TTL %(ttl)s    ;10 minute
 %(domain)s. IN SOA %(soa)s. %(admin)s. (
                 %(time)s	; serial
@@ -269,8 +268,8 @@ $TTL %(ttl)s    ;10 minute
                      'admin':domain_admin,'ttl':domain_ttl,'nsa':allnsainfo}
                 f.write(zonedata)
                 f.close()
-        dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
-        os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
+            dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
+            os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
     
     def convAclViewResult(self):
         """将acl_include顺序化"""
