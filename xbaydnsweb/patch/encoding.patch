@@ -1,0 +1,12 @@
+Index: django/utils/encoding.py
+===================================================================
+--- django/utils/encoding.py	（版本 7519）
++++ django/utils/encoding.py	（工作副本）
+@@ -43,6 +43,7 @@
+ 
+     If strings_only is True, don't convert (some) non-string-like objects.
+     """
++    if encoding=='X-MAC-SIMP-CHINESE':encoding='utf-8'
+     if strings_only and isinstance(s, (types.NoneType, int, long, datetime.datetime, datetime.date, datetime.time, float)):
+         return s
+     try:
