@@ -1,8 +1,45 @@
 Index: django/db/models/manipulators.py
 ===================================================================
---- django/db/models/manipulators.py	（版本 7506）
+--- django/db/models/manipulators.py	（版本 7519）
 +++ django/db/models/manipulators.py	（工作副本）
-@@ -306,7 +306,7 @@
+@@ -1,4 +1,4 @@
+-from django.core.exceptions import ObjectDoesNotExist
++from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
+ from django import oldforms
+ from django.core import validators
+ from django.db.models.fields import FileField, AutoField
+@@ -281,10 +281,11 @@
+     from django.db.models.fields.related import ManyToOneRel
+     from django.utils.text import get_text_list
+     field_list = [opts.get_field(field_name) for field_name in field_name_list]
+-    if isinstance(field_list[0].rel, ManyToOneRel):
+-        kwargs = {'%s__%s__iexact' % (field_name_list[0], field_list[0].rel.field_name): field_data}
+-    else:
+-        kwargs = {'%s__iexact' % field_name_list[0]: field_data}
++    if field_name_list[0]!='':
++        if isinstance(field_list[0].rel, ManyToOneRel):
++            kwargs = {'%s__%s__iexact' % (field_name_list[0], field_list[0].rel.field_name): field_data}
++        else:
++            kwargs = {'%s__iexact' % field_name_list[0]: field_data}
+     for f in field_list[1:]:
+         # This is really not going to work for fields that have different
+         # form fields, e.g. DateTime.
+@@ -294,6 +295,7 @@
+             # This will be caught by another validator, assuming the field
+             # doesn't have blank=True.
+             return
++        if field_val=='':continue
+         if isinstance(f.rel, ManyToOneRel):
+             kwargs['%s__pk' % f.name] = field_val
+         else:
+@@ -302,11 +304,14 @@
+         old_obj = self.manager.get(**kwargs)
+     except ObjectDoesNotExist:
+         return
++    except MultipleObjectsReturned:
++        raise validators.ValidationError, _("%(object)s with this %(type)s already exists for the given %(field)s.") % \
++            {'object': capfirst(opts.verbose_name), 'type': field_list[0].verbose_name.decode('utf8'), 'field': get_text_list([f.verbose_name for f in field_list[1:]], _('and'))}
+     if hasattr(self, 'original_object') and self.original_object._get_pk_val() == old_obj._get_pk_val():
          pass
      else:
          raise validators.ValidationError, _("%(object)s with this %(type)s already exists for the given %(field)s.") % \
