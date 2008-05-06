@@ -152,7 +152,7 @@ def checkJNL(path,view_diff):
     domains = Domain.objects.all()
     views = ['default']
     views.extend(view_diff['intersection'])
-    view.extend(view_diff['add_hash'])
+    views.extend(view_diff['add_hash'])
     for view in views:
         for domain in domains:
             records = Record.objects.filter(domain=domain,record_type__record_type='A')
