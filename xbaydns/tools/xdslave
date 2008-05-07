@@ -47,7 +47,7 @@ mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 crontab -u xdslave -l >/home/xdslave/old_crontab 2>/dev/null
 crontab -u xdslave /home/xdslave/prog/crontab
 crontab -u root -l |grep -v ReloadNamed>/tmp/root_crontab 2>/dev/null
-echo "*/5 * * * * /home/xdslave/prog/ReloadNamed.sh">>/tmp/root_crontab
+echo "*/1 * * * * /home/xdslave/prog/ReloadNamed.sh">>/tmp/root_crontab
 crontab -u root /tmp/root_crontab
 
 
