@@ -87,12 +87,6 @@ def updateDomain(view_diff):
             print "record ",record
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname
-            record_nsupdate(record)
-    """更新默认机房的记录"""
-    for record in Record.objects.all():
-        record.viewname="view_viewdefault"
-        print record.name,record.domain,record.viewname
-        record_nsupdate(record)
 
 def genNamedConf(path):
     """生成所有named配置文件"""
