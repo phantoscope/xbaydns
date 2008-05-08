@@ -91,9 +91,9 @@ key "%s" {
         s='''view "%s" { match-clients { %s%s; }; %%s };
         '''%(view,matchClient,key_tsig)
         for slave in slaves:
-            server=''' server %s { keys "%s"; };
+            server='''server %s { keys "%s"; };
             '''%(slave,tsig)
-            s = keys + server
+            s = s + server
         self.views[view]=keys+s
         return keys+s
     
