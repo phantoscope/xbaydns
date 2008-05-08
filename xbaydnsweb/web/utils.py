@@ -110,7 +110,7 @@ def genNamedConf(path):
         iparea.view = viewname
         iparea.save()
     #增加any的ACL和View
-    nc.addAcl('acl_default',slave_ips,['any',])
+    nc.addAcl('acl_default',['any',])
     nc.addView('view_viewdefault',slave_ips,['any',])
     
     view_diff = getViewDiff(ipareas,old_ipareas)
