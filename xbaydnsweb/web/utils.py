@@ -106,7 +106,7 @@ def genNamedConf(path):
         nc.addAcl(aclname,list(eval(iparea.ip)))
         #每个View对应一种ACL
         viewname='view_view%s'%serial
-        nc.addView(viewname,[aclname,],slave_ips)
+        nc.addView(viewname,slave_ips,[aclname,])
         iparea.view = viewname
         iparea.save()
     #增加any的ACL和View

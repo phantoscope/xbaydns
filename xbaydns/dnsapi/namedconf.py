@@ -73,7 +73,7 @@ class NamedConf(object):
     view 增加的view的名称 
     match-client 匹配于该view的acl汇总
     '''
-    def addView(self,view,matchClient=[],slaves):
+    def addView(self,view,slaves,matchClient=[]):
         tsig='%s-view-key'%view
         if len(matchClient)>0:
             matchClient=map(lambda x:'"%s";'%x,matchClient)
