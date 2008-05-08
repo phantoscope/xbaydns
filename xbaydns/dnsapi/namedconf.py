@@ -90,8 +90,7 @@ key "%s" {
         key_tsig='key "%s"'%tsig
         s1=''
         for slave in slaves:
-            server='''server %s { keys "%s"; };
-            '''%(slave,tsig)
+            server='''\n    server %s { keys "%s"; };'''%(slave,tsig)
             s1 = s1 + server
         s='''view "%s" { match-clients { %s%s; }; %s %%s };
         '''%(view,matchClient,key_tsig,s1)
