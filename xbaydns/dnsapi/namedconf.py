@@ -93,7 +93,7 @@ key "%s" {
         for slave in slaves:
             server=''' server %s { keys "%s"; };
             '''%(slave,tsig)
-            keys = keys + server
+            s = keys + server
         self.views[view]=keys+s
         return keys+s
     
