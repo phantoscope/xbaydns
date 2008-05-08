@@ -88,12 +88,13 @@ key "%s" {
 '''
         keys=keys%(tsig,self.genSecret(tsig))
         key_tsig='key "%s"'%tsig
-        s='''view "%s" { match-clients { %s%s; }; %%s };
-        '''%(view,matchClient,key_tsig)
+        s1=''
         for slave in slaves:
             server='''server %s { keys "%s"; };
             '''%(slave,tsig)
-            s = s + server
+            s1 = s1 + server
+        s='''view "%s" { match-clients { %s%s; }; %s %%s };
+        '''%(view,matchClient,key_tsig,s1)
         self.views[view]=keys+s
         return keys+s
     
