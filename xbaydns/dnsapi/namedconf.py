@@ -73,7 +73,7 @@ class NamedConf(object):
     view 增加的view的名称 
     match-client 匹配于该view的acl汇总
     '''
-    def addView(self,view,matchClient=[]):
+    def addView(self,view,matchClient=[],slaves):
         tsig='%s-view-key'%view
         if len(matchClient)>0:
             matchClient=map(lambda x:'"%s";'%x,matchClient)
@@ -90,6 +90,10 @@ key "%s" {
         key_tsig='key "%s"'%tsig
         s='''view "%s" { match-clients { %s%s; }; %%s };
         '''%(view,matchClient,key_tsig)
+        for slave in slaves:
+            server=''' server %s { keys "%s"; };
+            '''%(slave,tsig)
+            keys = keys + server
         self.views[view]=keys+s
         return keys+s
     
@@ -223,6 +227,13 @@ key "%s" {
             f.write(value)
             f.close()
             
+    def checkDefaultDomain(self,file):
+        try:
+            os.stat(file)
+            return True
+        except:
+            return False
+    
     '''
     保存view中声名的zone文件
     '''
@@ -235,6 +246,8 @@ key "%s" {
                     if domain=='defaultzone':continue
                     zonefilepath=os.path.join(path,"%s"
                             %self.getDomainFileName(domain,view))
+                    if view == 'viewdefault' and checkDefaultDomain(zonefilepath) == True:
+                        continue
                     f=open(zonefilepath,"w")
                     domain_admin=sysconf.default_admin
                     domain_ttl='3600'

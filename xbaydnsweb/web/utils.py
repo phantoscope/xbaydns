@@ -93,6 +93,8 @@ def genNamedConf(path):
     nc = NamedConf()
     ipareas = IPArea.objects.filter(~Q(ip='0'))
     old_ipareas = IPArea.objects.filter(ip='0')
+    slave_ips = map(lambda x:x.ip,Node.objects.all())
+    
     for iparea in ipareas:
         srout = eval(iparea.service_route)
         srout.sort()
@@ -104,7 +106,7 @@ def genNamedConf(path):
         nc.addAcl(aclname,list(eval(iparea.ip)))
         #每个View对应一种ACL
         viewname='view_view%s'%serial
-        nc.addView(viewname,[aclname,])
+        nc.addView(viewname,[aclname,],slave_ips)
         iparea.view = viewname
         iparea.save()
     #增加any的ACL和View
