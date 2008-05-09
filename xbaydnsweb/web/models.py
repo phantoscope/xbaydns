@@ -130,12 +130,12 @@ class Node(models.Model):
         self.pubkey = ''
         super(Node,self).save()
         update_allow_transfer(self.ip)
-        saveAllConf()
+        saveAllConf(renew=False)
         
     def delete(self):
         from xbaydnsweb.web.utils import *
         super(Node,self).delete()
-        saveAllConf()
+        saveAllConf(renew=False)
         
     def regsave(self):
         self.regtime = datetime.now()

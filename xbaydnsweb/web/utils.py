@@ -88,7 +88,7 @@ def updateDomain(view_diff):
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname
 
-def genNamedConf(path):
+def genNamedConf(path,renew=True):
     """生成所有named配置文件"""
     nc = NamedConf()
     ipareas = IPArea.objects.filter(~Q(ip='0'))
@@ -112,9 +112,11 @@ def genNamedConf(path):
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
     nc.addView('view_viewdefault',slave_ips,['any',])
-    
-    view_diff = getViewDiff(ipareas,old_ipareas)
-    nc.addViewUnChanged(view_diff['intersection'])        
+    if renew == True:
+        view_diff = getViewDiff(ipareas,old_ipareas)
+        nc.addViewUnChanged(view_diff['intersection'])
+    else:
+        nc.addViewUnChanged(map(lambda x:x.route_hash,ipareas))        
     #追加所有的Domain
     domain_matchs = map(lambda x:'%s'%x.name,Domain.objects.all())
     nc.addDomain(domain_matchs)
@@ -123,10 +125,11 @@ def genNamedConf(path):
     return view_diff
         
 #保存所有配置,生成所有bind需要的配置文件
-def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
-    view_diff = genNamedConf(path)
-    updateDomain(view_diff)
-    checkJNL(path,view_diff)
+def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf),renew=True):
+    view_diff = genNamedConf(path,renew)
+    if renew == True:
+        updateDomain(view_diff)
+        checkJNL(path,view_diff)
     
 def getViewDiff(ipareas,old_ipareas):
     view_diff = {}
