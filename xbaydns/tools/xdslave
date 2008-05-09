@@ -1,31 +1,35 @@
 #!/bin/sh
 
-if [ $# != 3 ]; then
-    echo "Usage: $0 <master_ip> <authzcode> <path_to_bind_chroot>"
+MASTERIP=$1
+AUTHZCODE=$2
+
+BINDCHROOT=${XDPREFIX}/named
+XDSLAVEHOME=${XDPREFIX}/home/xdslave
+
+#-------------------------------------
+if [ -z "${XDPREFIX}" ]
+then
+    echo "XDPREFIX is not init"
     exit 1
 fi
 
-MASTERIP=$1
-AUTHZCODE=$2
-BINDCHROOT=$3
-
-
 #1. init user(xdslave) enviroment 
 #===============================
-rm -rf /home/xdslave
+rm -rf ${XDSLAVEHOME}
 userdel xdslave
-useradd xdslave -g named -s /sbin/nologin -d /home/xdslave
-rm -rf /home/xdslave
-mkdir -p /home/xdslave/{.ssh,prog}
-mkdir -p /home/xdslave/named/{log,etc/{acl,view,dynamic}}
+useradd xdslave -g named -s /sbin/nologin -d ${XDSLAVEHOME}
+rm -rf ${XDSLAVEHOME}
+mkdir -p ${XDSLAVEHOME}/{.ssh,prog}
+mkdir -p ${XDSLAVEHOME}/named/{log,etc/{acl,view,dynamic}}
 
-touch /home/xdslave/.ssh/known_hosts
-ssh-keygen -t dsa -f /home/xdslave/rsync-key -N ""
+touch ${XDSLAVEHOME}/.ssh/known_hosts
+ssh-keygen -t dsa -f ${XDSLAVEHOME}/rsync-key -N ""
+chmod a+w /dev/null
 
 #2. register to Master 
 #================================
 echo "xdreg slave -m $MASTERIP -a $AUTHZCODE"
-xdreg slave -m $MASTERIP -a $AUTHZCODE
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdreg slave -m $MASTERIP -a $AUTHZCODE
 if [ $? -ne 0 ]; then
 exit 1
 fi
@@ -34,26 +38,25 @@ fi
 #3. sync program and configuration
 #=============================== 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bak
-cp /home/xdslave/.ssh/known_hosts ~/.ssh/known_hosts
-
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/prog /home/xdslave
-rsync -avz -e 'ssh -i /home/xdslave/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/slave/slave.conf /home/xdslave/slave.conf
+cp ${XDSLAVEHOME}/.ssh/known_hosts ~/.ssh/known_hosts
+MASTERHOME=`cat /tmp/MASTERHOME`
+rsync -avz -e "ssh -i ${XDSLAVEHOME}/rsync-key" xbaydns@$MASTERIP:${MASTERHOME}/slave/prog ${XDSLAVEHOME}
+rsync -avz -e "ssh -i ${XDSLAVEHOME}/rsync-key" xbaydns@$MASTERIP:${MASTERHOME}/slave/slave.conf ${XDSLAVEHOME}/slave.conf
 
 mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
 
 #4. setup up cron
 #==================================
-crontab -u xdslave -l >/home/xdslave/old_crontab 2>/dev/null
-crontab -u xdslave /home/xdslave/prog/crontab
-crontab -u root -l |grep -v ReloadNamed>/tmp/root_crontab 2>/dev/null
-echo "*/1 * * * * /home/xdslave/prog/ReloadNamed.sh">>/tmp/root_crontab
-crontab -u root /tmp/root_crontab
+crontab -u xdslave -l >${XDSLAVEHOME}/old_crontab 2>/dev/null
+echo "*/5 * * * * ${XDSLAVEHOME}/prog/UploadLog.sh" > ${XDSLAVEHOME}/prog/crontab
+echo "*/1 * * * * ${XDSLAVEHOME}/prog/UpdateNamed.sh">>${XDSLAVEHOME}/prog/crontab
+crontab -u xdslave ${XDSLAVEHOME}/prog/crontab
 
 
 #5. prepare bind's chroot
 #-----------------------
-rm -rff $BINDCHROOT/etc/{acl,view,dynamic}
+rm -rf $BINDCHROOT/etc/{acl,view,dynamic}
 mkdir -p $BINDCHROOT/{etc/{acl,view,dynamic},dev,var/{run,dump,stats,log}}
 touch $BINDCHROOT/var/log/named.log
 touch $BINDCHROOT/var/log/query.log
@@ -69,28 +72,85 @@ mknod $BINDCHROOT/dev/null c 1 3
 echo "\
 XBAYDNS_CHROOT_PATH=$BINDCHROOT
 XBAYDNS_BIND_CONF=/etc
-XBAYDNS_BIND_START=/usr/local/sbin/named
-XBAYDNS_BIND_USER=named
+XBAYDNS_BIND_START=${XDPREFIX}/named/sbin/named
+XBAYDNS_BIND_USER=xdslave
+PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
 export PATH XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
-"|tee /home/xdslave/xdenv
+"|tee ${XDSLAVEHOME}/xdenv
+cp ${XDSLAVEHOME}/xdenv ${XDPREFIX}/home/xdslave/.profile
 
-chmod +x /home/xdslave/xdenv
-source /home/xdslave/xdenv
-id named || useradd named -s /sbin/nologin
-xdinitbind slave $MASTERIP
+chmod +x ${XDSLAVEHOME}/xdenv
+source ${XDSLAVEHOME}/xdenv
+id xdslave || useradd xdslave -s /sbin/nologin
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdinitbind slave $MASTERIP
 
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
-rndc reload
-chown -R named:named $BINDCHROOT
+chown -R xdslave:named $BINDCHROOT
 chmod -R 770 $BINDCHROOT
-chown -R xdslave:named /home/xdslave
-chmod -R 700 /home/xdslave
+chown -R xdslave:named ${XDSLAVEHOME}
+chmod -R 700 ${XDSLAVEHOME}
+MYNAME=`cat ${XDSLAVEHOME}/myname`
 
+#7.generate slave startup script
+#===============================
+echo "\
+#!/bin/sh
 
-#7. message
+NAMED=\`pgrep named\`
+
+if [ ! -f ${BINDCHROOT}/sbin/named ]; then
+        echo 'named is not existed!'
+        exit 1
+fi
+
+startall(){
+        if [ -n \"\${NAMED}\" ]
+        then
+            echo 'named is already started, use restart instead.'
+            exit 1
+        fi
+        ${BINDCHROOT}/sbin/named -t ${BINDCHROOT} -u xdslave
+}
+
+stopall(){
+        if [ -n \"\${NAMED}\" ]
+        then
+            kill -9 \${NAMED}
+            NAMED=\`pgrep named\`; export NAMED
+        fi
+        killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
+}
+
+case \"\$1\" in
+start)
+        startall
+        echo 'slave named started'
+        ;;
+restart)
+        stopall
+        startall
+        echo 'slave named restarted'
+        ;;
+stop)
+        stopall
+        echo 'slave named stoped'
+        ;;
+reload)
+        ${BINDCHROOT}/sbin/rndc reload
+        ;;
+*)
+        echo \"Usage: $0 {start|stop|restart|reload}\"
+        exit 1
+        ;;
+esac
+exit 0
+" > ${XDSLAVEHOME}/slave.sh
+chmod +x ${XDSLAVEHOME}/slave.sh
+ln -sf ${XDSLAVEHOME}/slave.sh ${XDPREFIX}/bin/
+
+#8. message
 #=============================
-MYNAME=`cat /home/xdslave/myname`
 echo "\
 
 
@@ -98,11 +158,13 @@ echo "\
 XBayDNS(enabled slave) installed successfully!
 MASTER    :$MASTERIP
 SLAVE CODE:$MYNAME
-HOME      :/home/xdslave
+HOME      :${XDSLAVEHOME}
+
+Use \"${XDSLAVEHOME}/slave.sh start\" to start slave named.
 
 The next thing you may do:
 .  Start named server and make sure named running normally
-   #/usr/local/sbin/named -t $XBAYDNS_CHROOT_PATH -u named
+   #${XDPREFIX}/named/sbin/named -t $XBAYDNS_CHROOT_PATH -u xdslave
    #tail -f /var/log/messages
 
 "

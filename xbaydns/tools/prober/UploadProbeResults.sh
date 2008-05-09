@@ -10,6 +10,4 @@ if [ -f "$PPATH/../agent.conf" ]; then
 fi
 
 cd $PPATH
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' \
- ../iplatency/${AGENT_NAME}-* xbaydns\@$MASTER_IP:/home/xbaydns/agent/iplatency/
-
+rsync -avz -e 'ssh -i ../rsync-key' ../iplatency/${AGENT_NAME}-* xbaydns\@${MASTER_IP}:${XBAYDNSHOME}/agent/iplatency/

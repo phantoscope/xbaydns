@@ -1,32 +1,32 @@
 #!/bin/sh
 
 usage() {
-    echo "Usage: $0 master <master_ip> <path_to_bind_chroot>"
-    echo "       $0 agent  <master_ip> <authz_code>"
-    echo "       $0 slave  <master_ip> <authz_code> <path_to_bind_chroot>"
+    echo "Usage: $0 master <master_ip> <prefix>"
+    echo "       $0 agent  <master_ip> <prefix> <authz_code>"
+    echo "       $0 slave  <master_ip> <prefix> <authz_code>"
 }
 
-    
+
 if [ $# -lt 3 ]; then
     usage
     exit 1
 else
     TYPE=$1
     MASTERIP=$2
+    XDPREFIX=$3
+    export XDPREFIX
     if [ $TYPE = "master" ]; then
-        BIND_CHROOT=$3
-        xdmaster $MASTERIP $BIND_CHROOT
+        ${XDPREFIX}/bin/xdmaster $MASTERIP
     elif [ $TYPE = "agent" ]; then
-        AUTHZCODE=$3 
-        xdagent $MASTERIP $AUTHZCODE
+        AUTHZCODE=$4
+        ${XDPREFIX}/bin/xdagent $MASTERIP $AUTHZCODE
     elif [ $TYPE = "slave" ]; then
-        if [ $# -lt 4 ]; then
+        if [ $# -lt 3 ]; then
             usage
             exit 1
         fi
-        AUTHZCODE=$3
-        BIND_CHROOT=$4
-        xdslave $MASTERIP $AUTHZCODE $BIND_CHROOT
+        AUTHZCODE=$4
+        ${XDPREFIX}/bin/xdslave $MASTERIP $AUTHZCODE
     else
         usage
         exit 1

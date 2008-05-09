@@ -5,6 +5,7 @@ export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 PPATH=`dirname $0`
 if [ -f "$PPATH/../master.conf" ]; then
 	. $PPATH/../master.conf
+	. $PPATH/../xdenv
 fi
 
 cd $PPATH/../agent/iplatency
@@ -22,4 +23,4 @@ do
  sort $file > dummy && mv dummy $file
 done
 
-xdidc2view
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdidc2view

@@ -8,20 +8,30 @@ fi
 MASTERIP=$1
 AUTHZCODE=$2
 
+XDAGENTHOME=${XDPREFIX}/home/xdagent
+
+#pre init check env var
+#-------------------------------------
+if [ -z "${XDPREFIX}" ]
+then
+    echo "XDPREFIX is not init"
+    exit 1
+fi
+
 #1. init user(xdagent) enviroment 
 #===============================
-rm -rf /home/xdagent
+rm -rf ${XDAGENTHOME}
 userdel xdagent
-useradd xdagent -g named -s /sbin/nologin -d /home/xdagent
-mkdir -p /home/xdagent/{.ssh,prog,iplatency}
-touch /home/xdagent/.ssh/known_hosts
-ssh-keygen -t dsa -f /home/xdagent/rsync-key -N ""
-
+useradd xdagent -g named -s /sbin/nologin -d ${XDAGENTHOME}
+mkdir -p ${XDAGENTHOME}/{.ssh,prog,iplatency}
+touch ${XDAGENTHOME}/.ssh/known_hosts
+ssh-keygen -t dsa -f ${XDAGENTHOME}/rsync-key -N ""
+chmod a+w /dev/null
 
 #2. register to Master 
 #================================
 echo "xdreg agent -m $MASTERIP -a $AUTHZCODE"
-xdreg agent -m $MASTERIP -a $AUTHZCODE
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdreg agent -m $MASTERIP -a $AUTHZCODE
 if [ $? -ne 0 ]; then
 exit 1
 fi
@@ -30,27 +40,32 @@ fi
 #3. sync program and configuration
 #=============================== 
 mv ~/.ssh/known_hosts ~/.ssh/known_hosts.bak
-cp /home/xdagent/.ssh/known_hosts ~/.ssh/known_hosts
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/agent/prog /home/xdagent
-rsync -avz -e 'ssh -i /home/xdagent/rsync-key' xbaydns@$MASTERIP:/home/xbaydns/agent/agent.conf /home/xdagent
+cp ${XDAGENTHOME}/.ssh/known_hosts ~/.ssh/known_hosts
+MASTERHOME=`cat /tmp/MASTERHOME`
+rsync -avz -e "ssh -i ${XDAGENTHOME}/rsync-key" xbaydns@$MASTERIP:${MASTERHOME}/agent/prog ${XDAGENTHOME}
+rsync -avz -e "ssh -i ${XDAGENTHOME}/rsync-key" xbaydns@$MASTERIP:${MASTERHOME}/agent/agent.conf ${XDAGENTHOME}
 mv ~/.ssh/known_hosts.bak ~/.ssh/known_hosts
 
 
 #4. setup up cron
 #==================================
-crontab -u xdagent -l >/home/xdagent/old_crontab 2>/dev/null
-crontab -u xdagent /home/xdagent/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/UpdateAgent.sh">${XDAGENTHOME}/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/UpdateIPList.sh">>${XDAGENTHOME}/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/ProbeIPlist.sh">>${XDAGENTHOME}/prog/crontab
+echo "*/5 * * * * ${XDAGENTHOME}/prog/UploadProbeResults.sh">>${XDAGENTHOME}/prog/crontab
+crontab -u xdagent -l >${XDAGENTHOME}/old_crontab 2>/dev/null
+crontab -u xdagent ${XDAGENTHOME}/prog/crontab
 
 
-chmod +x /home/xdagent/prog/*
-chown -R xdagent:named /home/xdagent
-chmod 700 /home/xdagent
+chmod +x ${XDAGENTHOME}/prog/*
+chown -R xdagent:named ${XDAGENTHOME}
+chmod 700 ${XDAGENTHOME}
 
 
 
 #5. message
 #=============================
-MYNAME=`cat /home/xdagent/myname`
+MYNAME=`cat ${XDAGENTHOME}/myname`
 echo "\
 
 
@@ -58,6 +73,6 @@ echo "\
 XBayDNS(enabled agent) installed successfully!
 MASTER    :$MASTERIP
 AGENT CODE:$MYNAME
-HOME      :/home/xdagent
+HOME      :${XDAGENTHOME}
 
 "

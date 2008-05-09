@@ -12,9 +12,13 @@ import os
 import sys 
 import base64
 
+xdprefix = os.environ['XDPREFIX']
+agenthome = xdprefix+'/home/xdagent'
+slavehome = xdprefix+'/home/xdslave'
+
 def reg_agent(server, authzcode, pubkey):
     import urllib2
-    url = "http://%s/agent/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
+    url = "http://%s:8080/agent/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
     sock = urllib2.urlopen(url)
     stream = sock.read()
     sock.close()
@@ -24,13 +28,14 @@ def reg_agent(server, authzcode, pubkey):
         print('Sorry, %s' % resp['retmsg'])
         sys.exit(1)
 
-    open('/home/xdagent/myname', 'w').write(resp['yourname'])
-    open('/home/xdagent/.ssh/known_hosts', 'w').write(server + ' ' + resp['master_pubkey'])
+    open(os.path.join(agenthome,'myname'), 'w').write(resp['yourname'])
+    open(os.path.join(agenthome,'.ssh/known_hosts'), 'w').write(server + ' ' + resp['master_pubkey'])
+    open(os.path.join('/tmp', 'MASTERHOME'), 'w').write(resp['xbaydnshome'])
 
 
 def reg_slave(server, authzcode, pubkey):
     import urllib2
-    url = "http://%s/slave/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
+    url = "http://%s:8080/slave/create/%s/%s/" % (server, authzcode, pubkey.replace('/',',').replace(' ', ';')[0:len(pubkey) - 1])
     print "URL:%s" % url
     sock = urllib2.urlopen(url)
     stream = sock.read()
@@ -41,8 +46,9 @@ def reg_slave(server, authzcode, pubkey):
         print('Sorry, %s' % resp['retmsg'])
         sys.exit(1)
  
-    open('/home/xdslave/myname', 'w').write(resp['yourname'])
-    open('/home/xdslave/.ssh/known_hosts', 'w').write(server + ' ' + resp['master_pubkey'])
+    open(os.path.join(slavehome, 'myname'), 'w').write(resp['yourname'])
+    open(os.path.join(slavehome, '.ssh/known_hosts'), 'w').write(server + ' ' + resp['master_pubkey'])
+    open(os.path.join('/tmp', 'MASTERHOME'), 'w').write(resp['xbaydnshome'])
 
 def main():
     """Main entry point for running the xdagent ."""
@@ -67,13 +73,13 @@ def main():
             parser.print_help()
             sys.exit(1)
 
-        pubkey_string = open('/home/xdagent/rsync-key.pub').read()
+        pubkey_string = open(os.path.join(agenthome,'rsync-key.pub'), 'r').read()
         return reg_agent(options.server, options.authzcode, pubkey_string)
     elif (args[0] == 'slave'):
         if len(options.authzcode) == 0:
             parser.print_help()
             sys.exit(1)
-        pubkey_string = open('/home/xdslave/rsync-key.pub').read()
+        pubkey_string = open(os.path.join(slavehome, 'rsync-key.pub'), 'r').read()
         return reg_slave(options.server, options.authzcode, pubkey_string)
     else:
         parser.print_help()

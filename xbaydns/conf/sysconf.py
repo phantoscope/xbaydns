@@ -49,7 +49,10 @@ namedstop = ""
 # 这是bind的重启脚本
 namedrestart = ""
 # 这是xbaydns运算数据目录
-xbaydnsdb = "/home/xbaydns/view"
+xdprefix = "/opt/xbaydns"
+xbaydnsdb = os.path.join(xdprefix, "home/xbaydns/view")
+#xbaydnsdb = os.path.expanduser('~/view')
+#xbaydnsdb = os.path.expanduser('~/view')
 #xbaydnsdb = os.path.expanduser('~/view')
 
 namedef = {'Darwin':
@@ -98,6 +101,7 @@ if     ((system == 'Darwin') and (release >= '9.1.0')) \
         if len(namedrestart) == 0:
             namedrestart = namedef[system]['namedrestart']
 
+xdprefix = os.getenv('XDPREFIX', xdprefix)
 chroot_path = os.getenv('XBAYDNS_CHROOT_PATH', chroot_path)
 namedconf  = os.getenv('XBAYDNS_BIND_CONF', namedconf)
 named_user  = os.getenv('XBAYDNS_BIND_USER', named_user)

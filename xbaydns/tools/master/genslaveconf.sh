@@ -1,26 +1,18 @@
-#!/bin/sh
-
 export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
-source /home/xbaydns/xdenv
-source /home/xbaydns/master.conf
 
-export MASTER_PATH=$XBAYDNS_CHROOT_PATH/etc
-export SLAVE_PATH=/home/xbaydns/slave/named/etc
+PPATH=`dirname $0`
+if [ -f "$PPATH/../master.conf" ]; then
+        . $PPATH/../master.conf
+        . $PPATH/../xdenv
+fi
 
-slave_replace()
-{
-cat $1 | sed "s/server .* { keys \(.*\) };[ ]*$/server $MASTER_IP { keys \1 };/g" | sed "s/type master;/type slave;\n        masters{ $MASTER_IP; };/g" | uniq >$1.out
-mv $1.out $1
-}
-
+export MASTER_PATH=${XBAYDNS_CHROOT_PATH}/etc
+export SLAVE_PATH=${XDPREFIX}/home/xbaydns/slave/named/etc
+echo "SLAVE_PATH",$SLAVE_PATH
 mkdir -p $SLAVE_PATH
 rm -f $SLAVE_PATH/acl/*
 cp -rf $MASTER_PATH/acl $SLAVE_PATH
-
 rm -f $SLAVE_PATH/view/*
 cp -rf $MASTER_PATH/view $SLAVE_PATH
-
-for i in `find $SLAVE_PATH/view/*`
-do
- slave_replace $i
-done
+find $SLAVE_PATH/view/ -type f | xargs -Iaa sed -i.master -e s/"type master;"/"type slave;\n        masters{ ${MASTER_IP}; };"/g -e "s/server .* { keys \(.*\) };[ ]*$/server ${MASTER_IP} { keys \1 };/g" -e "N;/server .* { keys \(.*\) };[ ]*$/D" aa
+rm $SLAVE_PATH/view/*.master

@@ -284,7 +284,22 @@ $TTL %(ttl)s    ;10 minute
                     f.write(zonedata)
                     f.close()
         dpath=os.path.join(sysconf.chroot_path,sysconf.namedconf,'dynamic')
-        os.system("chown -R %s:wheel %s"%(sysconf.named_user,dpath))
+        os.system("chmod -R g+w %s"% dpath)
+    
+    def convAclViewResult(self):
+        """将acl_include顺序化"""
+        acls, views, acl_default, view_default = [],[],[],[]
+        for conf in self.acl_include:
+            if conf.find('default')!=-1:
+                if conf.find('acl')!=-1:
+                    acl_default.append(conf)
+                elif conf.find('view')!=-1:
+                    view_default.append(conf)
+            elif conf.find('acl')!=-1:
+                acls.append(conf)
+            elif conf.find('view')!=-1:
+                views.append(conf)
+        return acls+acl_default+views+view_default
     
     def convAclViewResult(self):
         """将acl_include顺序化"""

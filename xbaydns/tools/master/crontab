@@ -1,3 +1,0 @@
-*/5 * * * * /home/xbaydns/prog/Log2IPlist.sh
-*/5 * * * * /home/xbaydns/prog/genidcview.sh
-*/1 * * * * /home/xbaydns/prog/genslaveconf.sh

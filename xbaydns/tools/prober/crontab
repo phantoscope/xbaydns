@@ -1,4 +1,0 @@
-*/5 * * * * /home/xdagent/prog/UpdateAgent.sh
-*/5 * * * * /home/xdagent/prog/UpdateIPList.sh
-*/5 * * * * /home/xdagent/prog/ProbeIPlist.sh
-*/5 * * * * /home/xdagent/prog/UploadProbeResults.sh

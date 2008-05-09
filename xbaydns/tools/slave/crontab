@@ -1,2 +1,0 @@
-*/5 * * * * /home/xdslave/prog/UploadLog.sh
-*/1 * * * * /home/xdslave/prog/UpdateNamed.sh

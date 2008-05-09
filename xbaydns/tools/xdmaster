@@ -1,12 +1,15 @@
 #!/bin/sh
 
-if [ $# != 2 ]; then
-    echo "Usage: $0 <master_ip> <path_to_bind_chroot>"
+#pre init check env var
+#-------------------------------------
+if [ -z "${XDPREFIX}" ]
+then
+    echo "XDPREFIX is not init"
     exit 1
 fi
 
 MASTERIP=$1
-BINDCHROOT=$2
+BINDCHROOT=${XDPREFIX}/named
 
 #1.init sync&cron enviroment 
 #===========================
@@ -44,41 +47,55 @@ ln -s `which rsync` $SMRSH_ALLOWCMD_DIR/
 
 #1.2 make user(xbaydns) for sync
 #-----------------------------------
-rm -rf /home/xbaydns
+XBAYDNSHOME=${XDPREFIX}/home/xbaydns
+XBAYDNSEGG=`${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdwherepkg`
+if [ -d ${XBAYDNSHOME} ]
+then
+#I don't know why but if just remove ${XBAYDNSHOME}, XDPREFIX will not init.
+    rm -rf ${XDPREFIX}/home
+fi
+groupadd named
 userdel xbaydns
-useradd xbaydns -g named -s $SMRSH_CMD -d /home/xbaydns
+useradd xbaydns -g named -s $SMRSH_CMD -d ${XBAYDNSHOME}
 
-rm -rf  /home/xbaydns
-mkdir -p /home/xbaydns
-mkdir -p /home/xbaydns/{.ssh,prog,view,slave,agent}
-mkdir -p /home/xbaydns/view/{iplatency,idcview}
-mkdir -p /home/xbaydns/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
-mkdir -p /home/xbaydns/agent/{prog,iplatency}
+mkdir -p ${XBAYDNSHOME}
+mkdir -p ${XBAYDNSHOME}/{.ssh,prog,view,slave,agent}
+mkdir -p ${XBAYDNSHOME}/view/{iplatency,idcview}
+mkdir -p ${XBAYDNSHOME}/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
+mkdir -p ${XBAYDNSHOME}/agent/{prog,iplatency}
 
-touch /home/xbaydns/.ssh/authorized_keys
+cp ${XBAYDNSEGG}/xbaydnsweb/xbaydns.db ${XBAYDNSHOME}
+touch ${XBAYDNSHOME}/.ssh/authorized_keys
 
-cp -r `xdwherepkg`/xbaydns/tools/prober/* /home/xbaydns/agent/prog
-chmod +x /home/xbaydns/agent/prog/*
-echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/agent/agent.conf
-echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/master.conf
+cp -r ${XBAYDNSEGG}/xbaydns/tools/prober/* ${XBAYDNSHOME}/agent/prog
+chmod +x ${XBAYDNSHOME}/agent/prog/*
+echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/agent/agent.conf
+echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/agent/agent.conf
+echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/master.conf
+echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/master.conf
 
 
-cp -r `xdwherepkg`/xbaydns/tools/slave/* /home/xbaydns/slave/prog
-chmod +x /home/xbaydns/slave/prog/*
-echo "MASTER_IP=\"$MASTERIP\"">/home/xbaydns/slave/slave.conf
+cp -r ${XBAYDNSEGG}/xbaydns/tools/slave/* ${XBAYDNSHOME}/slave/prog
+chmod +x ${XBAYDNSHOME}/slave/prog/*
+echo "MASTER_IP=\"${MASTERIP}\"">${XBAYDNSHOME}/slave/slave.conf
+echo "XBAYDNSHOME=\"${XBAYDNSHOME}\"">>${XBAYDNSHOME}/slave/slave.conf
 
-cp -r `xdwherepkg`/xbaydns/tools/master/* /home/xbaydns/prog
-chmod +x /home/xbaydns/prog/*
+cp -r ${XBAYDNSEGG}/xbaydns/tools/master/* ${XBAYDNSHOME}/prog
+chmod +x ${XBAYDNSHOME}/prog/*
 
-crontab -u xbaydns -l >/home/xbaydns/old_crontab 2>/dev/null
-crontab -u xbaydns /home/xbaydns/prog/crontab
+echo "*/5 * * * * ${XBAYDNSHOME}/prog/Log2IPlist.sh" > ${XBAYDNSHOME}/prog/crontab
+echo "*/5 * * * * ${XBAYDNSHOME}/prog/genidcview.sh" >> ${XBAYDNSHOME}/prog/crontab
+echo "*/1 * * * * ${XBAYDNSHOME}/prog/genslaveconf.sh" >> ${XBAYDNSHOME}/prog/crontab
+
+crontab -u xbaydns -l >${XBAYDNSHOME}/old_crontab 2>/dev/null
+crontab -u xbaydns ${XBAYDNSHOME}/prog/crontab
 
 #2.prepare bind's chroot
 #-----------------------
 mkdir -p $BINDCHROOT/{etc,dev,var/{run,dump,stats,log}}
-chown -R named:named $BINDCHROOT/var/{run,dump,stats}
+chown -R xbaydns:named $BINDCHROOT/var/{run,dump,stats}
 touch $BINDCHROOT/var/log/named.log
-chown -R named:named $BINDCHROOT/var/log/named.log
+chown -R xbaydns:named $BINDCHROOT/var/log/named.log
 
 rm -rf $BINDCHROOT/dev/{random,zero,null}
 mknod $BINDCHROOT/dev/random c 1 8
@@ -88,39 +105,100 @@ mknod $BINDCHROOT/dev/null c 1 3
 #3.set envionment variables
 #==========================
 echo "\
+XDPREFIX=${XDPREFIX}
 XBAYDNS_CHROOT_PATH=$BINDCHROOT
 XBAYDNS_BIND_CONF=etc
-XBAYDNS_BIND_START=/usr/local/sbin/named
-XBAYDNS_BIND_USER=named
-export PATH XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
-"|tee /home/xbaydns/xdenv
+XBAYDNS_BIND_START=${XDPREFIX}/named/sbin/named
+XBAYDNS_BIND_USER=xbaydns
+PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
+export PATH XDPREFIX XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
+"|tee ${XBAYDNSHOME}/xdenv
+cp ${XBAYDNSHOME}/xdenv ${XBAYDNSHOME}/.profile
 
-chmod +x /home/xbaydns/xdenv
-source /home/xbaydns/xdenv
-id named || useradd named -s /sbin/nologin
-xdinitbind master
-chown -R named:named $BINDCHROOT
-chown -R xbaydns:named /home/xbaydns
-chmod -R 700 /home/xbaydns
+chmod +x ${XBAYDNSHOME}/xdenv
+source ${XBAYDNSHOME}/xdenv
+${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdinitbind master
+chown -R xbaydns:named $BINDCHROOT
+chown -R xbaydns:named ${XBAYDNSHOME}
+chmod -R 700 ${XBAYDNSHOME}
 rm -f /etc/rndc.key
 ln -s $BINDCHROOT/etc/rndc.key /etc/
 
-rndc reload
+#4.generate the startup script
+#=============================
+echo "\
+#!/bin/sh
 
+OS=\`uname\`
+NAMED=\`pgrep named\`
+
+if [ ! -f ${BINDCHROOT}/sbin/named -a ! -f ${XDPREFIX}/bin/xdweb ]; then
+        echo 'named or xbaydnsweb is not existed!'
+        exit 1
+fi
+
+startall(){
+        if [ -n \"\${NAMED}\" ]
+        then
+            echo 'named is already started, use restart instead.'
+            exit 1
+        fi
+        ${BINDCHROOT}/sbin/named -t ${BINDCHROOT} -u xbaydns
+        if [ \"\${OS}\" = \"Linux\" ]
+        then
+            runuser -s /bin/bash - xbaydns -c \"${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log\" &
+        elif [ \"\${OS}\" = \"FreeBSD\" ]
+        then
+            daemon -u xbaydns \"${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log\"
+        fi
+}
+
+stopall(){
+        if [ -n \"\${NAMED}\" ]
+        then
+            kill -9 \${NAMED}
+            NAMED=\`pgrep named\`; export NAMED
+        fi
+        killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
+        killall -9 ${XDPREFIX}/bin/python2.5 >& /dev/null
+}
+
+case \"\$1\" in
+start)
+        startall
+        echo 'Services started'
+        ;;
+restart)
+        stopall
+        startall
+        echo 'Sevices restarted'
+        ;;
+stop)
+        stopall
+        echo 'Sevices stoped'
+        ;;
+*)
+        echo \"Usage: $0 {start|stop|restart}\"
+        exit 1
+        ;;
+esac
+exit 0
+" > ${XBAYDNSHOME}/master.sh
+chmod +x ${XBAYDNSHOME}/master.sh
+ln -sf ${XBAYDNSHOME}/master.sh ${XDPREFIX}/bin/
+
+#5.print prompt informations
+#===========================
 echo "\
 
 
 
 XBayDNS(enabled master) installed successfully!
 MASTER    :$MASTERIP
-HOME      :/home/xbaydns
+HOME      :${XBAYDNSHOME}
 
-The next thing you may do:
-1. Start named server and make sure named running normally
-   #/usr/local/sbin/named -t $XBAYDNS_CHROOT_PATH -u named
-   #tail -f /var/log/messages
-2. Start XBayDNS Master Web server
-   #xdweb
-3. Browse http://$MASTERIP username/password for administrator: admin/admin
-   DON'T FORGET TO CHANGE YOUR PASSWORD!
+Use \"${XBAYDNSHOME}/master.sh start\" to start all services.
+
+Browse http://$MASTERIP:8080 username/password for administrator: admin/admin
+DON'T FORGET TO CHANGE YOUR PASSWORD!
 "
