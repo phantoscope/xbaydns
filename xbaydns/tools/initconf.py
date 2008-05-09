@@ -108,13 +108,15 @@ def namedconf_file(include_files, bind_type, allow_ip):
                 CONF_DIR=os.path.join('/', sysconf.namedconf),
                 ALLOW_IP='127.0.0.1', 
                 ALLOW_TRANSFER='127.0.0.1', 
-                LOG_SETTING_FOR_SLAVE="")
+                LOG_SETTING_FOR_SLAVE="",
+                WHETHER_NOTIFY='yes')
         elif bind_type == 'slave':
             namedconf = namedconf_tmpl.substitute(\
                 CONF_DIR=os.path.join('/', sysconf.namedconf),
                 ALLOW_IP=allow_ip, 
                 ALLOW_TRANSFER='none', 
-                LOG_SETTING_FOR_SLAVE=log_setting_for_slave)
+                LOG_SETTING_FOR_SLAVE=log_setting_for_slave,
+                WHETHER_NOTIFY='no')
         else:
             return False
         namedconf += "\n"
