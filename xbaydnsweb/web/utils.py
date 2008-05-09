@@ -112,11 +112,14 @@ def genNamedConf(path,renew=True):
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
     nc.addView('view_viewdefault',slave_ips,['any',])
+    view_diff = {}
     if renew == True:
         view_diff = getViewDiff(ipareas,old_ipareas)
-        nc.addViewUnChanged(view_diff['intersection'])
     else:
-        nc.addViewUnChanged(map(lambda x:x.route_hash,ipareas))        
+        view_diff.setdefault('intersection',map(lambda x:x.route_hash,ipareas))
+        view_diff.setdefault('add_hash',[])
+        view_diff.setdefault('del_hash',[])
+    nc.addViewUnChanged(view_diff['intersection'])    
     #追加所有的Domain
     domain_matchs = map(lambda x:'%s'%x.name,Domain.objects.all())
     nc.addDomain(domain_matchs)
