@@ -87,18 +87,14 @@ def updateDomain(view_diff):
             print "record ",record
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname
-            record_nsupdate(record)
-    """更新默认机房的记录"""
-    for record in Record.objects.all():
-        record.viewname="view_viewdefault"
-        print record.name,record.domain,record.viewname
-        record_nsupdate(record)
 
-def genNamedConf(path):
+def genNamedConf(path,renew=True):
     """生成所有named配置文件"""
     nc = NamedConf()
     ipareas = IPArea.objects.filter(~Q(ip='0'))
     old_ipareas = IPArea.objects.filter(ip='0')
+    slave_ips = map(lambda x:x.ip,Node.objects.all())
+    
     for iparea in ipareas:
         srout = eval(iparea.service_route)
         srout.sort()
@@ -110,15 +106,20 @@ def genNamedConf(path):
         nc.addAcl(aclname,list(eval(iparea.ip)))
         #每个View对应一种ACL
         viewname='view_view%s'%serial
-        nc.addView(viewname,[aclname,])
+        nc.addView(viewname,slave_ips,[aclname,])
         iparea.view = viewname
         iparea.save()
     #增加any的ACL和View
     nc.addAcl('acl_default',['any',])
-    nc.addView('view_viewdefault',['any',])
-    
-    view_diff = getViewDiff(ipareas,old_ipareas)
-    nc.addViewUnChanged(view_diff['intersection'])        
+    nc.addView('view_viewdefault',slave_ips,['any',])
+    view_diff = {}
+    if renew == True:
+        view_diff = getViewDiff(ipareas,old_ipareas)
+    else:
+        view_diff.setdefault('intersection',map(lambda x:x.route_hash,ipareas))
+        view_diff.setdefault('add_hash',[])
+        view_diff.setdefault('del_hash',[])
+    nc.addViewUnChanged(view_diff['intersection'])    
     #追加所有的Domain
     domain_matchs = map(lambda x:'%s'%x.name,Domain.objects.all())
     nc.addDomain(domain_matchs)
@@ -127,10 +128,11 @@ def genNamedConf(path):
     return view_diff
         
 #保存所有配置,生成所有bind需要的配置文件
-def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf)):
-    view_diff = genNamedConf(path)
-    updateDomain(view_diff)
-    checkJNL(path,view_diff)
+def saveAllConf(path=os.path.join(sysconf.chroot_path,sysconf.namedconf),renew=True):
+    view_diff = genNamedConf(path,renew)
+    if renew == True:
+        updateDomain(view_diff)
+        checkJNL(path,view_diff)
     
 def getViewDiff(ipareas,old_ipareas):
     view_diff = {}
