@@ -1,6 +1,8 @@
 set :user, "root"
 set :password, "123qwe"
 
+role :buildserv, "10.210.128.23"
+role :master, "10.210.128.34"
 role :bjagent, "10.210.128.35"
 role :gzagent, "10.210.128.26"
 role :xaagent, "10.210.128.25"
@@ -8,46 +10,59 @@ role :bjslave, "10.210.128.35"
 role :gzslave, "10.210.128.26"
 role :slave, "10.210.128.35", "10.210.128.26"
 
+task :buildpkg, :roles => :buildserv do
+  run "cd /root/build/xbaydns; svn up; rm -rf /opt/xbaydns*; cd /root/build; ./build.sh;"
+  run "cd /opt; tar cvf xbaydns.tbz xbaydns; python /root/build/pyserv.py"
+end
+
+task :installmaster, :roles => :master do
+  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
+  run "cd /opt/xbaydns/bin; ./xdsetup master 10.210.128.34 /opt/xbaydns"
+  run "/opt/xbaydns/bin/master.sh stop; /opt/xbaydns/bin/master.sh start"
+end
+
 task :bjinstallagent, :roles => :bjagent do
-  run "cd /home/xbaydns-trunk; svn up; python /home/xbaydns-trunk/setup.py install"
-  run "xdsetup agent 10.210.128.34 0d502fe9d07abeafd843914f86a4844c4c913d2c"
+  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
+  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns f5ee54d6fe8ec4cecd284567e10bbc8c47fd662f"
 end
 
 task :gzinstallagent, :roles => :gzagent do
-  run "cd /home/xbaydns-trunk; svn up; python /home/xbaydns-trunk/setup.py install"
-  run "xdsetup agent 10.210.128.34 fe46ab7c7f5f63596cb1b899791dcc2d94f945c3"
+  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
+  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns 912d2443c76d6369ef3d2e3732e51acc8f05321a"
 end
 
 task :xainstallagent, :roles => :xaagent do
-  run "cd /home/xbaydns-trunk; svn up; python /home/xbaydns-trunk/setup.py install"
-  run "xdsetup agent 10.210.128.34 93696be1b4f1664c5c4240d1f69e00f340427a67"
+  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
+  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns ceaa64a835af4746366f12d0598aa2acf03e047b"
 end
 
 task :bjinstallslave, :roles => :bjslave do
-  run "cd /home/xbaydns-trunk; python /home/xbaydns-trunk/setup.py install"
-  run "xdsetup slave 10.210.128.34 6b471b2a79acc3638d750ac02fe85327d5547753 /usr/local/named"
+#  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
+  run "/opt/xbaydns/bin/xdsetup slave 10.210.128.34 /opt/xbaydns 483083560416fdae9c390f8b1b5be2be9b709215"
 end
 
 task :gzinstallslave, :roles => :gzslave do
-  run "cd /home/xbaydns-trunk; python /home/xbaydns-trunk/setup.py install"
-  run "xdsetup slave 10.210.128.34 54f4b2b36dbbec7c48f3a8280344232ef60ad809 /usr/local/named"
+#  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
+  run "/opt/xbaydns/bin/xdsetup slave 10.210.128.34 /opt/xbaydns cabe82245a23e107ed829ce9ac6efef4b74abc71"
+  run "/opt/xbaydns/bin/slave.sh stop; /opt/xbaydns/bin/slave.sh start"
 end
 
 task :bjiplatency, :roles => :bjagent do
-  run "rm -f /home/xdagent/iplatency/*"
-  run "wget http://10.210.128.34:8000/data/iplatency/BJ-2008-04-19 -O /home/xdagent/iplatency/BJ-2008-04-24"
+  run "rm -f /opt/xbaydns/home/xdagent/iplatency/*"
+  run "/opt/xbaydns/bin/slave.sh stop; /opt/xbaydns/bin/slave.sh start"
+  run "wget http://10.210.128.34:8000/data/iplatency.complex/BJ-2008-04-19 -O /opt/xbaydns/home/xdagent/iplatency/BJ-2008-04-24"
 end
 
 task :gziplatency, :roles => :gzagent do
-  run "rm -f /home/xdagent/iplatency/*"
-  run "wget http://10.210.128.34:8000/data/iplatency/GZ-2008-04-19 -O /home/xdagent/iplatency/GZ-2008-04-24"
+  run "rm -f /opt/xbaydns/home/xdagent/iplatency/*"
+  run "wget http://10.210.128.34:8000/data/iplatency.complex/GZ-2008-04-19 -O /opt/xbaydns/home/xdagent/iplatency/GZ-2008-04-24"
 end
 
 task :xaiplatency, :roles => :xaagent do
-  run "rm -f /home/xdagent/iplatency/*"
-  run "wget http://10.210.128.34:8000/data/iplatency/XA-2008-04-19 -O /home/xdagent/iplatency/XA-2008-04-24"
+  run "rm -f /opt/xbaydns/home/xdagent/iplatency/*"
+  run "wget http://10.210.128.34:8000/data/iplatency.complex/XA-2008-04-19 -O /opt/xbaydns/home/xdagent/iplatency/XA-2008-04-24"
 end
 
 task :putlog, :roles => :slave do
-  run "cd /usr/local/named/var/log; rm -f named.log; wget http://10.210.128.34:8000/data/named.log; chown named:named named.log; chmod 770 named.log"
+  run "cd /opt/xbaydns/named/var/log; rm -f named.log; wget http://10.210.128.34:8000/data/named.log; chown named:named named.log; chmod 770 named.log"
 end

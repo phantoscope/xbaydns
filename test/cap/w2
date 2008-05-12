@@ -1,3 +1,7 @@
+
+kill -9 `ps ax|grep  pyserv.py|grep python |cut -d " " -f 1`
+python pyserv.py&
+
 cap bjinstallagent 
 cap bjinstallslave 
 cap bjiplatency 

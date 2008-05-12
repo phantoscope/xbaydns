@@ -1,0 +1,4 @@
+
+#cap buildpkg
+cap installmaster
+echo "done"
