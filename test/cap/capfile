@@ -23,27 +23,27 @@ end
 
 task :bjinstallagent, :roles => :bjagent do
   run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
-  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns f5ee54d6fe8ec4cecd284567e10bbc8c47fd662f"
+  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns 722c4f944c7b84a3f8361cc49bbf5b9d2153682e"
 end
 
 task :gzinstallagent, :roles => :gzagent do
   run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
-  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns 912d2443c76d6369ef3d2e3732e51acc8f05321a"
+  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns 1a1d89c508122738d196a86c399192ba39b87fd6"
 end
 
 task :xainstallagent, :roles => :xaagent do
   run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
-  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns ceaa64a835af4746366f12d0598aa2acf03e047b"
+  run "/opt/xbaydns/bin/xdsetup agent 10.210.128.34 /opt/xbaydns e22be8ad8ea81262070e93c37a9e9eebaed9916d"
 end
 
 task :bjinstallslave, :roles => :bjslave do
 #  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
-  run "/opt/xbaydns/bin/xdsetup slave 10.210.128.34 /opt/xbaydns 483083560416fdae9c390f8b1b5be2be9b709215"
+  run "/opt/xbaydns/bin/xdsetup slave 10.210.128.34 /opt/xbaydns 62bbbae72f01cac618cbb361d91161e9a8b6f8eb"
 end
 
 task :gzinstallslave, :roles => :gzslave do
 #  run "cd /opt; rm -rf xbaydns*; wget --quiet http://10.210.128.23:8000/xbaydns.tbz; tar xf xbaydns.tbz"
-  run "/opt/xbaydns/bin/xdsetup slave 10.210.128.34 /opt/xbaydns cabe82245a23e107ed829ce9ac6efef4b74abc71"
+  run "/opt/xbaydns/bin/xdsetup slave 10.210.128.34 /opt/xbaydns 362dbb1e352d3c19d69570e95c138797f339409f"
   run "/opt/xbaydns/bin/slave.sh stop; /opt/xbaydns/bin/slave.sh start"
 end
 
