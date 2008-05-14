@@ -15,10 +15,12 @@ fi
 
 #1. init user(xdslave) enviroment 
 #===============================
+PW=`which pw 2>/dev/null`
 rm -rf ${XDSLAVEHOME}
-userdel xdslave
+${PW} userdel xdslave
+${PW} groupadd named
 mkdir -p ${XDSLAVEHOME}
-useradd xdslave -g named -s /sbin/nologin -d ${XDSLAVEHOME}
+${PW} useradd xdslave -g named -s /sbin/nologin -d ${XDSLAVEHOME}
 rm -rf ${XDSLAVEHOME}
 mkdir -p ${XDSLAVEHOME}/{.ssh,prog}
 mkdir -p ${XDSLAVEHOME}/named/{log,etc/{acl,view,dynamic}}

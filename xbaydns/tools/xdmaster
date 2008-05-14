@@ -49,15 +49,16 @@ ln -s `which rsync` $SMRSH_ALLOWCMD_DIR/
 #-----------------------------------
 XBAYDNSHOME=${XDPREFIX}/home/xbaydns
 XBAYDNSEGG=`${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdwherepkg`
+PW=`which pw 2>/dev/null`
 if [ -d ${XBAYDNSHOME} ]
 then
 #I don't know why but if just remove ${XBAYDNSHOME}, XDPREFIX will not init.
     rm -rf ${XDPREFIX}/home
 fi
-groupadd named
-userdel xbaydns
+${PW} groupadd named
+${PW} userdel xbaydns
 mkdir -p ${XBAYDNSHOME}
-useradd xbaydns -g named -s ${SMRSH_CMD} -d ${XBAYDNSHOME}
+${PW} useradd xbaydns -g named -s ${SMRSH_CMD} -d ${XBAYDNSHOME}
 
 mkdir -p ${XBAYDNSHOME}/{.ssh,prog,view,slave,agent}
 mkdir -p ${XBAYDNSHOME}/view/{iplatency,idcview}

@@ -21,9 +21,11 @@ fi
 #1. init user(xdagent) enviroment 
 #===============================
 rm -rf ${XDAGENTHOME}
-userdel xdagent
+PW=`which pw 2>/dev/null`
+${PW} userdel xdagent
+${PW} groupadd named
 mkdir -p ${XDAGENTHOME}
-useradd xdagent -g named -s /sbin/nologin -d ${XDAGENTHOME}
+${PW} useradd xdagent -g named -s /sbin/nologin -d ${XDAGENTHOME}
 mkdir -p ${XDAGENTHOME}/{.ssh,prog,iplatency}
 touch ${XDAGENTHOME}/.ssh/known_hosts
 ssh-keygen -t dsa -f ${XDAGENTHOME}/rsync-key -N ""
