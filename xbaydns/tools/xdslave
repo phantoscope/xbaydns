@@ -17,6 +17,7 @@ fi
 #===============================
 rm -rf ${XDSLAVEHOME}
 userdel xdslave
+mkdir -p ${XDSLAVEHOME}
 useradd xdslave -g named -s /sbin/nologin -d ${XDSLAVEHOME}
 rm -rf ${XDSLAVEHOME}
 mkdir -p ${XDSLAVEHOME}/{.ssh,prog}
@@ -120,6 +121,7 @@ stopall(){
             NAMED=\`pgrep named\`; export NAMED
         fi
         killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
+        sleep 1
 }
 
 case \"\$1\" in

@@ -59,7 +59,6 @@ userdel xbaydns
 mkdir -p ${XBAYDNSHOME}
 useradd xbaydns -g named -s ${SMRSH_CMD} -d ${XBAYDNSHOME}
 
-mkdir -p ${XBAYDNSHOME}
 mkdir -p ${XBAYDNSHOME}/{.ssh,prog,view,slave,agent}
 mkdir -p ${XBAYDNSHOME}/view/{iplatency,idcview}
 mkdir -p ${XBAYDNSHOME}/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
@@ -161,6 +160,7 @@ stopall(){
         fi
         killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
         killall -9 ${XDPREFIX}/bin/python2.5 >& /dev/null
+        sleep 1
 }
 
 case \"\$1\" in
