@@ -56,7 +56,8 @@ then
 fi
 groupadd named
 userdel xbaydns
-useradd xbaydns -g named -s $SMRSH_CMD -d ${XBAYDNSHOME}
+mkdir -p ${XBAYDNSHOME}
+useradd xbaydns -g named -s ${SMRSH_CMD} -d ${XBAYDNSHOME}
 
 mkdir -p ${XBAYDNSHOME}
 mkdir -p ${XBAYDNSHOME}/{.ssh,prog,view,slave,agent}
@@ -114,6 +115,7 @@ PATH=${PATH}:${XDPREFIX}/named/bin:${XDPREFIX}/named/sbin
 export PATH XDPREFIX XBAYDNS_CHROOT_PATH XBAYDNS_BIND_CONF XBAYDNS_BIND_START XBAYDNS_BIND_USER
 "|tee ${XBAYDNSHOME}/xdenv
 cp ${XBAYDNSHOME}/xdenv ${XBAYDNSHOME}/.profile
+cp ${XBAYDNSHOME}/xdenv ${XBAYDNSHOME}/.bash_profile
 
 chmod +x ${XBAYDNSHOME}/xdenv
 source ${XBAYDNSHOME}/xdenv
@@ -130,7 +132,6 @@ echo "\
 #!/bin/sh
 
 OS=\`uname\`
-NAMED=\`pgrep named\`
 
 if [ ! -f ${BINDCHROOT}/sbin/named -a ! -f ${XDPREFIX}/bin/xdweb ]; then
         echo 'named or xbaydnsweb is not existed!'
@@ -138,7 +139,7 @@ if [ ! -f ${BINDCHROOT}/sbin/named -a ! -f ${XDPREFIX}/bin/xdweb ]; then
 fi
 
 startall(){
-        if [ -n \"\${NAMED}\" ]
+        if [ -n \"\`pgrep named\`\" ]
         then
             echo 'named is already started, use restart instead.'
             exit 1
@@ -154,10 +155,9 @@ startall(){
 }
 
 stopall(){
-        if [ -n \"\${NAMED}\" ]
+        if [ -n \"\`pgrep named\`\" ]
         then
-            kill -9 \${NAMED}
-            NAMED=\`pgrep named\`; export NAMED
+            kill -9 \`pgrep named\`
         fi
         killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
         killall -9 ${XDPREFIX}/bin/python2.5 >& /dev/null
