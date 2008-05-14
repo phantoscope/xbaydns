@@ -62,7 +62,7 @@ def getRecords(iparea):
     """将Result的结果按照域名合并汇总并返回"""
     records=[]
     for domain_name,idc_alias in list(eval(iparea.service_route)):
-        records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias,record_type__record_type='A'))
+        records.extend(Record.objects.filter(name=domain_name[:domain_name.index('.')],domain__name=domain_name[domain_name.index('.')+1:],idc__alias=idc_alias,record_type__record_type='A',active=True))
     return records
 
 def updateDomain(view_diff):
@@ -83,7 +83,7 @@ def updateDomain(view_diff):
             print record.name,record.domain,record.viewname
             record_nsupdate(record)
         """把非A记录加入每一个VIEW"""
-        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')|(Q(record_type__record_type='A') and Q(idc__isnull=True))):
+        for record in Record.objects.filter(Q(record_type__record_type='NS')|Q(record_type__record_type='CNAME')|(Q(record_type__record_type='A') and Q(idc__isnull=True) and Q(active=True))):
             print "record ",record
             record.viewname=iparea.view
             print record.name,record.domain,record.viewname

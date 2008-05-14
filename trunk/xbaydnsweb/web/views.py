@@ -22,6 +22,24 @@ def loadgenview(request):
         pass
     return HttpResponseRedirect('/web/iparea/')
 
+def srvarrange(request):
+    from django.db import connection
+    cursor = connection.cursor()
+    if requets.method == 'POST':
+        pass
+    arranges = {}
+    for idc in IDC.objects.all():
+        services = []
+        sql='''SELECT web_record.name,web_domain.name,web_idc.alias FROM web_recordtype,web_record,web_domain,web_idc WHERE 
+        web_domain.id=web_record.domain_id AND web_record.idc_id=%s AND web_recordtype.id =web_record.record_type_id AND web_recordtype.record_type ='A' 
+        GROUP BY web_record.name,web_domain.name,web_idc.alias'''%idc.id
+        cursor.execute(sql)
+        for r in cursor.fetchall():
+            key = '%s.%s'%(r[0],r[1])
+            services.append(key)
+        arranges.setdefault(idc.name,services)
+    return render_to_response('admin/web/srvarrange.html',locals())
+    
 def smartload(request):
     if request.method == 'POST':
         msg = _("Smart View Msg Complete")

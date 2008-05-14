@@ -22,6 +22,16 @@ def resultToHtml(results):
     return '<ul>%s</ul>'%html
 
 @register.simple_tag
+def srvArrangeToHtml(arranges):
+    html='<table>'
+    for idc,services in arranges.items():
+        s='<tr><td>%s</td><td></td></tr>'%idc
+        for service in services:
+            s+='<tr><td></td><td><input type=\'checkbox\' checked>%s</td></tr>'%service
+        html+='<ul>%s</ul>'%s
+    return '%s</table>'%html
+
+@register.simple_tag
 def getResultTime():
     import time,os
     from xbaydns.conf import sysconf

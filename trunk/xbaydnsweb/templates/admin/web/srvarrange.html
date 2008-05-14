@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load adminmedia admin_list i18n %}
+{% block title %}{% trans "SrvArrange" %}{% endblock %}
+
+{% block stylesheet %}{% admin_media_prefix %}css/forms.css{% endblock %}
+
+{% block extrahead %}
+{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="../../">{% trans "Home" %}</a> &rsaquo; {% trans "SrvArrange" %}</div>{% endblock %}
+
+{% block content %}
+{% load webtags %}
+
+<div id="content-main">
+	{% if msg %}
+	{{msg}}<br/>
+	{% endif %}
+	{% srvArrangeToHtml arranges %}
+	<form action="/admin/web/srvarrange" method="POST">
+		<input type="submit" value="{% trans "SrvArrangeSaveButton" %}">
+	</form>
+</div>
+
+{% endblock %}

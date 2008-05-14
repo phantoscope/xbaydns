@@ -207,7 +207,8 @@ class Record(models.Model):
     idc = models.ForeignKey(IDC,verbose_name=_('record_idc_verbose_name'),blank=True,null=True)
     record_info = models.CharField(max_length=100,verbose_name=_('record_info_name'))
     ttl = models.IntegerField(verbose_name=_('record_ttl_verbose_name'),default=3600)
-
+    active = models.BooleanField(verbose_name=_('record_active_verbose_name'),default=True)
+    
     def save(self):
         from xbaydnsweb.web.utils import *
         from xbaydns.conf import sysconf
@@ -220,7 +221,8 @@ class Record(models.Model):
             if old_record !=None:
                 old_record.viewname = "view_viewdefault"
                 record_delete(old_record)
-            record_nsupdate(self)
+            if self.active == True:
+                record_nsupdate(self)
             if self.record_type.record_type == 'A' and self.idc != None:
                 if self.idc.alias not in getDetectedIDC():
                     for iparea in IPArea.objects.all():
@@ -228,7 +230,8 @@ class Record(models.Model):
                         if old_record !=None:
                             old_record.viewname = iparea.view
                             record_delete(old_record)
-                        record_nsupdate(self)
+                        if self.active == True:
+                            record_nsupdate(self)
                 else:
                     if len(Record.objects.filter(idc=self.idc,record_type__record_type='A')) == 1:
                         conftoresults.main()
@@ -244,14 +247,16 @@ class Record(models.Model):
                                     if old_record !=None:
                                         old_record.viewname = iparea.view
                                         record_delete(old_record)
-                                    record_nsupdate(self)
+                                    if self.active == True:
+                                        record_nsupdate(self)
             else:
                 for iparea in IPArea.objects.all():
                     self.viewname = iparea.view
                     if old_record !=None:
                         old_record.viewname = iparea.view
                         record_delete(old_record)
-                    record_nsupdate(self)
+                    if self.active == True:
+                        record_nsupdate(self)
         except:
             if self.id != None:
                 super(Record,self).delete()
