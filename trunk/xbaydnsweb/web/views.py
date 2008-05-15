@@ -25,7 +25,7 @@ def loadgenview(request):
 def srvarrange(request):
     from django.db import connection
     cursor = connection.cursor()
-    if requets.method == 'POST':
+    if request.method == 'POST':
         pass
     arranges = {}
     for idc in IDC.objects.all():
