@@ -137,7 +137,7 @@ cp ${XBAYDNSHOME}/xdenv ${XBAYDNSHOME}/.profile
 cp ${XBAYDNSHOME}/xdenv ${XBAYDNSHOME}/.bash_profile
 
 chmod +x ${XBAYDNSHOME}/xdenv
-source ${XBAYDNSHOME}/xdenv
+. ${XBAYDNSHOME}/xdenv
 ${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdinitbind master
 chown -R xbaydns:named $BINDCHROOT
 chown -R xbaydns:named ${XBAYDNSHOME}
@@ -169,7 +169,8 @@ startall(){
             runuser -s /bin/bash - xbaydns -c \"${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log\" &
         elif [ \"\${OS}\" = \"FreeBSD\" ]
         then
-            daemon -u xbaydns \"${XDPREFIX}/bin/xdweb >& ${XDPREFIX}/home/xbaydns/xdweb.log\"
+            . ${XBAYDNSHOME}/xdenv
+            daemon -u xbaydns ${XDPREFIX}/bin/xdweb > ${XDPREFIX}/home/xbaydns/xdweb.log 2>&1
         fi
 }
 
@@ -178,8 +179,8 @@ stopall(){
         then
             kill -9 \`pgrep named\`
         fi
-        killall -9 ${BINDCHROOT}/sbin/named >& /dev/null
-        killall -9 ${XDPREFIX}/bin/python2.5 >& /dev/null
+        killall -9 ${BINDCHROOT}/sbin/named 2>/dev/null
+        killall -9 ${XDPREFIX}/bin/python2.5 2>/dev/null
         sleep 1
 }
 
