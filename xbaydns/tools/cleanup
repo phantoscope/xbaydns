@@ -1,0 +1,7 @@
+#!/bin/sh
+
+PW=`which pw 2>/dev/null`
+${PW} userdel xbaydns
+${PW} userdel xdslave
+${PW} userdel xdagent
+rm -f /etc/rndc.key
