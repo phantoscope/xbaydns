@@ -60,10 +60,20 @@ ${PW} userdel xbaydns
 mkdir -p ${XBAYDNSHOME}
 ${PW} useradd xbaydns -g named -s ${SMRSH_CMD} -d ${XBAYDNSHOME}
 
-mkdir -p ${XBAYDNSHOME}/{.ssh,prog,view,slave,agent}
-mkdir -p ${XBAYDNSHOME}/view/{iplatency,idcview}
-mkdir -p ${XBAYDNSHOME}/slave/{prog,named/{log,etc/{acl,view,dynamic}}}
-mkdir -p ${XBAYDNSHOME}/agent/{prog,iplatency}
+mkdir -p ${XBAYDNSHOME}/.ssh
+mkdir -p ${XBAYDNSHOME}/prog
+mkdir -p ${XBAYDNSHOME}/view
+mkdir -p ${XBAYDNSHOME}/slave
+mkdir -p ${XBAYDNSHOME}/agent
+mkdir -p ${XBAYDNSHOME}/view/iplatency
+mkdir -p ${XBAYDNSHOME}/view/idcview
+mkdir -p ${XBAYDNSHOME}/slave/prog
+mkdir -p ${XBAYDNSHOME}/slave/named/log
+mkdir -p ${XBAYDNSHOME}/slave/named/etc/acl
+mkdir -p ${XBAYDNSHOME}/slave/named/etc/view
+mkdir -p ${XBAYDNSHOME}/slave/named/etc/dynamic
+mkdir -p ${XBAYDNSHOME}/agent/prog
+mkdir -p ${XBAYDNSHOME}/agent/iplatency
 
 cp ${XBAYDNSEGG}/xbaydnsweb/xbaydns.db ${XBAYDNSHOME}
 touch ${XBAYDNSHOME}/.ssh/authorized_keys
@@ -93,12 +103,21 @@ crontab -u xbaydns ${XBAYDNSHOME}/prog/crontab
 
 #2.prepare bind's chroot
 #-----------------------
-mkdir -p $BINDCHROOT/{etc,dev,var/{run,dump,stats,log}}
-chown -R xbaydns:named $BINDCHROOT/var/{run,dump,stats}
+mkdir -p $BINDCHROOT/etc
+mkdir -p $BINDCHROOT/dev
+mkdir -p $BINDCHROOT/var/run
+mkdir -p $BINDCHROOT/var/dump
+mkdir -p $BINDCHROOT/var/stats
+mkdir -p $BINDCHROOT/var/log
+chown -R xbaydns:named $BINDCHROOT/var/run
+chown -R xbaydns:named $BINDCHROOT/var/dump
+chown -R xbaydns:named $BINDCHROOT/var/stats
 touch $BINDCHROOT/var/log/named.log
 chown -R xbaydns:named $BINDCHROOT/var/log/named.log
 
-rm -rf $BINDCHROOT/dev/{random,zero,null}
+rm -rf $BINDCHROOT/dev/random
+rm -rf $BINDCHROOT/dev/zero
+rm -rf $BINDCHROOT/dev/null
 mknod $BINDCHROOT/dev/random c 1 8
 mknod $BINDCHROOT/dev/zero c 1 5
 mknod $BINDCHROOT/dev/null c 1 3

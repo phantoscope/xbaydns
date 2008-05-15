@@ -22,8 +22,12 @@ ${PW} groupadd named
 mkdir -p ${XDSLAVEHOME}
 ${PW} useradd xdslave -g named -s /sbin/nologin -d ${XDSLAVEHOME}
 rm -rf ${XDSLAVEHOME}
-mkdir -p ${XDSLAVEHOME}/{.ssh,prog}
-mkdir -p ${XDSLAVEHOME}/named/{log,etc/{acl,view,dynamic}}
+mkdir -p ${XDSLAVEHOME}/.ssh
+mkdir -p ${XDSLAVEHOME}/prog
+mkdir -p ${XDSLAVEHOME}/named/log
+mkdir -p ${XDSLAVEHOME}/named/etc/acl
+mkdir -p ${XDSLAVEHOME}/named/etc/view
+mkdir -p ${XDSLAVEHOME}/named/etc/dynamic
 
 touch ${XDSLAVEHOME}/.ssh/known_hosts
 ssh-keygen -t dsa -f ${XDSLAVEHOME}/rsync-key -N ""
@@ -59,12 +63,23 @@ crontab -u xdslave ${XDSLAVEHOME}/prog/crontab
 
 #5. prepare bind's chroot
 #-----------------------
-rm -rf $BINDCHROOT/etc/{acl,view,dynamic}
-mkdir -p $BINDCHROOT/{etc/{acl,view,dynamic},dev,var/{run,dump,stats,log}}
+rm -rf $BINDCHROOT/etc/acl
+rm -rf $BINDCHROOT/etc/view
+rm -rf $BINDCHROOT/etc/dynamic
+mkdir -p $BINDCHROOT/etc/acl
+mkdir -p $BINDCHROOT/etc/view
+mkdir -p $BINDCHROOT/etc/dynamic
+mkdir -p $BINDCHROOT/dev
+mkdir -p $BINDCHROOT/var/run
+mkdir -p $BINDCHROOT/var/dump
+mkdir -p $BINDCHROOT/var/stats
+mkdir -p $BINDCHROOT/var/log
 touch $BINDCHROOT/var/log/named.log
 touch $BINDCHROOT/var/log/query.log
 
-rm -f $BINDCHROOT/dev/{random,zero,null}
+rm -f $BINDCHROOT/dev/random
+rm -f $BINDCHROOT/dev/zero
+rm -f $BINDCHROOT/dev/null
 mknod $BINDCHROOT/dev/random c 1 8
 mknod $BINDCHROOT/dev/zero c 1 5
 mknod $BINDCHROOT/dev/null c 1 3
