@@ -33,7 +33,7 @@ setup(
         'xbaydns/tools/xdsetup',
         'xbaydns/tools/xdmaster',
         'xbaydns/tools/xdagent',
-        'xbaydns/tools/xdslave'],
+        'xbaydns/tools/xdslave',
         'xbaydns/tools/cleanup'],
     test_suite = 'xbaydns.tests.suite',
     entry_points = {
