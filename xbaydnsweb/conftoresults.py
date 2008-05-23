@@ -39,7 +39,7 @@ def findFastSpeed(agents,times):
     print "values_sort",values_sort
     return values_sort
 
-def main():
+def main(preview=False):
     from xbaydns.conf import sysconf
     from xbaydnsweb.web.models import IDC,Result,Record,IPArea
     from xbaydns.tools.algorithms2 import quicksort,getRoute,PerformanceMatrix
@@ -47,12 +47,15 @@ def main():
     
     CONF_FILE='%s/idcview/idcview.current'%sysconf.xbaydnsdb
     
-    map(lambda x:x.delete(),Result.objects.all())
-    map(lambda x:x.delete(),IPArea.objects.filter(ip='0'))
+    if preview == False:
+        map(lambda x:x.delete(),Result.objects.all())
+        map(lambda x:x.delete(),IPArea.objects.filter(ip='0'))
     
-    for iparea in IPArea.objects.all():
-        iparea.ip = '0'
-        iparea.save()
+        for iparea in IPArea.objects.all():
+            iparea.ip = '0'
+            iparea.save()
+    else:
+        map(lambda x:x.delete(),PreviewArea.objects.all())
     
     services = getServiceRegions()
     regions_alias = getRegions()
@@ -85,7 +88,10 @@ def main():
                         service_route.append((service,idc))
                 else:
                     service_route.append((service,idcs))
-            IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
+            if preview == False:
+                IPArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
+            else:
+                PreviewArea.objects.create(ip=str(list(v)),acl='',view='',service_route=str(service_route))
 
 if __name__ == '__main__':
     os.environ['DJANGO_SETTINGS_MODULE'] = 'xbaydnsweb.settings'
