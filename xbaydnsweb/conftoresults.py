@@ -41,7 +41,7 @@ def findFastSpeed(agents,times):
 
 def main(preview=False):
     from xbaydns.conf import sysconf
-    from xbaydnsweb.web.models import IDC,Result,Record,IPArea
+    from xbaydnsweb.web.models import IDC,Result,Record,IPArea,PreviewArea
     from xbaydns.tools.algorithms2 import quicksort,getRoute,PerformanceMatrix
     from types import ListType
     
