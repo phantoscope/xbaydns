@@ -8,9 +8,29 @@ from datetime import datetime
 import traceback
 import logging.config
 import re,hashlib,time,copy
-from django.core import validators
+
+# TODO 联合主键失效问题
 
 log = logging.getLogger('xbaydnsweb.web.models')
+
+
+class MyModel(models.Model):
+    name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'))
+    name1 = models.CharField(max_length=100,verbose_name=_('idc_name_verbose_name'))
+    name2 = models.CharField(max_length=100,verbose_name=_('node_ip_verbose_name'))
+    idc = models.ForeignKey('IDC',blank=True, null=True)
+
+    class Admin:
+        list_display = ('name','name1','name2')
+        search_fields = ('name',)
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('idc_verbose_name')
+        verbose_name_plural = _('idc_verbose_name_plural')
+        unique_together=(('name1','name2','idc'))
+    def __unicode__(self):
+        return self.name
+
 
 class Domain(models.Model):
     """Domain Model"""
@@ -326,5 +346,7 @@ class PreviewArea(models.Model):
     service_route = models.TextField(verbose_name='service_route',help_text='')
     route_hash = models.CharField(max_length=100,blank=True)
     
+    class Admin:
+        list_display = (ip, view, acl, service_route, route_hash)
     def __unicode__(self):
         return self.ip
