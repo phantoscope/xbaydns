@@ -18,7 +18,7 @@
         <table summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">
         <caption>{% blocktrans with app.name as name %}{{ name }}{% endblocktrans %}</caption>
         {% for model in app.models %}
-            {% ifnotequal model.name 'previewarea' %}
+            {% ifnotequal model.admin_url 'web/previewarea/' %}
             <tr>
             {% if model.perms.change %}
                 <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
