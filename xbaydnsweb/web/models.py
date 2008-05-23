@@ -314,4 +314,17 @@ class Result(models.Model):
         verbose_name_plural = _('result_verbose_name_plural')
     def __unicode__(self):
         return "%s to %s go %s"%(self.ip,self.record,self.idc)
+    
+class OperationInfo(models.Model):
+    genview_time = models.DateTimeField(verbose_name=_('operationinfo_genview_time_name'))
 
+class PreviewArea(models.Model):
+    """IP Area Management"""
+    ip = models.TextField(verbose_name='',help_text='')
+    view = models.CharField(max_length=100)
+    acl = models.CharField(max_length=100)
+    service_route = models.TextField(verbose_name='service_route',help_text='')
+    route_hash = models.CharField(max_length=100,blank=True)
+    
+    def __unicode__(self):
+        return self.ip
