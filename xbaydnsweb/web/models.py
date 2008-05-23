@@ -347,6 +347,6 @@ class PreviewArea(models.Model):
     route_hash = models.CharField(max_length=100,blank=True)
     
     class Admin:
-        list_display = (ip, view, acl, service_route, route_hash)
+        list_display = ('ip', 'view', 'acl', 'service_route', 'route_hash')
     def __unicode__(self):
         return self.ip
