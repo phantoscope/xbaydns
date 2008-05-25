@@ -22,6 +22,14 @@ def loadgenview(request):
         pass
     return HttpResponseRedirect('/web/iparea/')
 
+def preview(request):
+    from xbaydnsweb import conftoresults
+    try:
+        conftoresults.main(priview=True)
+    except:
+        pass
+    return HttpResponseRedirect('/web/priviewarea/')
+
 def smartload(request):
     if request.method == 'POST':
         msg = _("Smart View Msg Complete")
