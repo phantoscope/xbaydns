@@ -312,7 +312,7 @@ class Record(models.Model):
                 (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc',)}),
         )
     class Meta:
-        ordering = ('name',)
+        ordering = ('name','domain','idc')
         verbose_name = _('record_verbose_name')
         verbose_name_plural = _('record_verbose_name_plural')
         unique_together = (("record_type","domain", "name","idc","record_info"),)
@@ -340,13 +340,15 @@ class OperationInfo(models.Model):
 
 class PreviewArea(models.Model):
     """IP Area Management"""
-    ip = models.TextField(verbose_name='',help_text='')
+    ip = models.TextField(verbose_name='',help_text='',verbose_name=_('iparea_ip_verbose_name'))
     view = models.CharField(max_length=100)
     acl = models.CharField(max_length=100)
-    service_route = models.TextField(verbose_name='service_route',help_text='')
+    service_route = models.TextField(verbose_name='service_route',help_text='',verbose_name=_('iparea_service_route_verbose_name'))
     route_hash = models.CharField(max_length=100,blank=True)
     
     class Admin:
-        list_display = ('ip', 'view', 'acl', 'service_route', 'route_hash')
+        list_display = ('ip','service_route')
+        verbose_name = _('previewarea_verbose_name')
+        verbose_name_plural = _('previewarea_verbose_name_plural')
     def __unicode__(self):
         return self.ip
