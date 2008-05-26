@@ -28,7 +28,7 @@ def preview(request):
         conftoresults.main(priview=True)
     except:
         pass
-    return HttpResponseRedirect('/web/priviewarea/')
+    return HttpResponseRedirect('/web/previewarea/')
 
 def smartload(request):
     if request.method == 'POST':
