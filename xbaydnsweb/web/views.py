@@ -25,7 +25,7 @@ def loadgenview(request):
 def preview(request):
     from xbaydnsweb import conftoresults
     try:
-        conftoresults.main(priview=True)
+        conftoresults.main(preview=True)
     except:
         pass
     return HttpResponseRedirect('/web/previewarea/')
