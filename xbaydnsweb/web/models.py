@@ -340,10 +340,10 @@ class OperationInfo(models.Model):
 
 class PreviewArea(models.Model):
     """IP Area Management"""
-    ip = models.TextField(verbose_name='',help_text='',verbose_name=_('iparea_ip_verbose_name'))
+    ip = models.TextField(help_text='',verbose_name=_('iparea_ip_verbose_name'))
     view = models.CharField(max_length=100)
     acl = models.CharField(max_length=100)
-    service_route = models.TextField(verbose_name='service_route',help_text='',verbose_name=_('iparea_service_route_verbose_name'))
+    service_route = models.TextField(help_text='',verbose_name=_('iparea_service_route_verbose_name'))
     route_hash = models.CharField(max_length=100,blank=True)
     
     class Admin:
