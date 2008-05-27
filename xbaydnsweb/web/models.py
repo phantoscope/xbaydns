@@ -348,6 +348,7 @@ class PreviewArea(models.Model):
     
     class Admin:
         list_display = ('ip','service_route')
+    class Meta:
         verbose_name = _('previewarea_verbose_name')
         verbose_name_plural = _('previewarea_verbose_name_plural')
     def __unicode__(self):
