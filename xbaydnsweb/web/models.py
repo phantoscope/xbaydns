@@ -18,7 +18,7 @@ class Domain(models.Model):
     """Domain Model"""
     name = models.CharField(max_length=100,unique=True,verbose_name=_('domain_name_verbose_name'),help_text='Example:example.com.cn')
     default_ns = models.CharField(max_length=100,verbose_name=_('domain_record_ns_name'),help_text='example.com.cn.')
-    record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn')
+    record_info = models.CharField(max_length=100,verbose_name=_('domain_record_info_name'),help_text='ns1.example.com.cn.')
     a_record_info = models.CharField(max_length=100,verbose_name=_('domain_a_record_info_name'),help_text='1.1.1.1')
     mainter = models.CharField(max_length=100,verbose_name=_('domain_maintainer'),help_text='')
     ttl = models.IntegerField(max_length=100,verbose_name=_('domain_ttl'),default=3600,help_text='3600')
@@ -294,12 +294,12 @@ class Record(models.Model):
                 (_('record_fields_idcinfo_verbose_name'), {'fields': ('record_info','idc',)}),
         )
     class Meta:
-        ordering = ('name','domain','idc')
+        ordering = ('name','domain')
         verbose_name = _('record_verbose_name')
         verbose_name_plural = _('record_verbose_name_plural')
         unique_together = (("record_type","domain", "name","idc","record_info"),)
     def __unicode__(self):
-        return '%s.%s in %s'%(self.name,self.domain,self.idc)
+        return '%s.%s in %s'%(self.name,self.domain,self.record_info)
 
 class Result(models.Model):
     """Result Model"""
