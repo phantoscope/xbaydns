@@ -4,22 +4,20 @@ import traceback
 
 def sort(speeds_dict):
     result = [[''],-1]
-    for idc,speed in speeds_dict.items():
-        if result[1] > float(speed.strip()) and float(speed.strip())>=0:
-            result[0] = [idc]
-            result[1] = float(speed.strip())
-        elif  result[1] == float(speed.strip()) and float(speed.strip())>=0:
-            result[0].append(idc)
-        elif result[1] < 0:
-            result = [[idc],float(speed.strip())]
-    if result[1] <0:
-        return speeds_dict.keys()
-    else:
-        return result[0]
+    r = []
+    l = speeds_dict.values()
+    l.sort()
+    for speed in l:
+        if speed > 0:
+            for k,v in speeds_dict.items():
+                if v == speed:
+                    r.append(k)
+    return r
+
 
 def gensort(CONF_FILE):
 #CONF_FILE='/opt/xbaydns/home/xbaydns/view/idcview/idcview.current'
-#CONF_FILE='c:/2.txt'
+    CONF_FILE='c:/2.txt'
     sort_dict = {}
     result_dict = {}
     for i,r in enumerate(open(CONF_FILE)):
