@@ -8,10 +8,11 @@ def sort(speeds_dict):
     l = speeds_dict.values()
     l.sort()
     for speed in l:
-        if speed > 0:
+        if float(speed.strip()) > 0:
             for k,v in speeds_dict.items():
                 if v == speed:
-                    r.append(k)
+                    if k not in r:
+                        r.append(k)
     return r
 
 
