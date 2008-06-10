@@ -96,6 +96,7 @@ def threadmain(ip, fileobj):
     pool_sema.release()
     file_mutex.acquire()
     fileobj.write("%s,%s,%s,%s\n"%(ip, pingtype, latency, time.strftime("%Y-%m-%d %H:%M:%S")))
+    fileobj.flush()
     file_mutex.release()
 
 def main():
