@@ -10,7 +10,7 @@ import re, sys
 
 def logtolist(s):
     data={}
-    c=re.compile("\d+\.\d+\.\d+\.\d+")
+    c=re.compile("client (\d+\.\d+\.\d+\.\d+)#")
     for ip in c.findall(s):
         data[ip]=''
     return data.keys()
