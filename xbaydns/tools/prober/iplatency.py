@@ -139,7 +139,7 @@ if __name__ == '__main__':
             sys.exit(1)
     pid = posix.getpid()
     pidfile = open("/tmp/iplatency.pid", "w")
-    pidfile.write(pid)
+    pidfile.write(str(pid))
     pidfile.close()
     ret = main()
     if os.path.isfile("/tmp/iplatency.pid"):
