@@ -141,7 +141,9 @@ if __name__ == '__main__':
         sys.exit(1)
     except ValueError:
         sys.exit(1)
-    except IOError, OSError:
+    except IOError:
+        pass
+    except OSError:
         pass
     pid = os.getpid()
     pidfile = open("/tmp/iplatency.pid", "w")
