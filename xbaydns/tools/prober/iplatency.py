@@ -8,7 +8,7 @@ Copyright (c) 2008 xBayDNS Team. All rights reserved.
 
 """
 
-import os, re, struct, sys, time
+import os, posix, re, struct, sys, time
 import threading
 from iplatency_conf import *
 
@@ -133,4 +133,15 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    sys.exit(main())
+    if os.path.isfile("/tmp/iplatency.pid"):
+        ret = os.system("/bin/pgrep -F /tmp/iplatency.pid >/dev/null 2>&1")
+        if ret == 0:
+            sys.exit(1)
+    pid = posix.getpid()
+    pidfile = open("/tmp/iplatency.pid", "w")
+    pidfile.write(pid)
+    pidfile.close()
+    ret = main()
+    if os.path.isfile("/tmp/iplatency.pid"):
+        os.remove("/tmp/iplatency.pid")
+    sys.exit(ret)
