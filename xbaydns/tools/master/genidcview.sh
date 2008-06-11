@@ -20,7 +20,7 @@ done
 cd $PPATH/../view/iplatency
 for file in *
 do
- sort $file > dummy && mv dummy $file
+ sort $file | uniq > dummy && mv dummy $file
 done
 
 ${XDPREFIX}/bin/python2.5 ${XDPREFIX}/bin/xdidc2view
