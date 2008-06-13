@@ -33,7 +33,7 @@ def convfiles(files):
         for line in file_obj:
             try:
                 ip, pingtype, latency, datetime = line.split(',')
-            except:
+            except ValueError:
                 continue
             if preip != ip:
                 if preip not in data:
