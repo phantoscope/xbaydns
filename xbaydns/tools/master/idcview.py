@@ -31,7 +31,10 @@ def convfiles(files):
         latency_sum = Decimal(latency)
         record_count = 1
         for line in file_obj:
-            ip, pingtype, latency, datetime = line.split(',')
+            try:
+                ip, pingtype, latency, datetime = line.split(',')
+            except:
+                continue
             if preip != ip:
                 if preip not in data:
                     data[preip] = {}
