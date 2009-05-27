@@ -24,7 +24,13 @@ setup(
     url = 'http://xbaydns.googlecode.com',
     download_url = 'http://code.google.com/p/xbaydns/downloads/list',
     zip_safe = False,
-
+    package_data = {
+        'xbaydns.tools': ['templates/default/*.tmpl',
+                          'templates/Darwin/*/*.tmpl',
+                          'templates/FreeBSD/*/*.tmpl',
+                          'templates/OpenBSD/*/*.tmpl',
+                         ], 
+        },
     packages = find_packages(exclude=['*tests*']),
     include_package_data = True,
     scripts = [
